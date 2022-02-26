@@ -6,11 +6,11 @@
     <description>Recent content in Categories on Lilith Sangreal</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Wed, 02 Feb 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://lilithsangreal.com/categories/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Fri, 17 Jan 2020 00:00:00 +0000</lastBuildDate><atom:link href="https://lilithsangreal.com/categories/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Deep Learning</title>
       <link>https://lilithsangreal.com/categories/deep-learning/</link>
-      <pubDate>Wed, 02 Feb 2022 00:00:00 +0000</pubDate>
+      <pubDate>Fri, 17 Jan 2020 00:00:00 +0000</pubDate>
       
       <guid>https://lilithsangreal.com/categories/deep-learning/</guid>
       <description></description>
@@ -19,9 +19,18 @@
     <item>
       <title>NLP</title>
       <link>https://lilithsangreal.com/categories/nlp/</link>
-      <pubDate>Wed, 02 Feb 2022 00:00:00 +0000</pubDate>
+      <pubDate>Fri, 17 Jan 2020 00:00:00 +0000</pubDate>
       
       <guid>https://lilithsangreal.com/categories/nlp/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>从 0 开始 Transformer</title>
+      <link>https://lilithsangreal.com/categories/%E4%BB%8E-0-%E5%BC%80%E5%A7%8B-transformer/</link>
+      <pubDate>Fri, 17 Jan 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://lilithsangreal.com/categories/%E4%BB%8E-0-%E5%BC%80%E5%A7%8B-transformer/</guid>
       <description></description>
     </item>
     

@@ -6,13 +6,54 @@
     <description>Recent content in NLP on Lilith Sangreal</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Wed, 02 Feb 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://lilithsangreal.com/categories/nlp/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Fri, 17 Jan 2020 00:00:00 +0000</lastBuildDate><atom:link href="https://lilithsangreal.com/categories/nlp/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>从 0 开始学习 Transformer 拾遗：文章本身的与解释</title>
+      <link>https://lilithsangreal.com/p/transformer-from-zero-4/</link>
+      <pubDate>Fri, 17 Jan 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://lilithsangreal.com/p/transformer-from-zero-4/</guid>
+      <description>从 0 开始学习 Transformer 拾遗：文章本身的与解释 首先感谢中科院计算所王子和先生提供的宝贵意见。
+由于文章结构的关系，为了能够同时兼顾代码的真实和描述的通俗。我使用了一些可能会有一定误导性的举例说明。在这里做一些解释。
+1. 关于 batch_size 在本系列上篇的 5.2.2. 使用向量化来提升效率，一节中。我使用了这样的描述：
+ 举个例子：若有 batch_size 批次，每批次 N 条的 Query，Key。 其计算完全可以组织成 (batch_size, N, seq_len_q, depth)点乘(batch_size, N, seq_len_q, depth)的转置，最终得到(batch_size, N, seq_len_q, seq_len_k) 形状的张量。
+ 熟悉深度学习的同学会发现，batch_size 这样的名字通常是用来描述一个批次的尺寸的，而并非描述批次数量。在 NLP 中，一次训练为一个批（batch），而一批若有 64 个句子，则 batch_size 为 64。在Transformer的实现中，它也是这样的含义。
+举这个例子时，我是从最右维度为最小单位描述的，那么从最右数，第一维度是词嵌入（或特征向量）的维度，第二个维度是句子的维度，那第三个维度只能是批次的尺寸（而事实上，第三个维度N 是多头注意力的头数，是一个临时加入的维度，第四个维度才是批次的尺寸），描述这段文字的时候还没有介绍多头注意力，所以无奈之举将 batch_size 临时改了含义。
+2. 关于多头注意力的计算图示带来的误导 这张图引用自国外的知名博客（在本系列上篇中提及）。显然为了能够更加直观易懂，这张图并非是基于 Transformer 真实的实现绘制的，而是按照多头注意力的原理绘制的。
+但是一些读者看到这篇文章再结合代码可能会带来一些困惑。
+在代码中，有两个关键的尺寸 depth 和 d_model。事实上，前者和后者的唯一关系是，前者刚好是后者拆成的 8 份之一，两者之间的转换只存在于拆分多头步骤，并没有其他任何映射关系（全连接网络）。
+由于这张图的抽象化：词嵌入的矩阵看起来显然小于 8 个头的 K Q V；最后多头拼接的一个长长的结果$W^O$转换成一个 $Z$，读者可能会认为词嵌入的深度是 depth ，再经过一次全连接网络得到一个d_model 然后拆成多头，最后输出结果拼成 d_model 再经过一次全连接得到 depth，循环往复。</description>
+    </item>
+    
+    <item>
+      <title>从 0 开始学习 Transformer 番外：Transformer 如何穿梭时空？</title>
+      <link>https://lilithsangreal.com/p/transformer-from-zero-3/</link>
+      <pubDate>Sun, 15 Dec 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://lilithsangreal.com/p/transformer-from-zero-3/</guid>
+      <description>从 0 开始学习 Transformer 番外：Transformer 如何穿梭时空？  从 0 开始学习 Transformer 番外：Transformer 如何穿梭时空？  1. 前言 2. Transformer 穿越时空了？ 3. 使用真值模拟输出配合前瞻遮挡    1. 前言 讲解 Transfomer 在训练阶段为何无需循环调用模型即可完成导师监督（teacher-forcing）法。讲解前瞻遮挡原理的精妙用法：通过一次正向传播，模拟模型逐个得到得到整个目标句子的预测过程。
+2. Transformer 穿越时空了？ 首先，我们来看看 Transofrmer 是如何完成导师监督的（下面这是一张动图，依然来自Jay Alammar，有可能加载不出来，请参考原文The Decoder Side部分)：
+这和本系列第二篇文章的 7.评估 部分是一致的：
+1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25  ... for i in range(MAX_LENGTH): enc_padding_mask, combined_mask, dec_padding_mask = create_masks( encoder_input, output) # predictions.</description>
+    </item>
+    
+    <item>
+      <title>从 0 开始学习 Transformer 下篇：Transformer 训练与评估</title>
+      <link>https://lilithsangreal.com/p/transformer-from-zero-2/</link>
+      <pubDate>Fri, 13 Dec 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://lilithsangreal.com/p/transformer-from-zero-2/</guid>
+      <description>从 0 开始学习 Transformer 下篇：Transformer 训练与评估  从 0 开始学习 Transformer 下篇：Transformer 训练与评估  1. 前言 2. 创造原训练集的编码表示  2.1. 数据下载与读取 2.2. 创建子词分词器 2.3. 数据处理   3. 损失函数设计 4. 优化器与学习率 5. 自回归原理 6. 训练  6.1. 超参数 6.2. 训练  6.2.1. 创建遮挡 6.2.2. 创建训练步骤及保存模型 6.2.3. 开始训练     7. 评估    1. 前言 在上一篇文章中我们已经描述了 Transformer 的整个模型搭建过程，并逐层逐行地解释了其正向传播的原理和细节。接下来，我们将着手定义优化训练的方式，处理语料，并最终使用搭建好的 Transformer 实现一个由葡萄牙语翻译至英语的翻译器。
+为了训练一个由葡萄牙语翻译至英语的翻译器，首先来观察如何处理数据从而能够正确地输入我们已经设计好的 Tranformer 模型：
+1 2 3 4 5 6 7  class Transformer(tf.</description>
+    </item>
+    
     <item>
       <title>从 0 开始学习 Transformer 上篇：Transformer 搭建与理解</title>
-      <link>https://lilithsangreal.com/p/test-chinese/</link>
-      <pubDate>Wed, 02 Feb 2022 00:00:00 +0000</pubDate>
+      <link>https://lilithsangreal.com/p/transformer-from-zero-1/</link>
+      <pubDate>Mon, 02 Dec 2019 00:00:00 +0000</pubDate>
       
-      <guid>https://lilithsangreal.com/p/test-chinese/</guid>
+      <guid>https://lilithsangreal.com/p/transformer-from-zero-1/</guid>
       <description>从 0 开始学习 Transformer 上篇：Transformer 搭建与理解  从 0 开始学习 Transformer 上篇：Transformer 搭建与理解  1. 前言 2. 参考代码、文章及部分插图来源 3. 在开始前的推荐了解  3.1. 循环神经网络（RNN） 3.2. 基于编码-解码（encoder-decoder）的序列到序列（sequence2sequence）模型 3.3. 注意力机制 3.4. 词嵌入（Word Embedding）   4. 初探 Transformer 5. 基础算法和模块  5.1. 位置编码（Positional encoding） 5.2. 注意力机制  5.2.1. 计算步骤细节 5.2.2. 使用向量化来提升效率 5.2.3. 如何作为自注意力使用   5.3. 遮挡 Mask  5.3.1. 填充遮挡 5.3.2. 前瞻遮挡（look-ahead mask）   5.4. 多头注意力（Multi-head attention）  5.4.1. 代码分析   5.</description>
     </item>
     

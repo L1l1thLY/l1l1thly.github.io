@@ -1,0 +1,1801 @@
+<!DOCTYPE html>
+<html lang="en-us">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='从 0 开始学习 Transformer 上篇：Transformer 搭建与理解'><title>从 0 开始学习 Transformer 上篇：Transformer 搭建与理解</title>
+
+<link rel='canonical' href='https://lilithsangreal.com/p/transformer-from-zero-1/'>
+
+<link rel="stylesheet" href="/scss/style.min.b949db8bead9abdc40291b93383b8da6abc3aa62e74f5580356c06ddbb792dab.css"><meta property='og:title' content='从 0 开始学习 Transformer 上篇：Transformer 搭建与理解'>
+<meta property='og:description' content='从 0 开始学习 Transformer 上篇：Transformer 搭建与理解'>
+<meta property='og:url' content='https://lilithsangreal.com/p/transformer-from-zero-1/'>
+<meta property='og:site_name' content='Lilith Sangreal'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2019-12-02T00:00:00&#43;00:00'/><meta property='article:modified_time' content='2019-12-02T00:00:00&#43;00:00'/><meta property='og:image' content='https://lilithsangreal.com/p/transformer-from-zero-1/the_transformer.png' />
+<meta name="twitter:title" content="从 0 开始学习 Transformer 上篇：Transformer 搭建与理解">
+<meta name="twitter:description" content="从 0 开始学习 Transformer 上篇：Transformer 搭建与理解"><meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content='https://lilithsangreal.com/p/transformer-from-zero-1/the_transformer.png' />
+    </head>
+    <body class="
+    article-page has-toc
+">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex 
+    
+        extended
+    
+">
+    
+        <div id="article-toolbar">
+            <a href="/" class="back-home">
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-chevron-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="15 6 9 12 15 18" />
+</svg>
+
+
+
+                <span>Back</span>
+            </a>
+        </div>
+    
+<main class="main full-width">
+    <article class="has-image main-article">
+    <header class="article-header">
+        <div class="article-image">
+            <a href="/p/transformer-from-zero-1/">
+                <img src="/p/transformer-from-zero-1/the_transformer_hu9dc15172e42e840ef18a078a4efb196f_44824_800x0_resize_box_3.png"
+                        srcset="/p/transformer-from-zero-1/the_transformer_hu9dc15172e42e840ef18a078a4efb196f_44824_800x0_resize_box_3.png 800w, /p/transformer-from-zero-1/the_transformer_hu9dc15172e42e840ef18a078a4efb196f_44824_1600x0_resize_box_3.png 1600w"
+                        width="800" 
+                        height="209" 
+                        loading="lazy"
+                        alt="Featured image of post 从 0 开始学习 Transformer 上篇：Transformer 搭建与理解" />
+                
+            </a>
+        </div>
+    
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/nlp/" >
+                NLP
+            </a>
+        
+            <a href="/categories/deep-learning/" >
+                Deep Learning
+            </a>
+        
+            <a href="/categories/%E4%BB%8E-0-%E5%BC%80%E5%A7%8B-transformer/" >
+                从 0 开始 Transformer
+            </a>
+        
+    </header>
+    
+
+    <h2 class="article-title">
+        <a href="/p/transformer-from-zero-1/">从 0 开始学习 Transformer 上篇：Transformer 搭建与理解</a>
+    </h2>
+
+    
+    <h3 class="article-subtitle">
+        从 0 开始学习 Transformer 上篇：Transformer 搭建与理解
+    </h3>
+    
+
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">Dec 02, 2019</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    11 minute read
+                </time>
+            </div>
+        
+    </footer>
+    
+</div>
+</header>
+
+    <section class="article-content">
+    
+    
+    <h1 id="从-0-开始学习-transformer-上篇transformer-搭建与理解">从 0 开始学习 Transformer 上篇：Transformer 搭建与理解</h1>
+<!-- raw HTML omitted -->
+<ul>
+<li><a class="link" href="#%e4%bb%8e-0-%e5%bc%80%e5%a7%8b%e5%ad%a6%e4%b9%a0-transformer-%e4%b8%8a%e7%af%87transformer-%e6%90%ad%e5%bb%ba%e4%b8%8e%e7%90%86%e8%a7%a3" >从 0 开始学习 Transformer 上篇：Transformer 搭建与理解</a>
+<ul>
+<li><a class="link" href="#1-%e5%89%8d%e8%a8%80" >1. 前言</a></li>
+<li><a class="link" href="#2-%e5%8f%82%e8%80%83%e4%bb%a3%e7%a0%81%e6%96%87%e7%ab%a0%e5%8f%8a%e9%83%a8%e5%88%86%e6%8f%92%e5%9b%be%e6%9d%a5%e6%ba%90" >2. 参考代码、文章及部分插图来源</a></li>
+<li><a class="link" href="#3-%e5%9c%a8%e5%bc%80%e5%a7%8b%e5%89%8d%e7%9a%84%e6%8e%a8%e8%8d%90%e4%ba%86%e8%a7%a3" >3. 在开始前的推荐了解</a>
+<ul>
+<li><a class="link" href="#31-%e5%be%aa%e7%8e%af%e7%a5%9e%e7%bb%8f%e7%bd%91%e7%bb%9crnn" >3.1. 循环神经网络（RNN）</a></li>
+<li><a class="link" href="#32-%e5%9f%ba%e4%ba%8e%e7%bc%96%e7%a0%81-%e8%a7%a3%e7%a0%81encoder-decoder%e7%9a%84%e5%ba%8f%e5%88%97%e5%88%b0%e5%ba%8f%e5%88%97sequence2sequence%e6%a8%a1%e5%9e%8b" >3.2. 基于编码-解码（encoder-decoder）的序列到序列（sequence2sequence）模型</a></li>
+<li><a class="link" href="#33-%e6%b3%a8%e6%84%8f%e5%8a%9b%e6%9c%ba%e5%88%b6" >3.3. 注意力机制</a></li>
+<li><a class="link" href="#34-%e8%af%8d%e5%b5%8c%e5%85%a5word-embedding" >3.4. 词嵌入（Word Embedding）</a></li>
+</ul>
+</li>
+<li><a class="link" href="#4-%e5%88%9d%e6%8e%a2-transformer" >4. 初探 Transformer</a></li>
+<li><a class="link" href="#5-%e5%9f%ba%e7%a1%80%e7%ae%97%e6%b3%95%e5%92%8c%e6%a8%a1%e5%9d%97" >5. 基础算法和模块</a>
+<ul>
+<li><a class="link" href="#51-%e4%bd%8d%e7%bd%ae%e7%bc%96%e7%a0%81positional-encoding" >5.1. 位置编码（Positional encoding）</a></li>
+<li><a class="link" href="#52-%e6%b3%a8%e6%84%8f%e5%8a%9b%e6%9c%ba%e5%88%b6" >5.2. 注意力机制</a>
+<ul>
+<li><a class="link" href="#521-%e8%ae%a1%e7%ae%97%e6%ad%a5%e9%aa%a4%e7%bb%86%e8%8a%82" >5.2.1. 计算步骤细节</a></li>
+<li><a class="link" href="#522-%e4%bd%bf%e7%94%a8%e5%90%91%e9%87%8f%e5%8c%96%e6%9d%a5%e6%8f%90%e5%8d%87%e6%95%88%e7%8e%87" >5.2.2. 使用向量化来提升效率</a></li>
+<li><a class="link" href="#523-%e5%a6%82%e4%bd%95%e4%bd%9c%e4%b8%ba%e8%87%aa%e6%b3%a8%e6%84%8f%e5%8a%9b%e4%bd%bf%e7%94%a8" >5.2.3. 如何作为自注意力使用</a></li>
+</ul>
+</li>
+<li><a class="link" href="#53-%e9%81%ae%e6%8c%a1-mask" >5.3. 遮挡 Mask</a>
+<ul>
+<li><a class="link" href="#531-%e5%a1%ab%e5%85%85%e9%81%ae%e6%8c%a1" >5.3.1. 填充遮挡</a></li>
+<li><a class="link" href="#532-%e5%89%8d%e7%9e%bb%e9%81%ae%e6%8c%a1look-ahead-mask" >5.3.2. 前瞻遮挡（look-ahead mask）</a></li>
+</ul>
+</li>
+<li><a class="link" href="#54-%e5%a4%9a%e5%a4%b4%e6%b3%a8%e6%84%8f%e5%8a%9bmulti-head-attention" >5.4. 多头注意力（Multi-head attention）</a>
+<ul>
+<li><a class="link" href="#541-%e4%bb%a3%e7%a0%81%e5%88%86%e6%9e%90" >5.4.1. 代码分析</a></li>
+</ul>
+</li>
+<li><a class="link" href="#55-%e7%82%b9%e5%bc%8f%e5%89%8d%e9%a6%88%e7%bd%91%e7%bb%9cpoint-wise-feed-forward-network" >5.5. 点式前馈网络（Point wise feed forward network）</a></li>
+</ul>
+</li>
+<li><a class="link" href="#6-%e7%bc%96%e7%a0%81%e5%99%a8%e8%a7%a3%e7%a0%81%e5%99%a8" >6. 编码器解码器</a>
+<ul>
+<li><a class="link" href="#61-%e7%bc%96%e7%a0%81%e5%99%a8%e5%b1%82" >6.1. 编码器层</a></li>
+<li><a class="link" href="#62-%e8%a7%a3%e7%a0%81%e5%99%a8%e5%b1%82" >6.2. 解码器层</a></li>
+<li><a class="link" href="#63-%e7%bc%96%e7%a0%81%e5%99%a8" >6.3. 编码器</a></li>
+<li><a class="link" href="#64-%e8%a7%a3%e7%a0%81%e5%99%a8" >6.4. 解码器</a></li>
+</ul>
+</li>
+<li><a class="link" href="#7-%e5%88%9b%e5%bb%ba-transformer" >7. 创建 Transformer</a></li>
+<li><a class="link" href="#8-%e5%b0%8f%e7%bb%93" >8. 小结</a></li>
+</ul>
+</li>
+</ul>
+<!-- raw HTML omitted -->
+<h2 id="1-前言">1. 前言</h2>
+<p>本文章结合代码讲解如何使用 Tensorflow <strong>从零开始学习理解及搭建一个Transformer</strong>，本文代码基于Tensorflow 2.0版本，若使用其他版本或Pytorch亦不妨参考。</p>
+<p>相较于 Tensorflow 官方指南，本文将对模块细节和使用进行更精细的讲解；将对代码构建过程中<strong>代码进行逐行解释</strong>以及<strong>自注意力机制等细节设计</strong>进行讲解。除此之外，也加入了笔者对于 Transformer 细节部分的一些<strong>个人疑惑和理解</strong>。简而言之，是融合了代码指南和原理精讲的一篇文章，力求将笔者对于 Transformer 的理解精粹于一篇文章，本人才疏学浅，欢迎批评指正。</p>
+<p>整个文章结构参考 Tensorflow 官方指南，按照自底向上的顺序来逐渐搭建一个用于<strong>将葡萄牙语翻译为英语的Transformer模型</strong>：先从最基本的算法模块实现，然后组装。在组装过程中讲解各个子模块产生的作用。</p>
+<h2 id="2-参考代码文章及部分插图来源">2. 参考代码、文章及部分插图来源</h2>
+<p>本文大量参考及使用他人文章和官方文档中代码和图片，在此表示感谢：</p>
+<ul>
+<li><a class="link" href="https://jalammar.github.io/illustrated-transformer/"  target="_blank" rel="noopener"
+    >The Illustrated Transformer</a></li>
+<li><a class="link" href="https://tensorflow.google.cn/tutorials/text/transformer"  target="_blank" rel="noopener"
+    >Transformer model for language understanding</a></li>
+<li><a class="link" href="https://tensorflow.google.cn/api_docs/python/tf"  target="_blank" rel="noopener"
+    >TensorFlow Core r2.0 API</a></li>
+<li><a class="link" href="https://tensorflow.google.cn/datasets"  target="_blank" rel="noopener"
+    >Datasets v1.3.0 API</a></li>
+</ul>
+<h2 id="3-在开始前的推荐了解">3. 在开始前的推荐了解</h2>
+<h3 id="31-循环神经网络rnn">3.1. 循环神经网络（RNN）</h3>
+<p>RNN是一种可用于抽取序列数据特征的神经网络结构，一个最基本的RNN是非常容易理解的，相当于 NLP 领域的 “Hello world“。很多 NLP 领域的知识点（如本文可能用到的注意力机制与自注意力机制、encoder-decoder架构）的相关文章很多都会使用一个最基本的 RNN 来类比），所以建议阅读本文前对最基本的循环神经网络有一个初步的了解。</p>
+<blockquote>
+<p>这部分内容推荐阅读 Ian Goodfellow 等人编写的 <em>Deep Learning</em> 一书中的 10.1 与 10.2 节。</p>
+</blockquote>
+<h3 id="32-基于编码-解码encoder-decoder的序列到序列sequence2sequence模型">3.2. 基于编码-解码（encoder-decoder）的序列到序列（sequence2sequence）模型</h3>
+<p>在⾃然语⾔处理的很多应⽤中，输⼊和输出都可以是不定⻓序列。以机器翻译为例，输⼊可以是⼀段不定⻓的英语⽂本序列，输出可以是⼀段不定⻓的法语⽂本序列，当输⼊和输出都是不定⻓序列时，我们可以使⽤编码器—解码器（encoder-decoder）架构或者sequence2sequence模型。</p>
+<blockquote>
+<p>这部分内容推荐阅读 Ian Goodfellow 等人编写的 <em>Deep Learning</em> 一书中的 10.4 节。</p>
+</blockquote>
+<h3 id="33-注意力机制">3.3. 注意力机制</h3>
+<p>Transformer 的核心思想——自注意力机制，实际上是受启发于注意力机制。对比注意力机制和自注意力机制的异同，可以更加的深刻理解自注意力机制的作用机理。</p>
+<p>强烈推荐阅读 <a class="link" href="https://zhuanlan.zhihu.com/p/37601161"  target="_blank" rel="noopener"
+    >张俊林 - 深度学习中的注意力模型</a>。</p>
+<p>对英语有自信的同学可以阅读 <a class="link" href="https://jalammar.github.io/visualizing-neural-machine-translation-mechanics-of-seq2seq-models-with-attention/"  target="_blank" rel="noopener"
+    >Visualizing A Neural Machine Translation Model (Mechanics of Seq2seq Models With Attention)</a>，其中包含大量的动画实例。</p>
+<h3 id="34-词嵌入word-embedding">3.4. 词嵌入（Word Embedding）</h3>
+<p>推荐阅读此文章 <a class="link" href="https://zhuanlan.zhihu.com/p/49271699"  target="_blank" rel="noopener"
+    >张俊林 - 从Word Embedding到Bert模型—自然语言处理中的预训练技术发展史</a> 的<strong>前半部分对 Word Embedding 的介绍</strong>。</p>
+<h2 id="4-初探-transformer">4. 初探 Transformer</h2>
+<p>Transformer 是基于自注意力机制的全新 encoder-decoder 模型。相较于传统循环神经网络搭建的同类模型，Transformer 具有多重优势：解决长期依赖的问题，可以并行化等等。</p>
+<p>现在我们已经知道了一个 encoder-decoder 可以完成多种自然语言处理任务。为了举例方便，假设要完成一个机器翻译任务：从法语翻译到英语。Transformer 做的事情就是这样的：</p>
+<p><img src="/p/transformer-from-zero-1/attachments/the_transformer.png"
+	width="1127"
+	height="294"
+	srcset="/p/transformer-from-zero-1/attachments/the_transformer_hu9dc15172e42e840ef18a078a4efb196f_44824_480x0_resize_box_3.png 480w, /p/transformer-from-zero-1/attachments/the_transformer_hu9dc15172e42e840ef18a078a4efb196f_44824_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="Transformer1"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="383"
+		data-flex-basis="920px"
+	
+></p>
+<p>作为一个 encoder-decoder 模型，Transformer 将会被分为编码器（左侧浅绿色）和解码器（右侧粉色）两部分：</p>
+<p><img src="/p/transformer-from-zero-1/attachments/The_transformer_encoders_decoders.png"
+	width="756"
+	height="474"
+	srcset="/p/transformer-from-zero-1/attachments/The_transformer_encoders_decoders_hu719cc4d57de2ce621a8aa9369922f3d4_39199_480x0_resize_box_3.png 480w, /p/transformer-from-zero-1/attachments/The_transformer_encoders_decoders_hu719cc4d57de2ce621a8aa9369922f3d4_39199_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="Transformer-enc-dec"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="159"
+		data-flex-basis="382px"
+	
+></p>
+<p>如何设计这两个部分呢？<a class="link" href="https://arxiv.org/abs/1706.03762"  target="_blank" rel="noopener"
+    >论文</a>中的图示是这样的：</p>
+<p><img src="/p/transformer-from-zero-1/attachments/the_transformer2.png"
+	width="668"
+	height="832"
+	srcset="/p/transformer-from-zero-1/attachments/the_transformer2_hue8ba12dbaf71f19d9d68468ec3964ba8_98723_480x0_resize_box_3.png 480w, /p/transformer-from-zero-1/attachments/the_transformer2_hue8ba12dbaf71f19d9d68468ec3964ba8_98723_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="Transformer2"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="80"
+		data-flex-basis="192px"
+	
+></p>
+<p>这一张图掩盖了许多细节，大量的箭头也使人不明就里。暂时来看，我们可以得到以下信息：</p>
+<ol>
+<li>解码器和编码器的结构类似，都是多头注意力机制（图中 Multi-Head Attention 块，是对于自注意力机制的变化使用）和前馈神经网络（Feed Forward）的堆叠多层。</li>
+<li>输入不仅仅是句子的词嵌入表示，还额外增加了称作位置编码（Positional Encoding）的额外信息。</li>
+</ol>
+<p>其他姑且按下不表。</p>
+<h2 id="5-基础算法和模块">5. 基础算法和模块</h2>
+<h3 id="51-位置编码positional-encoding">5.1. 位置编码（Positional encoding）</h3>
+<p>一个传统的，使用 RNN 构建的 Encoder-Decoder 模型对于输入句子中的单词是逐个读取的：读取完前一个单词，更新模型的状态，然后在此状态下再读取下一个单词。这种方式天然的包含了句子的位置前后关系。</p>
+<p>我们后面会发现 Transformer 对于输入却并非逐个读取，而是对整个句子的每个单词进行同时读取。这种方式就显然丢失了句子的前后位置关系。</p>
+<p>为了能够保留句子中单词和单词之间的位置关系，需要将位置也融合进入输入的句子中，需要对位置进行编码。</p>
+<p>Transformer 使用的位置编码算法如下定义：</p>
+<p>$$P E_{(p o s, 2 i)}=\sin \left(\text {pos} / 10000^{2 i / d_{\text {model}}}\right)$$</p>
+<p>$$P E_{(p o s, 2 i+1)}=\cos \left(\text {pos} / 10000^{2 i / d_{\text {matel}}}\right)$$</p>
+<p>由公式来看，对于一个句子，此编码算法对于偶数位置  <code>2i</code> 和奇数位置 <code>2i + 1</code> 分开进行编码。编码的结果是每个位置最终转化为 <code>d_model</code> 维度的向量。</p>
+<p>一个对50个位置编码至 512 维度位置向量的图示例子如下（其作用于的输入就是句子，句子长至 50 单词，且每个词嵌入的维度为 512）：</p>
+<p><img src="/p/transformer-from-zero-1/attachments/pos_enc.png"
+	width="632"
+	height="470"
+	srcset="/p/transformer-from-zero-1/attachments/pos_enc_hu6898a0dedddced8a3d6450c5f57265e0_52743_480x0_resize_box_3.png 480w, /p/transformer-from-zero-1/attachments/pos_enc_hu6898a0dedddced8a3d6450c5f57265e0_52743_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="pos_enc"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="134"
+		data-flex-basis="322px"
+	
+></p>
+<p>这个位置向量会直接加在词嵌入上使用，从而使词嵌入在含义远近的表示能力之外增加了句子中的位置关系的表示能力：</p>
+<blockquote>
+<p>位置编码向量被加到嵌入（embedding）向量中。嵌入表示一个 d 维空间的标记，在 d 维空间中有着相似含义的标记会离彼此更近。但是，嵌入并没有对在一句话中的词的相对位置进行编码。因此，当加上位置编码后，词将基于它们含义的相似度以及它们在句子中的位置，在 d 维空间中离彼此更近。</p>
+</blockquote>
+<p>才疏学浅，没法一个直观的角度来解释为何这样设计编码以及为何这样编码可以起到这样的效果。请各位指教。</p>
+<p>考虑此函数需要有大量的切片赋值操作（tensorflow api 实现起来较为困难，需要调用<code>assign</code>来实现numpy的赋值运算符<code>=</code>），所以使用numpy的api来实现，最后使用<code>tf.cast</code>将其自动转换为tensor（此处为一个<code>eager tensor</code>）。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-Python" data-lang="Python"><span class="k">def</span> <span class="nf">get_angles</span><span class="p">(</span><span class="n">pos</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">d_model</span><span class="p">):</span>
+  <span class="n">angle_rates</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">power</span><span class="p">(</span><span class="mi">10000</span><span class="p">,</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="p">(</span><span class="n">i</span><span class="o">//</span><span class="mi">2</span><span class="p">))</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">(</span><span class="n">d_model</span><span class="p">))</span>
+  <span class="k">return</span> <span class="n">pos</span> <span class="o">*</span> <span class="n">angle_rates</span>
+
+<span class="k">def</span> <span class="nf">positional_encoding</span><span class="p">(</span><span class="n">position</span><span class="p">,</span> <span class="n">d_model</span><span class="p">):</span>
+  <span class="n">angle_rads</span> <span class="o">=</span> <span class="n">get_angles</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">position</span><span class="p">)[:,</span> <span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">],</span>
+                          <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">d_model</span><span class="p">)[</span><span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">,</span> <span class="p">:],</span>
+                          <span class="n">d_model</span><span class="p">)</span>
+  
+  <span class="c1"># 将 sin 应用于数组中的偶数索引（indices）；2i</span>
+  <span class="n">angle_rads</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">::</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">angle_rads</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">::</span><span class="mi">2</span><span class="p">])</span>
+  
+  <span class="c1"># 将 cos 应用于数组中的奇数索引；2i+1</span>
+  <span class="n">angle_rads</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">::</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">angle_rads</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">::</span><span class="mi">2</span><span class="p">])</span>
+    
+  <span class="n">pos_encoding</span> <span class="o">=</span> <span class="n">angle_rads</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> 
+  <span class="c1"># 在这里增加了一个维度。eg: (50, 512) -&gt; (1, 50, 512)</span>
+  <span class="c1"># 为什么要增加一个维度呢？因为输入到 Transformer 的输入通常是多个句子层叠成一个批次。</span>
+  <span class="c1"># 增加一个维度就可以利用广播机制一次加法将一个批次的每个句子添加上位置编码。</span>
+    
+  <span class="k">return</span> <span class="n">tf</span><span class="o">.</span><span class="n">cast</span><span class="p">(</span><span class="n">pos_encoding</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">tf</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+</code></pre></td></tr></table>
+</div>
+</div><h3 id="52-注意力机制">5.2. 注意力机制</h3>
+<p>准确来说，是按比缩放的点积注意力机制（Scaled dot product attention）。</p>
+<p>顾名思义，Transformer 一种点积注意力机制，并且在普通的点积注意力机制上增加了“按比缩放”这个特性。</p>
+<p>根据输入的不同，这个模块既可以是自注意力，也可以是非自注意力。</p>
+<p>如果已经阅读了本文第三部分推荐的注意力机制相关的文章<a class="link" href="https://zhuanlan.zhihu.com/p/37601161"  target="_blank" rel="noopener"
+    >张俊林 - 深度学习中的注意力模型</a>，应该已经理解了注意力机制的本质：</p>
+<p>对于三个输入：</p>
+<ul>
+<li>Q：请求 query</li>
+<li>K：主键 key</li>
+<li>V：数值 value</li>
+</ul>
+<p>注意力机制本质就是使用 Q 和 K 来计算出“注意力权重“，然后利用注意力权重对Ｖ进行加权求和。</p>
+<p>按比缩放的点积注意力定义如下：</p>
+<p>$$
+\text {Attention }(Q, K, V)=\operatorname{softmax}<em>{k}\left(\frac{Q K^{T}}{\sqrt{d</em>{k}}}\right) V
+$$</p>
+<p>使用计算图来表示如下：</p>
+<p><img src="/p/transformer-from-zero-1/attachments/attention1.png"
+	width="432"
+	height="434"
+	srcset="/p/transformer-from-zero-1/attachments/attention1_hu5394e8fadf02ddbdf64c8199f417f577_20855_480x0_resize_box_3.png 480w, /p/transformer-from-zero-1/attachments/attention1_hu5394e8fadf02ddbdf64c8199f417f577_20855_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="attention1"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="99"
+		data-flex-basis="238px"
+	
+></p>
+<p>可以看出，注意力权重是通过 Q 和 K 直接进行点积<code>MatMul</code>，并按比缩放<code>Scale</code>（除以深度的平方根），然后进行 softmax 得到的。</p>
+<p>同样的，使用注意力权重乘上 V 便得到了一次输出。</p>
+<p>有两点需要讨论：</p>
+<ol>
+<li>为什么要按比缩放<code>Scale</code>：这是原论文中的一个推测——如果输入的Q，K维度过大，则会导致点积后的结果很大softmax函数有一个特点，当输入的 x 越大，其梯度会趋近于 0。这对于基于梯度下降法的优化非常不利。（这个是一个有根据的推测：假设q和k都是独立的随机变量，那么q 乘上 k 是均值的 0 方差为 $d_k$ 的。除以深度的平方根，可以让方差为 1）</li>
+<li>在 softmax 前，为什么有一个可选的 <code>Mask</code> 过程： 这是由于在整个模型的运行过程中，可能根据设计，要忽略掉一些输入。关于Mask的生成，将在下一部分详细解释。关于Mask的使用，将在#TODO时提及。</li>
+</ol>
+<h4 id="521-计算步骤细节">5.2.1. 计算步骤细节</h4>
+<blockquote>
+<p>注意：这个例子和实际 Transformer 使用的实际输入不同（并非直接使用词嵌入来作为Query、Key等输入），仅为了能够用自然语言阐述而设计。精确的解释我们放在后文。</p>
+</blockquote>
+<p>假设 Query 序列是一个句子，长度为 <code>seq_len_q</code>。</p>
+<p>而 Key 序列也是一些一个句子，长度为 <code>seq_len_k</code>。</p>
+<p>Value 序列中的每个值都对应 Key 句子中的一个单词，所以 v 的长度<code>seq_len_v</code> 等于 <code>seq_len_k</code> 。</p>
+<p>根据上文描述的注意力机制的计算方法：依次取 Query 中的单词，来和 Key 中的 <code>seq_len_v</code> 个单词一一计算注意力权重，得到 <code>seq_len_v</code> 个注意力权重，使用这个权重对 <code>seq_len_k</code> （再次强调，长度必须相同，这部分描述对应着下面代码注释中的要求<code>2.</code>）个 Value 进行加权求和，得到一个输出。</p>
+<p>一个 Query 序列将产生 <code>seq_len_q</code> 个加权求和。</p>
+<p>让我们用矩阵点乘的模式来描述这个过程：</p>
+<p>假设每个单词的嵌入为<code>depth</code>维度，显然这个步骤是:</p>
+<p>Q 矩阵<code>(seq_len_q, depth)</code> 和 K 矩阵<code>(seq_len_k, depth)</code> 的<strong>转置</strong>的矩阵乘法。</p>
+<p>最终得到注意力权重 <code>(seq_len_q, seq_len_k)</code> 矩阵。这个矩阵乘上 Value 矩阵<code>(seq_len_v, depth_v)</code> 便是加权求和过程，最终得到了输出Output <code>(seq_len_q, depth_v)</code>。</p>
+<blockquote>
+<p><code>depth_v</code> 表示 Value 序列中每个值的维度，显然，这个维度不一定要和上文的<code>depth</code>一致</p>
+</blockquote>
+<h4 id="522-使用向量化来提升效率">5.2.2. 使用向量化来提升效率</h4>
+<p>每个 Query 序列对应着一个 Key 序列，但这 Query-Key 组合彼此之间是独立的。完全可以将 Query、Key、Value 堆叠成批，一次运算搞定。<strong>矩阵乘法或是转置是针对最后的两个维度</strong>，所以只需要保持前置维度匹配（对应，下方注释的要求<code>1.</code>），计算结果和上面完全等效。</p>
+<p>举个例子：若有 <code>batch_size</code> 批次，每批次 <code>N</code> 条的 Query，Key。 其计算完全可以组织成 <code>(batch_size, N, seq_len_q, depth)</code>点乘<code>(batch_size, N, seq_len_q, depth)</code>的转置，最终得到<code>(batch_size, N, seq_len_q, seq_len_k)</code> 形状的张量。</p>
+<p>mask 以乘以一个极大的负数<code>-1e9</code>，然后在加上注意力权重，最终达到使一些位置的 Value 失效的效果。只需要保证其可通过广播机制能够自动转换为 <code>(..., seq_len_q, seq_len_k)</code> 形状（代码注释中的要求<code>3.</code>)。</p>
+<blockquote>
+<p>这一要求将会影响下一节的遮挡（Masking）的实现。</p>
+</blockquote>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-Python" data-lang="Python"><span class="k">def</span> <span class="nf">scaled_dot_product_attention</span><span class="p">(</span><span class="n">q</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">mask</span><span class="p">):</span>
+  <span class="s2">&#34;&#34;&#34; 这部分是对于输入的张量维度进行描述
+</span><span class="s2">
+</span><span class="s2">  1. q, k, v 必须具有匹配的前置维度。
+</span><span class="s2">
+</span><span class="s2">  2. k, v 必须有匹配的倒数第二个维度，例如：seq_len_k = seq_len_v。
+</span><span class="s2">  
+</span><span class="s2">  3. 虽然 mask 根据其类型（填充或前瞻）有不同的形状，但是 mask 必须能进行广播转换以便求和。
+</span><span class="s2">
+</span><span class="s2">  
+</span><span class="s2">  参数:
+</span><span class="s2">    q: 请求的形状 == (..., seq_len_q, depth)
+</span><span class="s2">    k: 主键的形状 == (..., seq_len_k, depth)
+</span><span class="s2">    v: 数值的形状 == (..., seq_len_v, depth_v)
+</span><span class="s2">    mask: Float 张量，其形状能转换成
+</span><span class="s2">          (..., seq_len_q, seq_len_k)。默认为None。
+</span><span class="s2">    
+</span><span class="s2">  返回值:
+</span><span class="s2">    输出，注意力权重
+</span><span class="s2">  &#34;&#34;&#34;</span>
+
+  <span class="n">matmul_qk</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">q</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">transpose_b</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>  <span class="c1"># 得到张量形状为 (..., seq_len_q, seq_len_k)</span>
+  
+    <span class="c1"># 缩放 matmul_qk</span>
+  <span class="n">dk</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">cast</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">k</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">tf</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span> <span class="c1"># dk 即 depth</span>
+  <span class="n">scaled_attention_logits</span> <span class="o">=</span> <span class="n">matmul_qk</span> <span class="o">/</span> <span class="n">tf</span><span class="o">.</span><span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">dk</span><span class="p">)</span>
+
+    <span class="c1"># 将 mask 加入到缩放的张量上。</span>
+  <span class="k">if</span> <span class="n">mask</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">scaled_attention_logits</span> <span class="o">+=</span> <span class="p">(</span><span class="n">mask</span> <span class="o">*</span> <span class="o">-</span><span class="mf">1e9</span><span class="p">)</span>  
+
+    <span class="c1"># softmax 在最后一个轴（seq_len_k）上归一化，因此分数</span>
+    <span class="c1"># 相加等于1。</span>
+  <span class="n">attention_weights</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">softmax</span><span class="p">(</span><span class="n">scaled_attention_logits</span><span class="p">,</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># (..., seq_len_q, seq_len_k)</span>
+
+  <span class="n">output</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">attention_weights</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>  <span class="c1"># (..., seq_len_q, depth_v)</span>
+
+  <span class="k">return</span> <span class="n">output</span><span class="p">,</span> <span class="n">attention_weights</span>
+</code></pre></td></tr></table>
+</div>
+</div><h4 id="523-如何作为自注意力使用">5.2.3. 如何作为自注意力使用</h4>
+<p>有人会这样总结：自注意力就是将同一个句子同时作为 Query 和 Key 来使用。我认为还不够精确。</p>
+<p>事实上，输入自注意力的 Query、Key 和 Value 都来自原始嵌入的线性变换：创建三个会随着模型训练过程不断优化的矩阵$W^Q$，$W^K$ 和 $W^V$，原始词嵌入乘上三个矩阵从而得到真正的 Query、Key 和 Value（也可以理解为三个独立的全连接神经网络，输入节点数量为词嵌入的维度，输出节点数量分别为Query，Key 和 Value 的维度）。</p>
+<p>其过程如下：</p>
+<p><img src="/p/transformer-from-zero-1/attachments/self_attention.png"
+	width="875"
+	height="552"
+	srcset="/p/transformer-from-zero-1/attachments/self_attention_hua65c3e6c2024ce004bd25224487b57c1_38480_480x0_resize_box_3.png 480w, /p/transformer-from-zero-1/attachments/self_attention_hua65c3e6c2024ce004bd25224487b57c1_38480_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="self_attention"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="158"
+		data-flex-basis="380px"
+	
+></p>
+<p>其余过程则完全和上述过程一致：</p>
+<p><img src="/p/transformer-from-zero-1/attachments/self_attention2.png"
+	width="786"
+	height="747"
+	srcset="/p/transformer-from-zero-1/attachments/self_attention2_hu87587cfd246d48e562a537c2833f60a8_61686_480x0_resize_box_3.png 480w, /p/transformer-from-zero-1/attachments/self_attention2_hu87587cfd246d48e562a537c2833f60a8_61686_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="self_attention2"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="105"
+		data-flex-basis="252px"
+	
+></p>
+<p>而自注意力的注意效果也是逐层变得集中。使用图形化来对自注意力的效果进行初步理解。</p>
+<p>当只经过线性变换的注意力效果：</p>
+<p><img src="/p/transformer-from-zero-1/attachments/1-layer-sa.png"
+	width="388"
+	height="336"
+	srcset="/p/transformer-from-zero-1/attachments/1-layer-sa_huaf0f73356d3a333cb09eb5b1d1d6905a_30160_480x0_resize_box_3.png 480w, /p/transformer-from-zero-1/attachments/1-layer-sa_huaf0f73356d3a333cb09eb5b1d1d6905a_30160_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="1-layer-sa"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="115"
+		data-flex-basis="277px"
+	
+></p>
+<p>注意力显然非常分散，有种抓不到要领的感觉。</p>
+<p>而经过了5层自注意力机制，单个单词的注意力开始集中于少数部分。</p>
+<p><img src="/p/transformer-from-zero-1/attachments/fin-layer-sa.png"
+	width="362"
+	height="338"
+	srcset="/p/transformer-from-zero-1/attachments/fin-layer-sa_hua725f0b59172e6a24314a8cb50dfbd10_25050_480x0_resize_box_3.png 480w, /p/transformer-from-zero-1/attachments/fin-layer-sa_hua725f0b59172e6a24314a8cb50dfbd10_25050_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="fin-layer-sa"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="107"
+		data-flex-basis="257px"
+	
+></p>
+<h3 id="53-遮挡-mask">5.3. 遮挡 Mask</h3>
+<h4 id="531-填充遮挡">5.3.1. 填充遮挡</h4>
+<p>如果一个输入句子由于长短不一不方便计算或是其他原因需要补充一些填充标记（pad tokens），显然在输出结果的时候应该把这些无意义的填充标记排除，因此需要一个函数产生此用途的 mask。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-Python" data-lang="Python"><span class="k">def</span> <span class="nf">create_padding_mask</span><span class="p">(</span><span class="n">seq</span><span class="p">):</span>
+
+  <span class="c1"># 对于一个序列，如果某位置其值为0，则认定为填充标记，在此位置标 1</span>
+  <span class="n">seq</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">cast</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">math</span><span class="o">.</span><span class="n">equal</span><span class="p">(</span><span class="n">seq</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">tf</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+  
+  <span class="c1"># 为了能够利用广播机制匹配注意力权重张量，需要增加必要的维度</span>
+  <span class="k">return</span> <span class="n">seq</span><span class="p">[:,</span> <span class="n">tf</span><span class="o">.</span><span class="n">newaxis</span><span class="p">,</span> <span class="n">tf</span><span class="o">.</span><span class="n">newaxis</span><span class="p">,</span> <span class="p">:]</span>  <span class="c1"># (batch_size, 1, 1, seq_len)</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>测试效果：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-Python" data-lang="Python"><span class="n">x</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">constant</span><span class="p">([[</span><span class="mi">7</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">]])</span>
+<span class="n">create_padding_mask</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="s2">&#34;&#34;&#34;
+</span><span class="s2">&lt;tf.Tensor: id=207703, shape=(3, 1, 1, 5), dtype=float32, numpy=
+</span><span class="s2">array([[[[0., 0., 1., 1., 0.]]],
+</span><span class="s2">
+</span><span class="s2">
+</span><span class="s2">       [[[0., 0., 0., 1., 1.]]],
+</span><span class="s2">
+</span><span class="s2">
+</span><span class="s2">       [[[1., 1., 1., 0., 0.]]]], dtype=float32)&gt;
+</span><span class="s2">&#34;&#34;&#34;</span>
+</code></pre></td></tr></table>
+</div>
+</div><h4 id="532-前瞻遮挡look-ahead-mask">5.3.2. 前瞻遮挡（look-ahead mask）</h4>
+<p>前瞻遮挡通常用于需要只考虑序列中的前一部分的时候，这个遮挡将会用在 Transform 的解码器部分，其设计原理是预测一个单词只考虑此单词前的单词，而不考虑此单词后的部分。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-Python" data-lang="Python"><span class="k">def</span> <span class="nf">create_look_ahead_mask</span><span class="p">(</span><span class="n">size</span><span class="p">):</span>
+  <span class="c1"># tf.linalg.band_path(Tensor, -1, 0) 是取Tensor的左下半矩阵</span>
+  <span class="n">mask</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">tf</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">band_part</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="n">size</span><span class="p">,</span> <span class="n">size</span><span class="p">)),</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+  <span class="k">return</span> <span class="n">mask</span>  <span class="c1"># (seq_len, seq_len)</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>最终效果得到：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-Python" data-lang="Python"><span class="n">x</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+<span class="n">temp</span> <span class="o">=</span> <span class="n">create_look_ahead_mask</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+<span class="n">temp</span>
+<span class="s2">&#34;&#34;&#34;
+</span><span class="s2">&lt;tf.Tensor: id=207718, shape=(3, 3), dtype=float32, numpy=
+</span><span class="s2">array([[0., 1., 1.],
+</span><span class="s2">       [0., 0., 1.],
+</span><span class="s2">       [0., 0., 0.]], dtype=float32)&gt;
+</span><span class="s2">&#34;&#34;&#34;</span>
+</code></pre></td></tr></table>
+</div>
+</div><h3 id="54-多头注意力multi-head-attention">5.4. 多头注意力（Multi-head attention）</h3>
+<p><img src="/p/transformer-from-zero-1/attachments/mul_attention1.png"
+	width="438"
+	height="447"
+	srcset="/p/transformer-from-zero-1/attachments/mul_attention1_hu406f1dbbcd280550648486a6640892d9_36586_480x0_resize_box_3.png 480w, /p/transformer-from-zero-1/attachments/mul_attention1_hu406f1dbbcd280550648486a6640892d9_36586_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="mul_attention1"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="97"
+		data-flex-basis="235px"
+	
+></p>
+<p>前文说到，使用一组会随着模型训练过程不断优化的矩阵$W^Q$，$W^K$ 和 $W^V$，可以通过对词嵌入 X 或者前一层的输出 R 相乘而得到一套可以输入进注意力机制的 Query, Key 和 Value。</p>
+<p>多头注意力机制是将初始的词向量（第一层）或前一层的输入（第二层开始）通过线性变换转换为多组  Query, Key 和 Value，从而得到不同的输出 Z。最后将所有的输出拼合起来，通过可训练的线性变换 $W^O$ 融合为一个输出：</p>
+<p><img src="/p/transformer-from-zero-1/attachments/mul_attention2.png"
+	width="1436"
+	height="804"
+	srcset="/p/transformer-from-zero-1/attachments/mul_attention2_hua474a07e32ad4c44bf3c82d3f49b46fc_166831_480x0_resize_box_3.png 480w, /p/transformer-from-zero-1/attachments/mul_attention2_hua474a07e32ad4c44bf3c82d3f49b46fc_166831_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="mul_attention1"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="178"
+		data-flex-basis="428px"
+	
+></p>
+<p>从注意力角度看，由于矩阵是随机初始化的，随着训练的过程，最终不同的Query, Key可能得到不同的注意力结果。</p>
+<p><img src="/p/transformer-from-zero-1/attachments/fin-layer-sa.png"
+	width="362"
+	height="338"
+	srcset="/p/transformer-from-zero-1/attachments/fin-layer-sa_hua725f0b59172e6a24314a8cb50dfbd10_25050_480x0_resize_box_3.png 480w, /p/transformer-from-zero-1/attachments/fin-layer-sa_hua725f0b59172e6a24314a8cb50dfbd10_25050_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="fin-layer-sa"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="107"
+		data-flex-basis="257px"
+	
+></p>
+<p><img src="/p/transformer-from-zero-1/attachments/fin-layer-sa2.png"
+	width="390"
+	height="341"
+	srcset="/p/transformer-from-zero-1/attachments/fin-layer-sa2_hu177c48548b6b1d8d327c668807a2464a_28347_480x0_resize_box_3.png 480w, /p/transformer-from-zero-1/attachments/fin-layer-sa2_hu177c48548b6b1d8d327c668807a2464a_28347_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="fin-layer-sa"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="114"
+		data-flex-basis="274px"
+	
+></p>
+<p>论文认为：</p>
+<ul>
+<li>这种方式拓展了模型专注于不同位置的能力。</li>
+<li>模型最终的“注意力”实际上是来自不同“表示子空间”的注意力的综合。</li>
+</ul>
+<p>做个比喻来说，这就好像是八个有不同阅读习惯的翻译家一同翻译同一个句子，他们每个人可能翻译时阅读顺序和关注点都有所不同，综合他们八个人的意见，最终得出来的翻译结果可能会更加准确。</p>
+<p>通过继承 <code>tf.keras.layers.Layer</code> 可以对多头注意力机制进行结构清晰的实现。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span><span class="lnt">52
+</span><span class="lnt">53
+</span><span class="lnt">54
+</span><span class="lnt">55
+</span><span class="lnt">56
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-Python" data-lang="Python"><span class="k">class</span> <span class="nc">MultiHeadAttention</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">Layer</span><span class="p">):</span>
+  <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">d_model</span><span class="p">,</span> <span class="n">num_heads</span><span class="p">):</span>
+  <span class="s2">&#34;&#34;&#34;
+</span><span class="s2">    参数: d_model 必须能被 num_heads 整除
+</span><span class="s2">    d_model: 由于要映射 num_heads 组 Q,K,V. d_model 的值需要为 num_heads * depth
+</span><span class="s2">    num_heads: 代表注意力机制的头数
+</span><span class="s2">  &#34;&#34;&#34;</span>
+    <span class="nb">super</span><span class="p">(</span><span class="n">MultiHeadAttention</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">num_heads</span> <span class="o">=</span> <span class="n">num_heads</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">d_model</span> <span class="o">=</span> <span class="n">d_model</span>
+    
+    <span class="k">assert</span> <span class="n">d_model</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_heads</span> <span class="o">==</span> <span class="mi">0</span>
+    
+    <span class="bp">self</span><span class="o">.</span><span class="n">depth</span> <span class="o">=</span> <span class="n">d_model</span> <span class="o">//</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_heads</span>
+    
+    <span class="bp">self</span><span class="o">.</span><span class="n">wq</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">Dense</span><span class="p">(</span><span class="n">d_model</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">wk</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">Dense</span><span class="p">(</span><span class="n">d_model</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">wv</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">Dense</span><span class="p">(</span><span class="n">d_model</span><span class="p">)</span>
+    
+    <span class="bp">self</span><span class="o">.</span><span class="n">dense</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">Dense</span><span class="p">(</span><span class="n">d_model</span><span class="p">)</span>
+        
+  <span class="k">def</span> <span class="nf">split_heads</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">):</span>
+    <span class="s2">&#34;&#34;&#34;分拆最后一个维度到 (num_heads, depth).
+</span><span class="s2">    转置结果使得形状为 (batch_size, num_heads, seq_len, depth)
+</span><span class="s2">    &#34;&#34;&#34;</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="p">(</span><span class="n">batch_size</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_heads</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">depth</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">tf</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">perm</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">])</span>
+    
+  <span class="k">def</span> <span class="nf">call</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">q</span><span class="p">,</span> <span class="n">mask</span><span class="p">):</span>
+    <span class="n">batch_size</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">q</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    
+    <span class="c1"># 这里采取将 q,k,v 先线性变换到 (..., seq_len, d_model)</span>
+    <span class="c1"># 再拆分成 num_heads 份 (..., nums_heads, seq_ken, d_model / nums_heads)</span>
+    <span class="c1"># 这和直接将原始 q,k,v 线性变换成 nums_heads 组是等效的！这样写效率更高！</span>
+
+    <span class="n">q</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">wq</span><span class="p">(</span><span class="n">q</span><span class="p">)</span>  <span class="c1"># (batch_size, seq_len, d_model)</span>
+    <span class="n">k</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">wk</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>  <span class="c1"># (batch_size, seq_len, d_model)</span>
+    <span class="n">v</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">wv</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>  <span class="c1"># (batch_size, seq_len, d_model)</span>
+    
+    <span class="n">q</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">split_heads</span><span class="p">(</span><span class="n">q</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">)</span>  <span class="c1"># (batch_size, num_heads, seq_len_q, depth)</span>
+    <span class="n">k</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">split_heads</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">)</span>  <span class="c1"># (batch_size, num_heads, seq_len_k, depth)</span>
+    <span class="n">v</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">split_heads</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">)</span>  <span class="c1"># (batch_size, num_heads, seq_len_v, depth)</span>
+    
+    <span class="c1"># scaled_attention.shape == (batch_size, num_heads, seq_len_q, depth)</span>
+    <span class="c1"># attention_weights.shape == (batch_size, num_heads, seq_len_q, seq_len_k)</span>
+    <span class="n">scaled_attention</span><span class="p">,</span> <span class="n">attention_weights</span> <span class="o">=</span> <span class="n">scaled_dot_product_attention</span><span class="p">(</span>
+        <span class="n">q</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">mask</span><span class="p">)</span>
+    
+    <span class="n">scaled_attention</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">scaled_attention</span><span class="p">,</span> <span class="n">perm</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">])</span>  <span class="c1"># (batch_size, seq_len_q, num_heads, depth)</span>
+
+    <span class="n">concat_attention</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">scaled_attention</span><span class="p">,</span> 
+                                  <span class="p">(</span><span class="n">batch_size</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">d_model</span><span class="p">))</span>  <span class="c1"># (batch_size, seq_len_q, d_model)</span>
+
+    <span class="n">output</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dense</span><span class="p">(</span><span class="n">concat_attention</span><span class="p">)</span>  <span class="c1"># (batch_size, seq_len_q, d_model)</span>
+        
+    <span class="k">return</span> <span class="n">output</span><span class="p">,</span> <span class="n">attention_weights</span>
+</code></pre></td></tr></table>
+</div>
+</div><h4 id="541-代码分析">5.4.1. 代码分析</h4>
+<p>由于维度多，两处更改<code>reshape</code> 和转置操作<code>transpose</code>令人头秃。所以来详细讲解一下Tensor是如何在多头注意力机制力流动的。如果对模型实现手到擒来的的同学可以直接跳过：</p>
+<p>首先，我们确定要输送给注意力机制 <code>scaled_dot_product_attention</code> 的形状是 <code>(batch_size, nums_heads, seq_len_q, depth)</code>，通俗来讲，注意力机制函数将会并行处理 <code>batch_size</code> 批句子，每批句子 <code>nums_heads</code> 句。为了得到合适的输出，要通过以下几步：</p>
+<ol>
+<li>将输入映射至足够维度<code>(batch_size, seq_len, input_depth) -&gt; (batch_size, seq_len, d_model)</code></li>
+</ol>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-Python" data-lang="Python"><span class="o">...</span>
+    <span class="n">q</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">wq</span><span class="p">(</span><span class="n">q</span><span class="p">)</span>  <span class="c1"># (batch_size, seq_len, d_model)</span>
+    <span class="n">k</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">wk</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>  <span class="c1"># (batch_size, seq_len, d_model)</span>
+    <span class="n">v</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">wv</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>  <span class="c1"># (batch_size, seq_len, d_model)</span>
+<span class="o">...</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>这个 <code>d_model</code> 的深度显然大于我们需要的 <code>depth</code>，这是为了下一步拆成 <code>num_heads</code>，将多次线性变换，转换为一次。</p>
+<ol start="2">
+<li>将输入拆分为多头</li>
+</ol>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-Python" data-lang="Python">  <span class="k">def</span> <span class="nf">split_heads</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">):</span>
+    <span class="s2">&#34;&#34;&#34;分拆最后一个维度到 (num_heads, depth).
+</span><span class="s2">    转置结果使得形状为 (batch_size, num_heads, seq_len, depth)
+</span><span class="s2">    &#34;&#34;&#34;</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="p">(</span><span class="n">batch_size</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_heads</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">depth</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">tf</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">perm</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">])</span>
+<span class="o">...</span>
+    <span class="c1"># 这里记得要把 batch_size 传进去</span>
+    <span class="n">q</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">split_heads</span><span class="p">(</span><span class="n">q</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">)</span>  <span class="c1"># (batch_size, num_heads, seq_len_q, depth)</span>
+    <span class="n">k</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">split_heads</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">)</span>  <span class="c1"># (batch_size, num_heads, seq_len_k, depth)</span>
+    <span class="n">v</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">split_heads</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">)</span>  <span class="c1"># (batch_size, num_heads, seq_len_v, depth)</span>
+<span class="o">...</span>
+</code></pre></td></tr></table>
+</div>
+</div><blockquote>
+<p>分拆最后一个维度到 (num_heads, depth)</p>
+</blockquote>
+<p>向量角度而言： <code>reshape</code> 操作将张量中每一行 <code>d_model</code> 都拆成了 <code>num_heads</code> 个 <code>depth</code> 长度的行向量。即：<code>(batch_size, seq_len, d_model) -&gt; (batch_size, seq_len, nums_heads, depth)</code>。</p>
+<p>从神经网络角度而言：由于对于单层全连接网络，输入层与<strong>隐层节点的任何一个子集</strong>结合，都是一个完整的单隐层全连接网络。也就是说，这种拆分完全可以看做将前一步<code>input_depth</code> 个节点到 <code>d_model</code> 个节点的全连接网络，拆分成了 <code>nums_heads</code> 个小的 <code>input_depth</code> 个节点到 <code>depth</code> 个节点的全连接网络。</p>
+<p>然后，我们处理的仍然是序列本身，因此，通过转置 <code>transpose</code> 将 <code>seq_len</code> 放回它原来的位置，让 <code>nums_heads</code> 成为一个前置维度：<code> (batch_size, seq_len, nums_heads, depth) -&gt; (batch_size, num_heads, seq_len, depth)</code></p>
+<p>自注意力机制的详细运算过程已经在前文说的很清楚了，接下来是对输出的处理。</p>
+<ol start="3">
+<li>将多头输出通过全连接映射为一个输出</li>
+</ol>
+<p>显然自注意力机制函数的输出形状将是<code>(batch_size, num_heads, seq_len_q, depth)</code>。</p>
+<p>为了能够方便地将多头结果拼合起来，首先我们将其转置到倒数第二个维度。</p>
+<p>然后，2.中<strong>怎么拆开的，就怎么拼回去</strong>。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-Python" data-lang="Python"><span class="o">...</span>
+    <span class="n">scaled_attention</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">scaled_attention</span><span class="p">,</span> <span class="n">perm</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">])</span>  <span class="c1"># (batch_size, seq_len_q, num_heads, depth)</span>
+
+    <span class="n">concat_attention</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">scaled_attention</span><span class="p">,</span> 
+                                  <span class="p">(</span><span class="n">batch_size</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">d_model</span><span class="p">))</span>  <span class="c1"># (batch_size, seq_len_q, d_model)</span>
+<span class="o">...</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>最后，通过全连接层将拼合好的输出融合起来：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-Python" data-lang="Python"><span class="o">...</span>
+<span class="n">output</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dense</span><span class="p">(</span><span class="n">concat_attention</span><span class="p">)</span>  <span class="c1"># (batch_size, seq_len_q, d_model)</span>
+<span class="o">...</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>这里，经过全连接层融合后的最后一维仍然是 <code>d_model</code>。</p>
+<h3 id="55-点式前馈网络point-wise-feed-forward-network">5.5. 点式前馈网络（Point wise feed forward network）</h3>
+<p>点式前馈网络由两层全联接层组成，两层之间有一个 ReLU 激活函数。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-Python" data-lang="Python"><span class="k">def</span> <span class="nf">point_wise_feed_forward_network</span><span class="p">(</span><span class="n">d_model</span><span class="p">,</span> <span class="n">dff</span><span class="p">):</span>
+  <span class="k">return</span> <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">Sequential</span><span class="p">([</span>
+      <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">Dense</span><span class="p">(</span><span class="n">dff</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="s1">&#39;relu&#39;</span><span class="p">),</span>  <span class="c1"># 第一层输出尺寸 (batch_size, seq_len, dff)</span>
+      <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">Dense</span><span class="p">(</span><span class="n">d_model</span><span class="p">)</span>  <span class="c1"># 第二层输出尺寸 (batch_size, seq_len, d_model)</span>
+  <span class="p">])</span>
+</code></pre></td></tr></table>
+</div>
+</div><p><code>dff</code>: 规定了点式前馈神经网络的内部<strong>第一层输出节点</strong>。</p>
+<p>在论文中，这个神经网络被称作<strong>位置式前馈神经网络</strong>（Position-wise Feed-Forward Networks
+In，不知道为什么Tensorflow的文档要改名），其定义如下：</p>
+<p>$$
+\mathrm{FFN}(x)=\max \left(0, x W_{1}+b_{1}\right) W_{2}+b_{2}
+$$</p>
+<p>可以看出其本质上是两次线性变换的串联（不考虑激活函数的情况下）。</p>
+<p>我们考虑一个<code>(..., seq_len, depth)</code> 的输入，第一次线性变换相当于针对每一行（换句话说，句子的每个位置），做了一个相同（但隐层参数不同）的全连接网络，输入节点数 <code>depth</code> 和 输出节点数 <code>dff</code>。得到 <code>（..., seq_len, dff)</code>。同理第二次线性变换类似，得到<code>(..., seq_len, d_model)</code>。</p>
+<p>事实上，它只是一个多层神经网络，但考虑它等同地处理句子的每个<strong>位置</strong>，起名如此也算合理。</p>
+<h2 id="6-编码器解码器">6. 编码器解码器</h2>
+<p>有了上面的诸多模块，终于可以召唤此图：</p>
+<p><img src="/p/transformer-from-zero-1/attachments/the_transformer2.png"
+	width="668"
+	height="832"
+	srcset="/p/transformer-from-zero-1/attachments/the_transformer2_hue8ba12dbaf71f19d9d68468ec3964ba8_98723_480x0_resize_box_3.png 480w, /p/transformer-from-zero-1/attachments/the_transformer2_hue8ba12dbaf71f19d9d68468ec3964ba8_98723_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="Transformer2"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="80"
+		data-flex-basis="192px"
+	
+></p>
+<p>左侧编码器，右侧解码器。</p>
+<p>并开始组装编码器和解码器：</p>
+<blockquote>
+<p>Transformer 模型与标准的具有注意力机制的序列到序列模型（sequence to sequence with attention model），遵循相同的一般模式。</p>
+<p>输入语句经过 N 个编码器层，为序列中的每个词/标记生成一个输出。</p>
+<p>解码器关注编码器的输出以及它自身的输入（自注意力）来预测下一个词。</p>
+</blockquote>
+<p>从这里一直到到 Transformer 的完成，我们始终忽略 mask 的实际细节。由于这一部分涉及到模型的训练优化所以我们放在下一篇文章展开来讲。在此我们只把它当做一个参数暴露给外部模块。并传给内部模块。</p>
+<h3 id="61-编码器层">6.1. 编码器层</h3>
+<p>对于编码器，一个编码器层是其核心的最小单位。</p>
+<p><img src="/p/transformer-from-zero-1/attachments/enc_sub.png"
+	width="218"
+	height="292"
+	srcset="/p/transformer-from-zero-1/attachments/enc_sub_hu0058cf4ff73a16050fe814c62aff015e_20208_480x0_resize_box_3.png 480w, /p/transformer-from-zero-1/attachments/enc_sub_hu0058cf4ff73a16050fe814c62aff015e_20208_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="enc_sub"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="74"
+		data-flex-basis="179px"
+	
+></p>
+<p>每个编码器层包括以下子层：</p>
+<ol>
+<li>多头注意力（有填充遮挡）</li>
+<li>点式前馈网络（Point wise feed forward networks）。</li>
+</ol>
+<p>每个子层在其周围有一个残差连接（图中最左侧的上下两个黑箭头），然后进行层归一化。残差连接有助于避免深度网络中的梯度消失问题。</p>
+<p>每个子层的输出是 <code>LayerNorm(x + Sublayer(x))</code>。归一化是在 <code>d_model</code>（最后一个）维度完成的。Transformer 中有 N 个编码器层。</p>
+<p>此外对于每个子层的输出，都使用了0.1概率的的<code>dropout</code>。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-Python" data-lang="Python"><span class="k">class</span> <span class="nc">EncoderLayer</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">Layer</span><span class="p">):</span>
+  <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">d_model</span><span class="p">,</span> <span class="n">num_heads</span><span class="p">,</span> <span class="n">dff</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="mf">0.1</span><span class="p">):</span>
+    <span class="nb">super</span><span class="p">(</span><span class="n">EncoderLayer</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">mha</span> <span class="o">=</span> <span class="n">MultiHeadAttention</span><span class="p">(</span><span class="n">d_model</span><span class="p">,</span> <span class="n">num_heads</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">ffn</span> <span class="o">=</span> <span class="n">point_wise_feed_forward_network</span><span class="p">(</span><span class="n">d_model</span><span class="p">,</span> <span class="n">dff</span><span class="p">)</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">layernorm1</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">LayerNormalization</span><span class="p">(</span><span class="n">epsilon</span><span class="o">=</span><span class="mf">1e-6</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">layernorm2</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">LayerNormalization</span><span class="p">(</span><span class="n">epsilon</span><span class="o">=</span><span class="mf">1e-6</span><span class="p">)</span>
+    
+    <span class="bp">self</span><span class="o">.</span><span class="n">dropout1</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">Dropout</span><span class="p">(</span><span class="n">rate</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">dropout2</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">Dropout</span><span class="p">(</span><span class="n">rate</span><span class="p">)</span>
+    
+  <span class="k">def</span> <span class="nf">call</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">training</span><span class="p">,</span> <span class="n">mask</span><span class="p">):</span> <span class="c1"># 填充遮挡将在调用时传入</span>
+
+    <span class="n">attn_output</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mha</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">mask</span><span class="p">)</span>  <span class="c1"># (batch_size, input_seq_len, d_model)</span>
+    <span class="n">attn_output</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dropout1</span><span class="p">(</span><span class="n">attn_output</span><span class="p">,</span> <span class="n">training</span><span class="o">=</span><span class="n">training</span><span class="p">)</span>
+    <span class="n">out1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">layernorm1</span><span class="p">(</span><span class="n">x</span> <span class="o">+</span> <span class="n">attn_output</span><span class="p">)</span>  <span class="c1"># (batch_size, input_seq_len, d_model)</span>
+    
+    <span class="n">ffn_output</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ffn</span><span class="p">(</span><span class="n">out1</span><span class="p">)</span>  <span class="c1"># (batch_size, input_seq_len, d_model)</span>
+    <span class="n">ffn_output</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dropout2</span><span class="p">(</span><span class="n">ffn_output</span><span class="p">,</span> <span class="n">training</span><span class="o">=</span><span class="n">training</span><span class="p">)</span>
+    <span class="n">out2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">layernorm2</span><span class="p">(</span><span class="n">out1</span> <span class="o">+</span> <span class="n">ffn_output</span><span class="p">)</span>  <span class="c1"># (batch_size, input_seq_len, d_model)</span>
+    
+    <span class="k">return</span> <span class="n">out2</span>
+</code></pre></td></tr></table>
+</div>
+</div><h3 id="62-解码器层">6.2. 解码器层</h3>
+<p><img src="/p/transformer-from-zero-1/attachments/dec_sub.png"
+	width="206"
+	height="354"
+	srcset="/p/transformer-from-zero-1/attachments/dec_sub_hue58f25544b2438c34520be540e4522b8_34928_480x0_resize_box_3.png 480w, /p/transformer-from-zero-1/attachments/dec_sub_hue58f25544b2438c34520be540e4522b8_34928_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="dec_sub"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="58"
+		data-flex-basis="139px"
+	
+></p>
+<p>每个解码器层包括以下子层：</p>
+<ol>
+<li>遮挡的多头注意力（前瞻遮挡和填充遮挡）</li>
+<li>多头注意力（用填充遮挡）。V（数值）和 K（主键）接收编码器输出作为输入。Q（请求）接收遮挡的多头注意力子层的输出。</li>
+<li>点式前馈网络
+每个子层在其周围有一个残差连接，然后进行层归一化。每个子层的输出是 <code>LayerNorm(x + Sublayer(x))</code>。归一化是在 <code>d_model</code>（最后一个）维度完成的。</li>
+</ol>
+<p>Transformer 中共有 N 个解码器层。</p>
+<p>当 Q 接收到解码器的第一个注意力块的输出，并且 K 接收到编码器的输出时，注意力权重表示根据编码器的输出赋予解码器输入的重要性。换一种说法，解码器通过查看编码器输出和对其自身输出的自注意力，预测下一个词。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-Python" data-lang="Python"><span class="k">class</span> <span class="nc">DecoderLayer</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">Layer</span><span class="p">):</span>
+  <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">d_model</span><span class="p">,</span> <span class="n">num_heads</span><span class="p">,</span> <span class="n">dff</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="mf">0.1</span><span class="p">):</span>
+    <span class="nb">super</span><span class="p">(</span><span class="n">DecoderLayer</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">mha1</span> <span class="o">=</span> <span class="n">MultiHeadAttention</span><span class="p">(</span><span class="n">d_model</span><span class="p">,</span> <span class="n">num_heads</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">mha2</span> <span class="o">=</span> <span class="n">MultiHeadAttention</span><span class="p">(</span><span class="n">d_model</span><span class="p">,</span> <span class="n">num_heads</span><span class="p">)</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">ffn</span> <span class="o">=</span> <span class="n">point_wise_feed_forward_network</span><span class="p">(</span><span class="n">d_model</span><span class="p">,</span> <span class="n">dff</span><span class="p">)</span>
+ 
+    <span class="bp">self</span><span class="o">.</span><span class="n">layernorm1</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">LayerNormalization</span><span class="p">(</span><span class="n">epsilon</span><span class="o">=</span><span class="mf">1e-6</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">layernorm2</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">LayerNormalization</span><span class="p">(</span><span class="n">epsilon</span><span class="o">=</span><span class="mf">1e-6</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">layernorm3</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">LayerNormalization</span><span class="p">(</span><span class="n">epsilon</span><span class="o">=</span><span class="mf">1e-6</span><span class="p">)</span>
+    
+    <span class="bp">self</span><span class="o">.</span><span class="n">dropout1</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">Dropout</span><span class="p">(</span><span class="n">rate</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">dropout2</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">Dropout</span><span class="p">(</span><span class="n">rate</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">dropout3</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">Dropout</span><span class="p">(</span><span class="n">rate</span><span class="p">)</span>
+    
+    
+  <span class="k">def</span> <span class="nf">call</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">enc_output</span><span class="p">,</span> <span class="n">training</span><span class="p">,</span> 
+           <span class="n">look_ahead_mask</span><span class="p">,</span> <span class="n">padding_mask</span><span class="p">):</span>
+    <span class="c1"># enc_output.shape == (batch_size, input_seq_len, d_model)</span>
+
+    <span class="n">attn1</span><span class="p">,</span> <span class="n">attn_weights_block1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mha1</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">look_ahead_mask</span><span class="p">)</span>  <span class="c1"># (batch_size, target_seq_len, d_model)</span>
+    <span class="n">attn1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dropout1</span><span class="p">(</span><span class="n">attn1</span><span class="p">,</span> <span class="n">training</span><span class="o">=</span><span class="n">training</span><span class="p">)</span>
+    <span class="n">out1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">layernorm1</span><span class="p">(</span><span class="n">attn1</span> <span class="o">+</span> <span class="n">x</span><span class="p">)</span>
+    
+    <span class="n">attn2</span><span class="p">,</span> <span class="n">attn_weights_block2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mha2</span><span class="p">(</span>
+        <span class="n">enc_output</span><span class="p">,</span> <span class="n">enc_output</span><span class="p">,</span> <span class="n">out1</span><span class="p">,</span> <span class="n">padding_mask</span><span class="p">)</span>  <span class="c1"># (batch_size, target_seq_len, d_model)</span>
+    <span class="n">attn2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dropout2</span><span class="p">(</span><span class="n">attn2</span><span class="p">,</span> <span class="n">training</span><span class="o">=</span><span class="n">training</span><span class="p">)</span>
+    <span class="n">out2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">layernorm2</span><span class="p">(</span><span class="n">attn2</span> <span class="o">+</span> <span class="n">out1</span><span class="p">)</span>  <span class="c1"># (batch_size, target_seq_len, d_model)</span>
+    
+    <span class="n">ffn_output</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ffn</span><span class="p">(</span><span class="n">out2</span><span class="p">)</span>  <span class="c1"># (batch_size, target_seq_len, d_model)</span>
+    <span class="n">ffn_output</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dropout3</span><span class="p">(</span><span class="n">ffn_output</span><span class="p">,</span> <span class="n">training</span><span class="o">=</span><span class="n">training</span><span class="p">)</span>
+    <span class="n">out3</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">layernorm3</span><span class="p">(</span><span class="n">ffn_output</span> <span class="o">+</span> <span class="n">out2</span><span class="p">)</span>  <span class="c1"># (batch_size, target_seq_len, d_model)</span>
+    
+    <span class="k">return</span> <span class="n">out3</span><span class="p">,</span> <span class="n">attn_weights_block1</span><span class="p">,</span> <span class="n">attn_weights_block2</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>显然，相较于编码器，除了用于自注意力的多头注意力层。解码器增加了一层注意力层用于实现编码器和解码器之间的注意力。其他与编码器完全一致。</p>
+<p>注意：两层注意力使用的遮挡类型略有不同！</p>
+<h3 id="63-编码器">6.3. 编码器</h3>
+<p>由于封装了上文实现的所有模块。所以这个模块的参数显得有些多，我们只关注此层特有的参数：</p>
+<ul>
+<li><code>num_layers</code>：规定编码器使用多少个编码器层。</li>
+<li><code>input_vocab_size</code>: 原语料的词汇量</li>
+<li><code>maximum_position_encoding</code>：最大的位置编码，代表位置编码最长匹配的位置长度</li>
+</ul>
+<p>其总体步骤包括三步：</p>
+<ol>
+<li>将原始句子单词编码更换为词嵌入</li>
+<li>将词嵌入加上位置编码</li>
+<li>将处理过后的输出输入规定好的多个编码器层</li>
+</ol>
+<p>其中：在原始句子的词嵌入上需要乘上 $\sqrt{d_model}$，这是原论文中规定的。文章中没有对这个变量的解释。</p>
+<blockquote>
+<p>In the embedding layers, we multiply those weights by $\sqrt{d_{model}}$</p>
+</blockquote>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-Python" data-lang="Python"><span class="k">class</span> <span class="nc">Encoder</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">Layer</span><span class="p">):</span>
+  <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">num_layers</span><span class="p">,</span> <span class="n">d_model</span><span class="p">,</span> <span class="n">num_heads</span><span class="p">,</span> <span class="n">dff</span><span class="p">,</span> <span class="n">input_vocab_size</span><span class="p">,</span>
+               <span class="n">maximum_position_encoding</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="mf">0.1</span><span class="p">):</span>
+    <span class="nb">super</span><span class="p">(</span><span class="n">Encoder</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">d_model</span> <span class="o">=</span> <span class="n">d_model</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">num_layers</span> <span class="o">=</span> <span class="n">num_layers</span>
+    
+    <span class="bp">self</span><span class="o">.</span><span class="n">embedding</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">Embedding</span><span class="p">(</span><span class="n">input_vocab_size</span><span class="p">,</span> <span class="n">d_model</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">pos_encoding</span> <span class="o">=</span> <span class="n">positional_encoding</span><span class="p">(</span><span class="n">maximum_position_encoding</span><span class="p">,</span> 
+                                            <span class="bp">self</span><span class="o">.</span><span class="n">d_model</span><span class="p">)</span>
+    
+    
+    <span class="bp">self</span><span class="o">.</span><span class="n">enc_layers</span> <span class="o">=</span> <span class="p">[</span><span class="n">EncoderLayer</span><span class="p">(</span><span class="n">d_model</span><span class="p">,</span> <span class="n">num_heads</span><span class="p">,</span> <span class="n">dff</span><span class="p">,</span> <span class="n">rate</span><span class="p">)</span> 
+                       <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_layers</span><span class="p">)]</span>
+  
+    <span class="bp">self</span><span class="o">.</span><span class="n">dropout</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">Dropout</span><span class="p">(</span><span class="n">rate</span><span class="p">)</span>
+        
+  <span class="k">def</span> <span class="nf">call</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">training</span><span class="p">,</span> <span class="n">mask</span><span class="p">):</span>
+
+    <span class="n">seq_len</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">x</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+    
+    <span class="c1"># 将嵌入和位置编码相加。</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">embedding</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>  <span class="c1"># (batch_size, input_seq_len, d_model)</span>
+    <span class="n">x</span> <span class="o">*=</span> <span class="n">tf</span><span class="o">.</span><span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">cast</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">d_model</span><span class="p">,</span> <span class="n">tf</span><span class="o">.</span><span class="n">float32</span><span class="p">))</span>
+    <span class="n">x</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pos_encoding</span><span class="p">[:,</span> <span class="p">:</span><span class="n">seq_len</span><span class="p">,</span> <span class="p">:]</span>
+
+    <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dropout</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">training</span><span class="o">=</span><span class="n">training</span><span class="p">)</span>
+    
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_layers</span><span class="p">):</span>
+      <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">enc_layers</span><span class="p">[</span><span class="n">i</span><span class="p">](</span><span class="n">x</span><span class="p">,</span> <span class="n">training</span><span class="p">,</span> <span class="n">mask</span><span class="p">)</span>
+    
+    <span class="k">return</span> <span class="n">x</span>  <span class="c1"># (batch_size, input_seq_len, d_model)</span>
+</code></pre></td></tr></table>
+</div>
+</div><h3 id="64-解码器">6.4. 解码器</h3>
+<p>解码器和编码器参数类似。</p>
+<ol>
+<li>将输出序列同样转换为同维度词嵌入</li>
+<li>加上位置编码</li>
+<li>和编码器的输出一同输入给多个解码器层</li>
+</ol>
+<p>在调用时，<code>enc_output</code> 是来自编码器层的输出。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-Python" data-lang="Python"><span class="k">class</span> <span class="nc">Decoder</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">Layer</span><span class="p">):</span>
+  <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">num_layers</span><span class="p">,</span> <span class="n">d_model</span><span class="p">,</span> <span class="n">num_heads</span><span class="p">,</span> <span class="n">dff</span><span class="p">,</span> <span class="n">target_vocab_size</span><span class="p">,</span>
+               <span class="n">maximum_position_encoding</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="mf">0.1</span><span class="p">):</span>
+    <span class="nb">super</span><span class="p">(</span><span class="n">Decoder</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">d_model</span> <span class="o">=</span> <span class="n">d_model</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">num_layers</span> <span class="o">=</span> <span class="n">num_layers</span>
+    
+    <span class="bp">self</span><span class="o">.</span><span class="n">embedding</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">Embedding</span><span class="p">(</span><span class="n">target_vocab_size</span><span class="p">,</span> <span class="n">d_model</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">pos_encoding</span> <span class="o">=</span> <span class="n">positional_encoding</span><span class="p">(</span><span class="n">maximum_position_encoding</span><span class="p">,</span> <span class="n">d_model</span><span class="p">)</span>
+    
+    <span class="bp">self</span><span class="o">.</span><span class="n">dec_layers</span> <span class="o">=</span> <span class="p">[</span><span class="n">DecoderLayer</span><span class="p">(</span><span class="n">d_model</span><span class="p">,</span> <span class="n">num_heads</span><span class="p">,</span> <span class="n">dff</span><span class="p">,</span> <span class="n">rate</span><span class="p">)</span> 
+                       <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_layers</span><span class="p">)]</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">dropout</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">Dropout</span><span class="p">(</span><span class="n">rate</span><span class="p">)</span>
+    
+  <span class="k">def</span> <span class="nf">call</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">enc_output</span><span class="p">,</span> <span class="n">training</span><span class="p">,</span> 
+           <span class="n">look_ahead_mask</span><span class="p">,</span> <span class="n">padding_mask</span><span class="p">):</span>
+
+    <span class="n">seq_len</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">x</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">attention_weights</span> <span class="o">=</span> <span class="p">{}</span>
+    
+    <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">embedding</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>  <span class="c1"># (batch_size, target_seq_len, d_model)</span>
+    <span class="n">x</span> <span class="o">*=</span> <span class="n">tf</span><span class="o">.</span><span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">cast</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">d_model</span><span class="p">,</span> <span class="n">tf</span><span class="o">.</span><span class="n">float32</span><span class="p">))</span>
+    <span class="n">x</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pos_encoding</span><span class="p">[:,</span> <span class="p">:</span><span class="n">seq_len</span><span class="p">,</span> <span class="p">:]</span>
+    
+    <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dropout</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">training</span><span class="o">=</span><span class="n">training</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_layers</span><span class="p">):</span>
+      <span class="n">x</span><span class="p">,</span> <span class="n">block1</span><span class="p">,</span> <span class="n">block2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dec_layers</span><span class="p">[</span><span class="n">i</span><span class="p">](</span><span class="n">x</span><span class="p">,</span> <span class="n">enc_output</span><span class="p">,</span> <span class="n">training</span><span class="p">,</span>
+                                             <span class="n">look_ahead_mask</span><span class="p">,</span> <span class="n">padding_mask</span><span class="p">)</span>
+      
+      <span class="n">attention_weights</span><span class="p">[</span><span class="s1">&#39;decoder_layer</span><span class="si">{}</span><span class="s1">_block1&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">)]</span> <span class="o">=</span> <span class="n">block1</span>
+      <span class="n">attention_weights</span><span class="p">[</span><span class="s1">&#39;decoder_layer</span><span class="si">{}</span><span class="s1">_block2&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">)]</span> <span class="o">=</span> <span class="n">block2</span>
+    
+    <span class="c1"># x.shape == (batch_size, target_seq_len, d_model)</span>
+    <span class="k">return</span> <span class="n">x</span><span class="p">,</span> <span class="n">attention_weights</span>
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="7-创建-transformer">7. 创建 Transformer</h2>
+<p>将编码器和解码器组合起来，连接最后的线性输出层，就得到了整体的 Transformer：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-Python" data-lang="Python"><span class="k">class</span> <span class="nc">Transformer</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+  <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">num_layers</span><span class="p">,</span> <span class="n">d_model</span><span class="p">,</span> <span class="n">num_heads</span><span class="p">,</span> <span class="n">dff</span><span class="p">,</span> <span class="n">input_vocab_size</span><span class="p">,</span> 
+               <span class="n">target_vocab_size</span><span class="p">,</span> <span class="n">pe_input</span><span class="p">,</span> <span class="n">pe_target</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="mf">0.1</span><span class="p">):</span>
+    <span class="nb">super</span><span class="p">(</span><span class="n">Transformer</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">encoder</span> <span class="o">=</span> <span class="n">Encoder</span><span class="p">(</span><span class="n">num_layers</span><span class="p">,</span> <span class="n">d_model</span><span class="p">,</span> <span class="n">num_heads</span><span class="p">,</span> <span class="n">dff</span><span class="p">,</span> 
+                           <span class="n">input_vocab_size</span><span class="p">,</span> <span class="n">pe_input</span><span class="p">,</span> <span class="n">rate</span><span class="p">)</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">decoder</span> <span class="o">=</span> <span class="n">Decoder</span><span class="p">(</span><span class="n">num_layers</span><span class="p">,</span> <span class="n">d_model</span><span class="p">,</span> <span class="n">num_heads</span><span class="p">,</span> <span class="n">dff</span><span class="p">,</span> 
+                           <span class="n">target_vocab_size</span><span class="p">,</span> <span class="n">pe_target</span><span class="p">,</span> <span class="n">rate</span><span class="p">)</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">final_layer</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">Dense</span><span class="p">(</span><span class="n">target_vocab_size</span><span class="p">)</span>
+    
+  <span class="k">def</span> <span class="nf">call</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inp</span><span class="p">,</span> <span class="n">tar</span><span class="p">,</span> <span class="n">training</span><span class="p">,</span> <span class="n">enc_padding_mask</span><span class="p">,</span> 
+           <span class="n">look_ahead_mask</span><span class="p">,</span> <span class="n">dec_padding_mask</span><span class="p">):</span>
+
+    <span class="n">enc_output</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">encoder</span><span class="p">(</span><span class="n">inp</span><span class="p">,</span> <span class="n">training</span><span class="p">,</span> <span class="n">enc_padding_mask</span><span class="p">)</span>  <span class="c1"># (batch_size, inp_seq_len, d_model)</span>
+    
+    <span class="c1"># dec_output.shape == (batch_size, tar_seq_len, d_model)</span>
+    <span class="n">dec_output</span><span class="p">,</span> <span class="n">attention_weights</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">decoder</span><span class="p">(</span>
+        <span class="n">tar</span><span class="p">,</span> <span class="n">enc_output</span><span class="p">,</span> <span class="n">training</span><span class="p">,</span> <span class="n">look_ahead_mask</span><span class="p">,</span> <span class="n">dec_padding_mask</span><span class="p">)</span>
+    
+    <span class="n">final_output</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">final_layer</span><span class="p">(</span><span class="n">dec_output</span><span class="p">)</span>  <span class="c1"># (batch_size, tar_seq_len, target_vocab_size)</span>
+    
+    <span class="k">return</span> <span class="n">final_output</span><span class="p">,</span> <span class="n">attention_weights</span>
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="8-小结">8. 小结</h2>
+<p>到此为止，我们已经描述了 Transformer 的整个模型搭建过程，并逐层逐行地解释了其正向传播的原理和细节。本文仍未讲到的是：</p>
+<ul>
+<li>如何训练一个Transformer：
+<ul>
+<li>前瞻遮挡和填充遮挡如何使用。</li>
+<li>超参数如何配置。</li>
+<li>如何设计损失函数。</li>
+<li>如何优化和评估。</li>
+</ul>
+</li>
+</ul>
+<p>后篇将结合实例详细描述这些内容。</p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+
+    
+        <link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/katex@0.13.13/dist/katex.min.css"integrity="sha384-RZU/ijkSsFbcmivfdRBQDtwuwVqK7GMOw6IMvKyeWL2K5UAlyp6WonmB8m7Jd0Hn"crossorigin="anonymous"
+            ><script 
+                src="https://cdn.jsdelivr.net/npm/katex@0.13.13/dist/katex.min.js"integrity="sha384-pK1WpvzWVBQiP0/GjnvRxV4mOb0oxFuyRxJlk6vVw146n3egcN5C925NCP7a7BY8"crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/katex@0.13.13/dist/contrib/auto-render.min.js"integrity="sha384-vZTG03m&#43;2yp6N6BNi5iM4rW4oIwk5DfcNdFfxkk9ZWpDriOkXX8voJBFrAO7MpVl"crossorigin="anonymous"
+                defer
+                >
+            </script><script>
+    window.addEventListener("DOMContentLoaded", () => {
+        renderMathInElement(document.querySelector(`.article-content`), {
+            delimiters: [
+                { left: "$$", right: "$$", display: true },
+                { left: "$", right: "$", display: false },
+                { left: "\\(", right: "\\)", display: false },
+                { left: "\\[", right: "\\]", display: true }
+            ]
+        });})
+</script>
+    
+</article>
+
+    
+
+    <aside class="related-contents--wrapper">
+    
+    
+        <h2 class="section-title">Related contents</h2>
+        <div class="related-contents">
+            <div class="flex article-list--tile">
+                
+                    
+<article class="has-image">
+    <a href="/p/transformer-from-zero-4/">
+        
+        
+            <div class="article-image">
+                <img src="/p/transformer-from-zero-4/the_transformer.02a726e225f7010356c7d65bfb3ee8d5_hu9dc15172e42e840ef18a078a4efb196f_44824_250x150_fill_box_smart1_3.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy"
+                        alt="Featured image of post 从 0 开始学习 Transformer 拾遗：文章本身的与解释"
+                        data-key="transformer-from-zero-4" 
+                        data-hash="md5-Aqcm4iX3AQNWx9Zb&#43;z7o1Q==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">从 0 开始学习 Transformer 拾遗：文章本身的与解释</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/transformer-from-zero-3/">
+        
+        
+            <div class="article-image">
+                <img src="/p/transformer-from-zero-3/the_transformer.02a726e225f7010356c7d65bfb3ee8d5_hu9dc15172e42e840ef18a078a4efb196f_44824_250x150_fill_box_smart1_3.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy"
+                        alt="Featured image of post 从 0 开始学习 Transformer 番外：Transformer 如何穿梭时空？"
+                        data-key="transformer-from-zero-3" 
+                        data-hash="md5-Aqcm4iX3AQNWx9Zb&#43;z7o1Q==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">从 0 开始学习 Transformer 番外：Transformer 如何穿梭时空？</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/transformer-from-zero-2/">
+        
+        
+            <div class="article-image">
+                <img src="/p/transformer-from-zero-2/the_transformer.02a726e225f7010356c7d65bfb3ee8d5_hu9dc15172e42e840ef18a078a4efb196f_44824_250x150_fill_box_smart1_3.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy"
+                        alt="Featured image of post 从 0 开始学习 Transformer 下篇：Transformer 训练与评估"
+                        data-key="transformer-from-zero-2" 
+                        data-hash="md5-Aqcm4iX3AQNWx9Zb&#43;z7o1Q==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">从 0 开始学习 Transformer 下篇：Transformer 训练与评估</h2>
+        </div>
+    </a>
+</article>
+                
+            </div>
+        </div>
+    
+</aside>
+
+     
+    
+        
+    <div class="disqus-container">
+    <div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "hugo-theme-stack" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+<style>
+    .disqus-container {
+        background-color: var(--card-background);
+        border-radius: var(--card-border-radius);
+        box-shadow: var(--shadow-l1);
+        padding: var(--card-padding);
+    }
+</style>
+
+<script>
+    window.addEventListener('onColorSchemeChange', (e) => {
+        if (DISQUS) {
+            DISQUS.reset({
+                reload: true
+            });
+        }
+    })
+</script>
+
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2019 - 
+        
+        2022 Lilith Sangreal
+    </section>
+    
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.8.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.css"integrity="sha256-c0uckgykQ9v5k&#43;IqViZOZKc47Jn7KQil4/MP3ySA3F8="crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.css"integrity="sha256-SBLU4vv6CA6lHsZ1XyTdhyjJxCjPif/TRkjnsyGAGnE="crossorigin="anonymous"
+            >
+
+            </main>
+    
+        <aside class="sidebar right-sidebar sticky">
+            <section class="widget archives">
+                <div class="widget-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+                </div>
+                <h2 class="widget-title section-title">Table of contents</h2>
+                
+                <div class="widget--toc">
+                    <nav id="TableOfContents">
+  <ol>
+    <li><a href="#1-前言">1. 前言</a></li>
+    <li><a href="#2-参考代码文章及部分插图来源">2. 参考代码、文章及部分插图来源</a></li>
+    <li><a href="#3-在开始前的推荐了解">3. 在开始前的推荐了解</a>
+      <ol>
+        <li><a href="#31-循环神经网络rnn">3.1. 循环神经网络（RNN）</a></li>
+        <li><a href="#32-基于编码-解码encoder-decoder的序列到序列sequence2sequence模型">3.2. 基于编码-解码（encoder-decoder）的序列到序列（sequence2sequence）模型</a></li>
+        <li><a href="#33-注意力机制">3.3. 注意力机制</a></li>
+        <li><a href="#34-词嵌入word-embedding">3.4. 词嵌入（Word Embedding）</a></li>
+      </ol>
+    </li>
+    <li><a href="#4-初探-transformer">4. 初探 Transformer</a></li>
+    <li><a href="#5-基础算法和模块">5. 基础算法和模块</a>
+      <ol>
+        <li><a href="#51-位置编码positional-encoding">5.1. 位置编码（Positional encoding）</a></li>
+        <li><a href="#52-注意力机制">5.2. 注意力机制</a>
+          <ol>
+            <li><a href="#521-计算步骤细节">5.2.1. 计算步骤细节</a></li>
+            <li><a href="#522-使用向量化来提升效率">5.2.2. 使用向量化来提升效率</a></li>
+            <li><a href="#523-如何作为自注意力使用">5.2.3. 如何作为自注意力使用</a></li>
+          </ol>
+        </li>
+        <li><a href="#53-遮挡-mask">5.3. 遮挡 Mask</a>
+          <ol>
+            <li><a href="#531-填充遮挡">5.3.1. 填充遮挡</a></li>
+            <li><a href="#532-前瞻遮挡look-ahead-mask">5.3.2. 前瞻遮挡（look-ahead mask）</a></li>
+          </ol>
+        </li>
+        <li><a href="#54-多头注意力multi-head-attention">5.4. 多头注意力（Multi-head attention）</a>
+          <ol>
+            <li><a href="#541-代码分析">5.4.1. 代码分析</a></li>
+          </ol>
+        </li>
+        <li><a href="#55-点式前馈网络point-wise-feed-forward-network">5.5. 点式前馈网络（Point wise feed forward network）</a></li>
+      </ol>
+    </li>
+    <li><a href="#6-编码器解码器">6. 编码器解码器</a>
+      <ol>
+        <li><a href="#61-编码器层">6.1. 编码器层</a></li>
+        <li><a href="#62-解码器层">6.2. 解码器层</a></li>
+        <li><a href="#63-编码器">6.3. 编码器</a></li>
+        <li><a href="#64-解码器">6.4. 解码器</a></li>
+      </ol>
+    </li>
+    <li><a href="#7-创建-transformer">7. 创建 Transformer</a></li>
+    <li><a href="#8-小结">8. 小结</a></li>
+  </ol>
+</nav>
+                </div>
+            </section>
+        </aside>
+    
+
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.5/dist/vibrant.min.js"integrity="sha256-5NovOZc4iwiAWTYIFiIM7DxKUXKWvpVEuMEPLzcm5/g="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>

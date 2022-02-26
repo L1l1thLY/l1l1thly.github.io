@@ -1,0 +1,1421 @@
+<!DOCTYPE html>
+<html lang="en-us">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='从 0 开始学习 Transformer 下篇：Transformer 训练与评估'><title>从 0 开始学习 Transformer 下篇：Transformer 训练与评估</title>
+
+<link rel='canonical' href='https://lilithsangreal.com/p/transformer-from-zero-2/'>
+
+<link rel="stylesheet" href="/scss/style.min.b949db8bead9abdc40291b93383b8da6abc3aa62e74f5580356c06ddbb792dab.css"><meta property='og:title' content='从 0 开始学习 Transformer 下篇：Transformer 训练与评估'>
+<meta property='og:description' content='从 0 开始学习 Transformer 下篇：Transformer 训练与评估'>
+<meta property='og:url' content='https://lilithsangreal.com/p/transformer-from-zero-2/'>
+<meta property='og:site_name' content='Lilith Sangreal'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2019-12-13T00:00:00&#43;00:00'/><meta property='article:modified_time' content='2019-12-13T00:00:00&#43;00:00'/><meta property='og:image' content='https://lilithsangreal.com/p/transformer-from-zero-2/the_transformer.png' />
+<meta name="twitter:title" content="从 0 开始学习 Transformer 下篇：Transformer 训练与评估">
+<meta name="twitter:description" content="从 0 开始学习 Transformer 下篇：Transformer 训练与评估"><meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content='https://lilithsangreal.com/p/transformer-from-zero-2/the_transformer.png' />
+    </head>
+    <body class="
+    article-page has-toc
+">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex 
+    
+        extended
+    
+">
+    
+        <div id="article-toolbar">
+            <a href="/" class="back-home">
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-chevron-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="15 6 9 12 15 18" />
+</svg>
+
+
+
+                <span>Back</span>
+            </a>
+        </div>
+    
+<main class="main full-width">
+    <article class="has-image main-article">
+    <header class="article-header">
+        <div class="article-image">
+            <a href="/p/transformer-from-zero-2/">
+                <img src="/p/transformer-from-zero-2/the_transformer_hu9dc15172e42e840ef18a078a4efb196f_44824_800x0_resize_box_3.png"
+                        srcset="/p/transformer-from-zero-2/the_transformer_hu9dc15172e42e840ef18a078a4efb196f_44824_800x0_resize_box_3.png 800w, /p/transformer-from-zero-2/the_transformer_hu9dc15172e42e840ef18a078a4efb196f_44824_1600x0_resize_box_3.png 1600w"
+                        width="800" 
+                        height="209" 
+                        loading="lazy"
+                        alt="Featured image of post 从 0 开始学习 Transformer 下篇：Transformer 训练与评估" />
+                
+            </a>
+        </div>
+    
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/nlp/" >
+                NLP
+            </a>
+        
+            <a href="/categories/deep-learning/" >
+                Deep Learning
+            </a>
+        
+            <a href="/categories/%E4%BB%8E-0-%E5%BC%80%E5%A7%8B-transformer/" >
+                从 0 开始 Transformer
+            </a>
+        
+    </header>
+    
+
+    <h2 class="article-title">
+        <a href="/p/transformer-from-zero-2/">从 0 开始学习 Transformer 下篇：Transformer 训练与评估</a>
+    </h2>
+
+    
+    <h3 class="article-subtitle">
+        从 0 开始学习 Transformer 下篇：Transformer 训练与评估
+    </h3>
+    
+
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">Dec 13, 2019</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    8 minute read
+                </time>
+            </div>
+        
+    </footer>
+    
+</div>
+</header>
+
+    <section class="article-content">
+    
+    
+    <h1 id="从-0-开始学习-transformer-下篇transformer-训练与评估">从 0 开始学习 Transformer 下篇：Transformer 训练与评估</h1>
+<!-- raw HTML omitted -->
+<ul>
+<li><a class="link" href="#%e4%bb%8e-0-%e5%bc%80%e5%a7%8b%e5%ad%a6%e4%b9%a0-transformer-%e4%b8%8b%e7%af%87transformer-%e8%ae%ad%e7%bb%83%e4%b8%8e%e8%af%84%e4%bc%b0" >从 0 开始学习 Transformer 下篇：Transformer 训练与评估</a>
+<ul>
+<li><a class="link" href="#1-%e5%89%8d%e8%a8%80" >1. 前言</a></li>
+<li><a class="link" href="#2-%e5%88%9b%e9%80%a0%e5%8e%9f%e8%ae%ad%e7%bb%83%e9%9b%86%e7%9a%84%e7%bc%96%e7%a0%81%e8%a1%a8%e7%a4%ba" >2. 创造原训练集的编码表示</a>
+<ul>
+<li><a class="link" href="#21-%e6%95%b0%e6%8d%ae%e4%b8%8b%e8%bd%bd%e4%b8%8e%e8%af%bb%e5%8f%96" >2.1. 数据下载与读取</a></li>
+<li><a class="link" href="#22-%e5%88%9b%e5%bb%ba%e5%ad%90%e8%af%8d%e5%88%86%e8%af%8d%e5%99%a8" >2.2. 创建子词分词器</a></li>
+<li><a class="link" href="#23-%e6%95%b0%e6%8d%ae%e5%a4%84%e7%90%86" >2.3. 数据处理</a></li>
+</ul>
+</li>
+<li><a class="link" href="#3-%e6%8d%9f%e5%a4%b1%e5%87%bd%e6%95%b0%e8%ae%be%e8%ae%a1" >3. 损失函数设计</a></li>
+<li><a class="link" href="#4-%e4%bc%98%e5%8c%96%e5%99%a8%e4%b8%8e%e5%ad%a6%e4%b9%a0%e7%8e%87" >4. 优化器与学习率</a></li>
+<li><a class="link" href="#5-%e8%87%aa%e5%9b%9e%e5%bd%92%e5%8e%9f%e7%90%86" >5. 自回归原理</a></li>
+<li><a class="link" href="#6-%e8%ae%ad%e7%bb%83" >6. 训练</a>
+<ul>
+<li><a class="link" href="#61-%e8%b6%85%e5%8f%82%e6%95%b0" >6.1. 超参数</a></li>
+<li><a class="link" href="#62-%e8%ae%ad%e7%bb%83" >6.2. 训练</a>
+<ul>
+<li><a class="link" href="#621-%e5%88%9b%e5%bb%ba%e9%81%ae%e6%8c%a1" >6.2.1. 创建遮挡</a></li>
+<li><a class="link" href="#622-%e5%88%9b%e5%bb%ba%e8%ae%ad%e7%bb%83%e6%ad%a5%e9%aa%a4%e5%8f%8a%e4%bf%9d%e5%ad%98%e6%a8%a1%e5%9e%8b" >6.2.2. 创建训练步骤及保存模型</a></li>
+<li><a class="link" href="#623-%e5%bc%80%e5%a7%8b%e8%ae%ad%e7%bb%83" >6.2.3. 开始训练</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="link" href="#7-%e8%af%84%e4%bc%b0" >7. 评估</a></li>
+</ul>
+</li>
+</ul>
+<!-- raw HTML omitted -->
+<h2 id="1-前言">1. 前言</h2>
+<p>在<a class="link" href="https://gitee.com/LilithSangreal/LilithSangreal-Blog/blob/master/NLP/Transformer.md"  target="_blank" rel="noopener"
+    >上一篇文章</a>中我们已经描述了 Transformer 的整个模型搭建过程，并逐层逐行地解释了其正向传播的原理和细节。接下来，我们将着手定义优化训练的方式，处理语料，并最终使用搭建好的 Transformer 实现一个由葡萄牙语翻译至英语的翻译器。</p>
+<p>为了训练一个由葡萄牙语翻译至英语的翻译器，首先来观察如何处理数据从而能够正确地输入我们已经设计好的 Tranformer 模型：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-Python" data-lang="Python"><span class="k">class</span> <span class="nc">Transformer</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+<span class="o">...</span>
+    
+  <span class="k">def</span> <span class="nf">call</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inp</span><span class="p">,</span> <span class="n">tar</span><span class="p">,</span> <span class="n">training</span><span class="p">,</span> <span class="n">enc_padding_mask</span><span class="p">,</span> 
+           <span class="n">look_ahead_mask</span><span class="p">,</span> <span class="n">dec_padding_mask</span><span class="p">):</span>
+
+<span class="o">...</span> 
+</code></pre></td></tr></table>
+</div>
+</div><p>只摘取模型的调用 <code>call</code> 部分，可以看出 Transformer 需要的输入：</p>
+<ul>
+<li><code>inp</code>：输入序列，这里需要的是源语言（葡萄牙语）的编码表示。（嵌入表示将在编码器中完成）</li>
+<li><code>tar</code>：目标序列，这里需要的是目标语言（英语）的编码表示。（嵌入表示将在编码器中完成）</li>
+<li><code>training</code>：布尔量，规定模型是否可以训练。</li>
+<li><code>enc_padding_mask</code>：编码器，填充遮挡。</li>
+<li><code>look_ahead_mask</code>：前瞻遮挡。两个遮挡将在后面详细描述。</li>
+<li><code>dec_padding_mask</code>：解码器，填充遮挡。</li>
+</ul>
+<p>由此，我们知道，为了达成目的，我们需要完成以下几个步骤：</p>
+<ol>
+<li>创造原训练集（输入句子和目标句子）的嵌入表示</li>
+<li>为我们的 Transformer 设计优化器和损失函数</li>
+<li>根据情况创造填充遮挡</li>
+<li>为了实现自回归创建前瞻遮挡</li>
+<li>将数据输入进行训练</li>
+<li>最终对训练好的模型进行评估</li>
+</ol>
+<h2 id="2-创造原训练集的编码表示">2. 创造原训练集的编码表示</h2>
+<h3 id="21-数据下载与读取">2.1. 数据下载与读取</h3>
+<p>参考 Tensorflow 的官方教程，我们同样使用 TFDS 来进行数据的下载和载入。（应首先在本机环境或虚拟环境中安装 <code>tensorflow_datasets</code> 模块。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-Python" data-lang="Python"><span class="kn">import</span> <span class="nn">tensorflow_datasets</span> <span class="k">as</span> <span class="nn">tfds</span>
+
+<span class="n">examples</span><span class="p">,</span> <span class="n">metadata</span> <span class="o">=</span> <span class="n">tfds</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s1">&#39;ted_hrlr_translate/pt_to_en&#39;</span><span class="p">,</span> <span class="n">with_info</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                               <span class="n">as_supervised</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">train_examples</span><span class="p">,</span> <span class="n">val_examples</span> <span class="o">=</span> <span class="n">examples</span><span class="p">[</span><span class="s1">&#39;train&#39;</span><span class="p">],</span> <span class="n">examples</span><span class="p">[</span><span class="s1">&#39;validation&#39;</span><span class="p">]</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>第一行代码会访问用户目录下（Windows和Unix系系统各有不同，请参考<a class="link" href="https://tensorflow.google.cn/datasets?hl=zh_cn"  target="_blank" rel="noopener"
+    >官方文档</a>）是否已经下载好了葡萄牙翻译至英文翻译器所需的数据集，如果不存在，则会自动下载。第二行，则将其自动转换为训练集合和测试集合两个 <code>tf.data.Dataset</code> 实例。</p>
+<h3 id="22-创建子词分词器">2.2. 创建子词分词器</h3>
+<p><code>tfds</code> 独立于 Tensorflow，是专门用来管理和下载一些成熟的数据集的Python库。但其中有很多我认为通用性很强的函数。比如子词分词器：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-Python" data-lang="Python"><span class="n">tokenizer_en</span> <span class="o">=</span> <span class="n">tfds</span><span class="o">.</span><span class="n">features</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">SubwordTextEncoder</span><span class="o">.</span><span class="n">build_from_corpus</span><span class="p">(</span>
+    <span class="p">(</span><span class="n">en</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span> <span class="k">for</span> <span class="n">pt</span><span class="p">,</span> <span class="n">en</span> <span class="ow">in</span> <span class="n">train_examples</span><span class="p">),</span> <span class="n">target_vocab_size</span><span class="o">=</span><span class="mi">2</span><span class="o">**</span><span class="mi">13</span><span class="p">)</span>
+
+<span class="n">tokenizer_pt</span> <span class="o">=</span> <span class="n">tfds</span><span class="o">.</span><span class="n">features</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">SubwordTextEncoder</span><span class="o">.</span><span class="n">build_from_corpus</span><span class="p">(</span>
+    <span class="p">(</span><span class="n">pt</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span> <span class="k">for</span> <span class="n">pt</span><span class="p">,</span> <span class="n">en</span> <span class="ow">in</span> <span class="n">train_examples</span><span class="p">),</span> <span class="n">target_vocab_size</span><span class="o">=</span><span class="mi">2</span><span class="o">**</span><span class="mi">13</span><span class="p">)</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>上方代码分别创建了两个子词分词器，分别读取了训练集合中的全部英文和葡萄牙文，并基于这些大段的文字形成了子词分词器。</p>
+<p>子词分词器的作用是将输入句子中的每一个单词编码为一个独一无二的数字，如果出现了子词分词器不能识别的新单词，那么就将其打散成多个可以识别的子词来编码成数字。</p>
+<p>同样的，分词器也可以将用数字表示的句子重新转换回原有的句子。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-Python" data-lang="Python"><span class="n">sample_string</span> <span class="o">=</span> <span class="s1">&#39;Transformer is awesome.&#39;</span>
+
+<span class="n">tokenized_string</span> <span class="o">=</span> <span class="n">tokenizer_en</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">sample_string</span><span class="p">)</span>
+<span class="nb">print</span> <span class="p">(</span><span class="s1">&#39;Tokenized string is </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">tokenized_string</span><span class="p">))</span>
+
+<span class="c1"># Tokenized string is [7915, 1248, 7946, 7194, 13, 2799, 7877]</span>
+
+<span class="n">original_string</span> <span class="o">=</span> <span class="n">tokenizer_en</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">tokenized_string</span><span class="p">)</span>
+<span class="nb">print</span> <span class="p">(</span><span class="s1">&#39;The original string: </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">original_string</span><span class="p">))</span>
+
+<span class="c1"># The original string: Transformer is awesome.</span>
+
+<span class="k">assert</span> <span class="n">original_string</span> <span class="o">==</span> <span class="n">sample_string</span>
+
+<span class="c1"># 分词器转换回的句子和原始句子一定是相同的。</span>
+
+</code></pre></td></tr></table>
+</div>
+</div><h3 id="23-数据处理">2.3. 数据处理</h3>
+<p>为了方便后期使用，编写一个将编码后句子加上开始标记和结束标记。利用 <code>tf.data.Dataset</code> 的 <code>map</code> 功能来批量完成这一任务。首先需要定义一个函数：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-Python" data-lang="Python"><span class="k">def</span> <span class="nf">encode</span><span class="p">(</span><span class="n">lang1</span><span class="p">,</span> <span class="n">lang2</span><span class="p">):</span>
+  <span class="n">lang1</span> <span class="o">=</span> <span class="p">[</span><span class="n">tokenizer_pt</span><span class="o">.</span><span class="n">vocab_size</span><span class="p">]</span> <span class="o">+</span> <span class="n">tokenizer_pt</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span>
+      <span class="n">lang1</span><span class="o">.</span><span class="n">numpy</span><span class="p">())</span> <span class="o">+</span> <span class="p">[</span><span class="n">tokenizer_pt</span><span class="o">.</span><span class="n">vocab_size</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span>
+
+  <span class="n">lang2</span> <span class="o">=</span> <span class="p">[</span><span class="n">tokenizer_en</span><span class="o">.</span><span class="n">vocab_size</span><span class="p">]</span> <span class="o">+</span> <span class="n">tokenizer_en</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span>
+      <span class="n">lang2</span><span class="o">.</span><span class="n">numpy</span><span class="p">())</span> <span class="o">+</span> <span class="p">[</span><span class="n">tokenizer_en</span><span class="o">.</span><span class="n">vocab_size</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span>
+  
+  <span class="k">return</span> <span class="n">lang1</span><span class="p">,</span> <span class="n">lang2</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>显然这里我们使用了原生 Python 编写这个函数，这样的函数是不能为 <code>map</code> 所用的。我们需要使用 <code>tf.py_function</code> 将这个函数转换为计算图。（此函数可以将原生 Python 编写的计算过程转换为 Tensorflow 流程控制的计算图，详情请参考 <a class="link" href="https://tensorflow.google.cn/api_docs/python/tf/py_function?hl=zh_cn"  target="_blank" rel="noopener"
+    >py_function</a>)</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-Python" data-lang="Python"><span class="k">def</span> <span class="nf">tf_encode</span><span class="p">(</span><span class="n">pt</span><span class="p">,</span> <span class="n">en</span><span class="p">):</span>
+  <span class="k">return</span> <span class="n">tf</span><span class="o">.</span><span class="n">py_function</span><span class="p">(</span><span class="n">encode</span><span class="p">,</span> <span class="p">[</span><span class="n">pt</span><span class="p">,</span> <span class="n">en</span><span class="p">],</span> <span class="p">[</span><span class="n">tf</span><span class="o">.</span><span class="n">int64</span><span class="p">,</span> <span class="n">tf</span><span class="o">.</span><span class="n">int64</span><span class="p">])</span> 
+  <span class="c1"># 第一个参数是包装的函数，第二个参数是输入的参数列表，第三个参数是输出的数据类型</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>于是，我们可以给训练数据集和验证数据集中每个句子加上开始标记和结束标记：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-Python" data-lang="Python"><span class="n">train_dataset</span> <span class="o">=</span> <span class="n">train_examples</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">tf_encode</span><span class="p">)</span>
+<span class="n">val_dataset</span> <span class="o">=</span> <span class="n">val_examples</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">tf_encode</span><span class="p">)</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>为了能够让这个模型较小，我们只使用句子短于 40 个单词的句子来作为输入数据。这里利用 <code>tf.data.Dataset</code> 的 <code>filter</code> 过滤器功能来快速筛选出需要的数据。</p>
+<p>为了使用 <code>filter</code>，首先要定义一个过滤器函数。这是一个布尔函数，如果一条数据符合要求，则返回真，否则返回假。显然，对于葡萄牙句子翻译至英文句子数据集，我们要筛选出所有成对相同意思的句子，并且两条句子都短于 40 个单词（编码后并加上了开始和终结标记后的长度）。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-Python" data-lang="Python"><span class="k">def</span> <span class="nf">filter_max_length</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">max_length</span><span class="o">=</span><span class="n">MAX_LENGTH</span><span class="p">):</span>
+  <span class="k">return</span> <span class="n">tf</span><span class="o">.</span><span class="n">logical_and</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">max_length</span><span class="p">,</span>
+                        <span class="n">tf</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">y</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">max_length</span><span class="p">)</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>类似的，对数据集进行筛选：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-Python" data-lang="Python"><span class="n">train_dataset</span> <span class="o">=</span> <span class="n">train_dataset</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">filter_max_length</span><span class="p">)</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>我们已经知道， 输入给 Transformer 的句子通常不会单句地输入，而是把句子叠成一批输入。将一批有长有短的句子叠成一批，需要将较短的句子补 0 使其长度匹配当前一批中最长的句子。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-Python" data-lang="Python"><span class="c1"># 将数据集缓存到内存中以加快读取速度。</span>
+<span class="n">train_dataset</span> <span class="o">=</span> <span class="n">train_dataset</span><span class="o">.</span><span class="n">cache</span><span class="p">()</span>
+<span class="c1"># shuffle 函数定义一个随机方式，首先定义一个缓存大小，取一部分数据放入缓存（BUFFER_SIZE大小），然后进行随机洗牌，最后从缓存中取。显然，若想实现全数据集的完美随机，需要让缓存的大小大于等于整个数据集。</span>
+<span class="c1"># 首先将数据进行随机打散之后，对较短的数据进行填充。</span>
+<span class="n">train_dataset</span> <span class="o">=</span> <span class="n">train_dataset</span><span class="o">.</span><span class="n">shuffle</span><span class="p">(</span><span class="n">BUFFER_SIZE</span><span class="p">)</span><span class="o">.</span><span class="n">padded_batch</span><span class="p">(</span>
+    <span class="n">BATCH_SIZE</span><span class="p">,</span> <span class="n">padded_shapes</span><span class="o">=</span><span class="p">([</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]))</span>
+<span class="n">train_dataset</span> <span class="o">=</span> <span class="n">train_dataset</span><span class="o">.</span><span class="n">prefetch</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">experimental</span><span class="o">.</span><span class="n">AUTOTUNE</span><span class="p">)</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>显然，验证集合也需要进行类似的处理操作（验证操作无需随机）。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-Python" data-lang="Python"><span class="n">val_dataset</span> <span class="o">=</span> <span class="n">val_dataset</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">filter_max_length</span><span class="p">)</span><span class="o">.</span><span class="n">padded_batch</span><span class="p">(</span>
+    <span class="n">BATCH_SIZE</span><span class="p">,</span> <span class="n">padded_shapes</span><span class="o">=</span><span class="p">([</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]))</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>取出一个数据看一看：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-Python" data-lang="Python"><span class="n">pt_batch</span><span class="p">,</span> <span class="n">en_batch</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">val_dataset</span><span class="p">))</span>
+<span class="s2">&#34;&#34;&#34;
+</span><span class="s2">pt_batch:
+</span><span class="s2">(&lt;tf.Tensor: id=207688, shape=(64, 40), dtype=int64, numpy=
+</span><span class="s2"> array([[8214, 1259,    5, ...,    0,    0,    0],
+</span><span class="s2">        [8214,  299,   13, ...,    0,    0,    0],
+</span><span class="s2">        [8214,   59,    8, ...,    0,    0,    0],
+</span><span class="s2">        ...,
+</span><span class="s2">        [8214,   95,    3, ...,    0,    0,    0],
+</span><span class="s2">        [8214, 5157,    1, ...,    0,    0,    0],
+</span><span class="s2">        [8214, 4479, 7990, ...,    0,    0,    0]])&gt;,
+</span><span class="s2">en_batch:
+</span><span class="s2"> &lt;tf.Tensor: id=207689, shape=(64, 40), dtype=int64, numpy=
+</span><span class="s2"> array([[8087,   18,   12, ...,    0,    0,    0],
+</span><span class="s2">        [8087,  634,   30, ...,    0,    0,    0],
+</span><span class="s2">        [8087,   16,   13, ...,    0,    0,    0],
+</span><span class="s2">        ...,
+</span><span class="s2">        [8087,   12,   20, ...,    0,    0,    0],
+</span><span class="s2">        [8087,   17, 4981, ...,    0,    0,    0],
+</span><span class="s2">        [8087,   12, 5453, ...,    0,    0,    0]])&gt;)
+</span><span class="s2">&#34;&#34;&#34;</span>
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="3-损失函数设计">3. 损失函数设计</h2>
+<p>损失函数的设计较为简单，需要考虑输出的句子和真正的目标句子是否为同一句子。只需要使用一个交叉熵函数。有一点需要注意，由上一章数据处理可以看出，数据中含有大量的填充（补0），这些填充不能作为真正的输入来考虑，因此在损失函数的计算中，需要将这些部分屏蔽掉。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-Python" data-lang="Python"><span class="n">loss_object</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">losses</span><span class="o">.</span><span class="n">SparseCategoricalCrossentropy</span><span class="p">(</span>
+    <span class="n">from_logits</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">reduction</span><span class="o">=</span><span class="s1">&#39;none&#39;</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">loss_function</span><span class="p">(</span><span class="n">real</span><span class="p">,</span> <span class="n">pred</span><span class="p">):</span>
+<span class="c1"># 对于mask，如果编码句子中出现了值为 0 的数据，则将其置 0</span>
+  <span class="n">mask</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">math</span><span class="o">.</span><span class="n">logical_not</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">math</span><span class="o">.</span><span class="n">equal</span><span class="p">(</span><span class="n">real</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+<span class="c1"># 输出句子和真正的句子计算交叉熵</span>
+  <span class="n">loss_</span> <span class="o">=</span> <span class="n">loss_object</span><span class="p">(</span><span class="n">real</span><span class="p">,</span> <span class="n">pred</span><span class="p">)</span>
+<span class="c1"># 将无效的交叉熵删除</span>
+  <span class="n">mask</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">cast</span><span class="p">(</span><span class="n">mask</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">loss_</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
+  <span class="n">loss_</span> <span class="o">*=</span> <span class="n">mask</span>
+<span class="c1"># 返回平均值</span>
+  <span class="k">return</span> <span class="n">tf</span><span class="o">.</span><span class="n">reduce_mean</span><span class="p">(</span><span class="n">loss_</span><span class="p">)</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>同时，定义两个指标用于展示训练过程中的模型变化：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-Python" data-lang="Python"><span class="n">train_loss</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">metrics</span><span class="o">.</span><span class="n">Mean</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;train_loss&#39;</span><span class="p">)</span>
+<span class="n">train_accuracy</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">metrics</span><span class="o">.</span><span class="n">SparseCategoricalAccuracy</span><span class="p">(</span>
+    <span class="n">name</span><span class="o">=</span><span class="s1">&#39;train_accuracy&#39;</span><span class="p">)</span>
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="4-优化器与学习率">4. 优化器与学习率</h2>
+<p>Transformer 使用 Adam 优化器，其 $\beta_1$ 为 0.9， $\beta_2$ 为0.98, $\epsilon$ 为 $10^{-9}$。其学习率随着训练的进程变化：</p>
+<p><img src="/p/transformer-from-zero-2/attachments/lrate.png"
+	width="732"
+	height="55"
+	srcset="/p/transformer-from-zero-2/attachments/lrate_hu1a65c91c5e08cd605968e0b54ebd6d87_13198_480x0_resize_box_3.png 480w, /p/transformer-from-zero-2/attachments/lrate_hu1a65c91c5e08cd605968e0b54ebd6d87_13198_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="学习率"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="1330"
+		data-flex-basis="3194px"
+	
+></p>
+<p>其中，这个 <code>warmup_step</code> 设定为 4000。如此设计，学习率随着训练（Train Step）的变化就如下图所示</p>
+<p><img src="/p/transformer-from-zero-2/attachments/lrate2.png"
+	width="432"
+	height="277"
+	srcset="/p/transformer-from-zero-2/attachments/lrate2_hu1938b3b14c38f208cf9f3eb193edae53_16525_480x0_resize_box_3.png 480w, /p/transformer-from-zero-2/attachments/lrate2_hu1938b3b14c38f208cf9f3eb193edae53_16525_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="学习率2"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="155"
+		data-flex-basis="374px"
+	
+></p>
+<p>学习率的变化，我们通过继承 <code>tf.keras.optimizers.schedules.LearningRateSchedule</code>来实现。顾名思义，这个类会创建一个可序列化的<strong>学习率衰减（也可能增加）时间表</strong>：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-Python" data-lang="Python"><span class="k">class</span> <span class="nc">CustomSchedule</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">optimizers</span><span class="o">.</span><span class="n">schedules</span><span class="o">.</span><span class="n">LearningRateSchedule</span><span class="p">):</span>
+  <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">d_model</span><span class="p">,</span> <span class="n">warmup_steps</span><span class="o">=</span><span class="mi">4000</span><span class="p">):</span>
+    <span class="nb">super</span><span class="p">(</span><span class="n">CustomSchedule</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+    
+    <span class="bp">self</span><span class="o">.</span><span class="n">d_model</span> <span class="o">=</span> <span class="n">d_model</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">d_model</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">cast</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">d_model</span><span class="p">,</span> <span class="n">tf</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">warmup_steps</span> <span class="o">=</span> <span class="n">warmup_steps</span>
+    
+  <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">step</span><span class="p">):</span> <span class="c1">#　这个时间表被调用时，按照 step 返回学习率</span>
+    <span class="n">arg1</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">math</span><span class="o">.</span><span class="n">rsqrt</span><span class="p">(</span><span class="n">step</span><span class="p">)</span>
+    <span class="n">arg2</span> <span class="o">=</span> <span class="n">step</span> <span class="o">*</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">warmup_steps</span> <span class="o">**</span> <span class="o">-</span><span class="mf">1.5</span><span class="p">)</span>
+    
+    <span class="k">return</span> <span class="n">tf</span><span class="o">.</span><span class="n">math</span><span class="o">.</span><span class="n">rsqrt</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">d_model</span><span class="p">)</span> <span class="o">*</span> <span class="n">tf</span><span class="o">.</span><span class="n">math</span><span class="o">.</span><span class="n">minimum</span><span class="p">(</span><span class="n">arg1</span><span class="p">,</span> <span class="n">arg2</span><span class="p">)</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>优化器便可以方便地使用这个类的实例改变学习率优化。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-Python" data-lang="Python"><span class="n">learning_rate</span> <span class="o">=</span> <span class="n">CustomSchedule</span><span class="p">(</span><span class="n">d_model</span><span class="p">)</span>
+
+<span class="n">optimizer</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">optimizers</span><span class="o">.</span><span class="n">Adam</span><span class="p">(</span><span class="n">learning_rate</span><span class="p">,</span> <span class="n">beta_1</span><span class="o">=</span><span class="mf">0.9</span><span class="p">,</span> <span class="n">beta_2</span><span class="o">=</span><span class="mf">0.98</span><span class="p">,</span> 
+                                     <span class="n">epsilon</span><span class="o">=</span><span class="mf">1e-9</span><span class="p">)</span>
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="5-自回归原理">5. 自回归原理</h2>
+<p>至今位置，我们已经拥有了 Transformer 的完整模型，数据输入和优化器。</p>
+<p>但显然，Transformer 和 传统的 RNN 按时序依次读取输入和输出的训练方式“看起来”不同——它一次输入整个句子。而 encoder-decoder 架构是自回归的：通过上一步产生的符号和这一步的输入来预测这一步的输出。开始训练之前，需要了解 Transformer 是如何实现自回归的。</p>
+<p>Tranformer 使用导师监督（teacher-forcing）法，即在预测过程中无论模型在当前时间步骤下预测出什么，teacher-forcing 方法都会将真实的输出传递到下一个时间步骤上。</p>
+<p>当 transformer 预测每个词时，自注意力（self-attention）功能使它能够查看输入序列中前面的单词，从而更好地预测下一个单词。为了仅能让其查看输入序列中前面的单词，则需要前瞻遮挡来屏蔽后方的单词。</p>
+<p>也就是说，若输入一个葡萄牙文句子，Tranformer 将第一次仅预测出英文句子的第一个单词，然后再次基础上依次预测第二个，第三个。</p>
+<p>而训练过程也应该模拟这样的预测过程，每次仅增加一个目标序列的单词。</p>
+<p>因此，我们将目标句子改写成两种：</p>
+<p>原目标句子：<code>sentence</code> = &ldquo;<code>SOS</code> A lion in the jungle is sleeping <code>EOS</code>&rdquo;</p>
+<p>改写为：</p>
+<p><code>tar_inp</code> = &ldquo;<code>SOS</code> A lion in the jungle is sleeping&rdquo;</p>
+<p><code>tar_real</code> = &ldquo;A lion in the jungle is sleeping <code>EOS</code>&rdquo;</p>
+<p>（<code>SOS</code> 和 <code>EOS</code> 是开始标记和结束标记。）</p>
+<p>真正输入给 Decoder 部分的是前者，配合前瞻遮挡它将模拟逐个单词产生的模型历史预测。而后者，则代表着模型当前步骤应该依次预测出的单词序列。很显然，他们应该仅仅只有一个单词的位移。</p>
+<h2 id="6-训练">6. 训练</h2>
+<h3 id="61-超参数">6.1. 超参数</h3>
+<blockquote>
+<p>Transformer 的基础模型使用的数值为：num_layers=6，d_model = 512，dff = 2048。</p>
+</blockquote>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-Python" data-lang="Python"><span class="n">num_layers</span> <span class="o">=</span> <span class="mi">4</span>
+<span class="n">d_model</span> <span class="o">=</span> <span class="mi">128</span>
+<span class="n">dff</span> <span class="o">=</span> <span class="mi">512</span>
+<span class="n">num_heads</span> <span class="o">=</span> <span class="mi">8</span>
+
+<span class="n">input_vocab_size</span> <span class="o">=</span> <span class="n">tokenizer_pt</span><span class="o">.</span><span class="n">vocab_size</span> <span class="o">+</span> <span class="mi">2</span>
+<span class="n">target_vocab_size</span> <span class="o">=</span> <span class="n">tokenizer_en</span><span class="o">.</span><span class="n">vocab_size</span> <span class="o">+</span> <span class="mi">2</span>
+<span class="n">dropout_rate</span> <span class="o">=</span> <span class="mf">0.1</span>
+</code></pre></td></tr></table>
+</div>
+</div><h3 id="62-训练">6.2. 训练</h3>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-Python" data-lang="Python"><span class="n">transformer</span> <span class="o">=</span> <span class="n">Transformer</span><span class="p">(</span><span class="n">num_layers</span><span class="p">,</span> <span class="n">d_model</span><span class="p">,</span> <span class="n">num_heads</span><span class="p">,</span> <span class="n">dff</span><span class="p">,</span>
+                          <span class="n">input_vocab_size</span><span class="p">,</span> <span class="n">target_vocab_size</span><span class="p">,</span> 
+                          <span class="n">pe_input</span><span class="o">=</span><span class="n">input_vocab_size</span><span class="p">,</span> 
+                          <span class="n">pe_target</span><span class="o">=</span><span class="n">target_vocab_size</span><span class="p">,</span>
+                          <span class="n">rate</span><span class="o">=</span><span class="n">dropout_rate</span><span class="p">)</span>
+</code></pre></td></tr></table>
+</div>
+</div><h4 id="621-创建遮挡">6.2.1. 创建遮挡</h4>
+<ul>
+<li>首先要对输入数据（原始句子和目标句子）创建填充遮挡（填充了 0 的位置标记为 1，其余部分标记为 0，这里与损失函数的部分刚好相反）。</li>
+<li>对于编码器解码器结构，当编码器预测后方的单词，只使用前方已经预测出的单词。为了实现这一效果，需要使用前瞻遮挡。</li>
+</ul>
+<p>无论哪种遮挡，0 标记着保留的部分，1 标记着要遮挡的部分。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-Python" data-lang="Python">
+<span class="c1"># 这里 inp 和 tar 都是来自第 2 章的编码后数据，形状显然为 (batch_size, len)</span>
+<span class="k">def</span> <span class="nf">create_masks</span><span class="p">(</span><span class="n">inp</span><span class="p">,</span> <span class="n">tar</span><span class="p">):</span>
+  <span class="c1"># 编码器填充遮挡，编码器自注意力时使用，在自注意力编码时排除掉没有含义的填充</span>
+  <span class="n">enc_padding_mask</span> <span class="o">=</span> <span class="n">create_padding_mask</span><span class="p">(</span><span class="n">inp</span><span class="p">)</span>
+  
+  <span class="c1"># 在解码器的第二个注意力模块使用。</span>
+  <span class="c1"># 该填充遮挡用于遮挡编码器的输出，其输出输送给解码器使用，排除掉没有含义的填充</span>
+  <span class="n">dec_padding_mask</span> <span class="o">=</span> <span class="n">create_padding_mask</span><span class="p">(</span><span class="n">inp</span><span class="p">)</span>
+  
+  <span class="c1"># 在解码器的第一个注意力模块使用。</span>
+  <span class="c1"># 遮挡（mask）解码器获取到的输入的后续标记（future tokens）。</span>
+  <span class="c1"># 自然，填充的 padding 也不能忘记考虑，所以把两个遮挡合在一起两全其美</span>
+  <span class="n">look_ahead_mask</span> <span class="o">=</span> <span class="n">create_look_ahead_mask</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">tar</span><span class="p">)[</span><span class="mi">1</span><span class="p">])</span>
+  <span class="n">dec_target_padding_mask</span> <span class="o">=</span> <span class="n">create_padding_mask</span><span class="p">(</span><span class="n">tar</span><span class="p">)</span>
+  <span class="n">combined_mask</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="n">dec_target_padding_mask</span><span class="p">,</span> <span class="n">look_ahead_mask</span><span class="p">)</span>
+  
+  <span class="k">return</span> <span class="n">enc_padding_mask</span><span class="p">,</span> <span class="n">combined_mask</span><span class="p">,</span> <span class="n">dec_padding_mask</span>
+</code></pre></td></tr></table>
+</div>
+</div><h4 id="622-创建训练步骤及保存模型">6.2.2. 创建训练步骤及保存模型</h4>
+<p>为了保存模型，需要创建一个检查点管理器，在需要时使用此管理器来保存模型：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-Python" data-lang="Python"><span class="n">checkpoint_path</span> <span class="o">=</span> <span class="s2">&#34;./checkpoints/train&#34;</span>
+
+<span class="n">ckpt</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">train</span><span class="o">.</span><span class="n">Checkpoint</span><span class="p">(</span><span class="n">transformer</span><span class="o">=</span><span class="n">transformer</span><span class="p">,</span>
+                           <span class="n">optimizer</span><span class="o">=</span><span class="n">optimizer</span><span class="p">)</span>
+
+<span class="n">ckpt_manager</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">train</span><span class="o">.</span><span class="n">CheckpointManager</span><span class="p">(</span><span class="n">ckpt</span><span class="p">,</span> <span class="n">checkpoint_path</span><span class="p">,</span> <span class="n">max_to_keep</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+
+<span class="c1"># 如果检查点存在，则恢复最新的检查点。</span>
+<span class="k">if</span> <span class="n">ckpt_manager</span><span class="o">.</span><span class="n">latest_checkpoint</span><span class="p">:</span>
+  <span class="n">ckpt</span><span class="o">.</span><span class="n">restore</span><span class="p">(</span><span class="n">ckpt_manager</span><span class="o">.</span><span class="n">latest_checkpoint</span><span class="p">)</span>
+  <span class="nb">print</span> <span class="p">(</span><span class="s1">&#39;Latest checkpoint restored!!&#39;</span><span class="p">)</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>根据 5. 节的描述，将对目标序列进行调整和创建遮挡。最终实现训练过程。</p>
+<p>在TF2.0中，由于使用了 eager excution 导致的性能下降，将使用<code>@tf.function</code> 装饰器将代码转换为传统的计算图提升性能。但这种转换并非完全智能，若没有良好的限制，则会因为输入 Tensor 的变化导致无法复用已有的计算图，导致冗余的转换。详情请参考<a class="link" href="https://tf.wiki/zh/basic/tools.html#tf-function-graph-execution"  target="_blank" rel="noopener"
+    >Graph Execution 模式</a>。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-Python" data-lang="Python"><span class="c1"># 该 @tf.function 将追踪-编译 train_step 并将其转换为计算图，以便更快地执行。</span>
+<span class="c1"># 该函数专用于参数张量的精确形状。为了避免由于可变序列长度或可变批次大小（最后一批次较小）导致的多次冗余转换</span>
+<span class="c1"># 使用 input_signature 指定更多的通用形状。</span>
+
+<span class="n">train_step_signature</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">tf</span><span class="o">.</span><span class="n">TensorSpec</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">tf</span><span class="o">.</span><span class="n">int64</span><span class="p">),</span>
+    <span class="n">tf</span><span class="o">.</span><span class="n">TensorSpec</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">tf</span><span class="o">.</span><span class="n">int64</span><span class="p">),</span>
+<span class="p">]</span>
+
+<span class="nd">@tf</span><span class="o">.</span><span class="n">function</span><span class="p">(</span><span class="n">input_signature</span><span class="o">=</span><span class="n">train_step_signature</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">train_step</span><span class="p">(</span><span class="n">inp</span><span class="p">,</span> <span class="n">tar</span><span class="p">):</span>
+  <span class="n">tar_inp</span> <span class="o">=</span> <span class="n">tar</span><span class="p">[:,</span> <span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+  <span class="n">tar_real</span> <span class="o">=</span> <span class="n">tar</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">:]</span>
+  
+  <span class="n">enc_padding_mask</span><span class="p">,</span> <span class="n">combined_mask</span><span class="p">,</span> <span class="n">dec_padding_mask</span> <span class="o">=</span> <span class="n">create_masks</span><span class="p">(</span><span class="n">inp</span><span class="p">,</span> <span class="n">tar_inp</span><span class="p">)</span>
+  
+  <span class="k">with</span> <span class="n">tf</span><span class="o">.</span><span class="n">GradientTape</span><span class="p">()</span> <span class="k">as</span> <span class="n">tape</span><span class="p">:</span>
+    <span class="n">predictions</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">transformer</span><span class="p">(</span><span class="n">inp</span><span class="p">,</span> <span class="n">tar_inp</span><span class="p">,</span> 
+                                 <span class="kc">True</span><span class="p">,</span> 
+                                 <span class="n">enc_padding_mask</span><span class="p">,</span> 
+                                 <span class="n">combined_mask</span><span class="p">,</span> 
+                                 <span class="n">dec_padding_mask</span><span class="p">)</span>
+    <span class="n">loss</span> <span class="o">=</span> <span class="n">loss_function</span><span class="p">(</span><span class="n">tar_real</span><span class="p">,</span> <span class="n">predictions</span><span class="p">)</span>
+
+  <span class="n">gradients</span> <span class="o">=</span> <span class="n">tape</span><span class="o">.</span><span class="n">gradient</span><span class="p">(</span><span class="n">loss</span><span class="p">,</span> <span class="n">transformer</span><span class="o">.</span><span class="n">trainable_variables</span><span class="p">)</span>    
+  <span class="n">optimizer</span><span class="o">.</span><span class="n">apply_gradients</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">gradients</span><span class="p">,</span> <span class="n">transformer</span><span class="o">.</span><span class="n">trainable_variables</span><span class="p">))</span>
+  
+  <span class="n">train_loss</span><span class="p">(</span><span class="n">loss</span><span class="p">)</span>
+  <span class="n">train_accuracy</span><span class="p">(</span><span class="n">tar_real</span><span class="p">,</span> <span class="n">predictions</span><span class="p">)</span>
+</code></pre></td></tr></table>
+</div>
+</div><h4 id="623-开始训练">6.2.3. 开始训练</h4>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-Python" data-lang="Python"><span class="n">EPOCHS</span> <span class="o">=</span> <span class="mi">20</span>
+
+<span class="k">for</span> <span class="n">epoch</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">EPOCHS</span><span class="p">):</span>
+  <span class="n">start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+  
+  <span class="n">train_loss</span><span class="o">.</span><span class="n">reset_states</span><span class="p">()</span>
+  <span class="n">train_accuracy</span><span class="o">.</span><span class="n">reset_states</span><span class="p">()</span>
+  
+  <span class="c1"># inp -&gt; portuguese, tar -&gt; english</span>
+  <span class="k">for</span> <span class="p">(</span><span class="n">batch</span><span class="p">,</span> <span class="p">(</span><span class="n">inp</span><span class="p">,</span> <span class="n">tar</span><span class="p">))</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">train_dataset</span><span class="p">):</span>
+    <span class="n">train_step</span><span class="p">(</span><span class="n">inp</span><span class="p">,</span> <span class="n">tar</span><span class="p">)</span>
+    
+    <span class="k">if</span> <span class="n">batch</span> <span class="o">%</span> <span class="mi">50</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+      <span class="nb">print</span> <span class="p">(</span><span class="s1">&#39;Epoch </span><span class="si">{}</span><span class="s1"> Batch </span><span class="si">{}</span><span class="s1"> Loss </span><span class="si">{:.4f}</span><span class="s1"> Accuracy </span><span class="si">{:.4f}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+          <span class="n">epoch</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">batch</span><span class="p">,</span> <span class="n">train_loss</span><span class="o">.</span><span class="n">result</span><span class="p">(),</span> <span class="n">train_accuracy</span><span class="o">.</span><span class="n">result</span><span class="p">()))</span>
+      
+  <span class="k">if</span> <span class="p">(</span><span class="n">epoch</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">%</span> <span class="mi">5</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+    <span class="n">ckpt_save_path</span> <span class="o">=</span> <span class="n">ckpt_manager</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+    <span class="nb">print</span> <span class="p">(</span><span class="s1">&#39;Saving checkpoint for epoch </span><span class="si">{}</span><span class="s1"> at </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">epoch</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span>
+                                                         <span class="n">ckpt_save_path</span><span class="p">))</span>
+    
+  <span class="nb">print</span> <span class="p">(</span><span class="s1">&#39;Epoch </span><span class="si">{}</span><span class="s1"> Loss </span><span class="si">{:.4f}</span><span class="s1"> Accuracy </span><span class="si">{:.4f}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">epoch</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> 
+                                                <span class="n">train_loss</span><span class="o">.</span><span class="n">result</span><span class="p">(),</span> 
+                                                <span class="n">train_accuracy</span><span class="o">.</span><span class="n">result</span><span class="p">()))</span>
+
+  <span class="nb">print</span> <span class="p">(</span><span class="s1">&#39;Time taken for 1 epoch: </span><span class="si">{}</span><span class="s1"> secs</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start</span><span class="p">))</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>效果如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-Shell" data-lang="Shell">Epoch <span class="m">1</span> Batch <span class="m">0</span> Loss 4.4721 Accuracy 0.0000
+Epoch <span class="m">1</span> Batch <span class="m">50</span> Loss 4.2211 Accuracy 0.0076
+Epoch <span class="m">1</span> Batch <span class="m">100</span> Loss 4.1943 Accuracy 0.0173
+Epoch <span class="m">1</span> Batch <span class="m">150</span> Loss 4.1539 Accuracy 0.0205
+Epoch <span class="m">1</span> Batch <span class="m">200</span> Loss 4.0675 Accuracy 0.0221
+...
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="7-评估">7. 评估</h2>
+<blockquote>
+<p>以下步骤用于评估：</p>
+</blockquote>
+<blockquote>
+<ul>
+<li>用葡萄牙语分词器（tokenizer_pt）编码输入语句。此外，添加开始和结束标记，这样输入就与模型训练的内容相同。这是编码器输入。</li>
+<li>解码器输入为 start token == tokenizer_en.vocab_size。</li>
+<li>计算填充遮挡和前瞻遮挡。</li>
+<li>解码器通过查看编码器输出和它自身的输出（自注意力）给出预测。</li>
+<li>选择最后一个词并计算它的 argmax。将预测的词连接到解码器输入，然后传递给解码器。在这种方法中，解码器根据它预测的之前的词预测下一个。</li>
+</ul>
+</blockquote>
+<p>评估函数：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-Python" data-lang="Python"><span class="k">def</span> <span class="nf">evaluate</span><span class="p">(</span><span class="n">inp_sentence</span><span class="p">):</span>
+  <span class="n">start_token</span> <span class="o">=</span> <span class="p">[</span><span class="n">tokenizer_pt</span><span class="o">.</span><span class="n">vocab_size</span><span class="p">]</span>
+  <span class="n">end_token</span> <span class="o">=</span> <span class="p">[</span><span class="n">tokenizer_pt</span><span class="o">.</span><span class="n">vocab_size</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+  
+  <span class="c1"># 输入语句是葡萄牙语，增加开始和结束标记</span>
+  <span class="n">inp_sentence</span> <span class="o">=</span> <span class="n">start_token</span> <span class="o">+</span> <span class="n">tokenizer_pt</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">inp_sentence</span><span class="p">)</span> <span class="o">+</span> <span class="n">end_token</span>
+  <span class="n">encoder_input</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="n">inp_sentence</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+  
+  <span class="c1"># 因为目标是英语，输入 transformer 的第一个词应该是</span>
+  <span class="c1"># 英语的开始标记。</span>
+  <span class="n">decoder_input</span> <span class="o">=</span> <span class="p">[</span><span class="n">tokenizer_en</span><span class="o">.</span><span class="n">vocab_size</span><span class="p">]</span>
+  <span class="n">output</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="n">decoder_input</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+    
+  <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">MAX_LENGTH</span><span class="p">):</span>
+    <span class="n">enc_padding_mask</span><span class="p">,</span> <span class="n">combined_mask</span><span class="p">,</span> <span class="n">dec_padding_mask</span> <span class="o">=</span> <span class="n">create_masks</span><span class="p">(</span>
+        <span class="n">encoder_input</span><span class="p">,</span> <span class="n">output</span><span class="p">)</span>
+  
+    <span class="c1"># predictions.shape == (batch_size, seq_len, vocab_size)</span>
+    <span class="n">predictions</span><span class="p">,</span> <span class="n">attention_weights</span> <span class="o">=</span> <span class="n">transformer</span><span class="p">(</span><span class="n">encoder_input</span><span class="p">,</span> 
+                                                 <span class="n">output</span><span class="p">,</span>
+                                                 <span class="kc">False</span><span class="p">,</span>
+                                                 <span class="n">enc_padding_mask</span><span class="p">,</span>
+                                                 <span class="n">combined_mask</span><span class="p">,</span>
+                                                 <span class="n">dec_padding_mask</span><span class="p">)</span>
+    
+    <span class="c1"># 从 seq_len 维度选择最后一个词</span>
+    <span class="n">predictions</span> <span class="o">=</span> <span class="n">predictions</span><span class="p">[:</span> <span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">:,</span> <span class="p">:]</span>  <span class="c1"># (batch_size, 1, vocab_size)</span>
+
+    <span class="n">predicted_id</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">cast</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">predictions</span><span class="p">,</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">),</span> <span class="n">tf</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span>
+    
+    <span class="c1"># 如果 predicted_id 等于结束标记，就返回结果</span>
+    <span class="k">if</span> <span class="n">predicted_id</span> <span class="o">==</span> <span class="n">tokenizer_en</span><span class="o">.</span><span class="n">vocab_size</span><span class="o">+</span><span class="mi">1</span><span class="p">:</span>
+      <span class="k">return</span> <span class="n">tf</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span> <span class="n">attention_weights</span>
+    
+    <span class="c1"># 连接 predicted_id 与输出，作为解码器的输入传递到解码器。</span>
+    <span class="n">output</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">output</span><span class="p">,</span> <span class="n">predicted_id</span><span class="p">],</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+
+  <span class="k">return</span> <span class="n">tf</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span> <span class="n">attention_weights</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>可视化注意力:</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-Python" data-lang="Python"><span class="k">def</span> <span class="nf">plot_attention_weights</span><span class="p">(</span><span class="n">attention</span><span class="p">,</span> <span class="n">sentence</span><span class="p">,</span> <span class="n">result</span><span class="p">,</span> <span class="n">layer</span><span class="p">):</span>
+  <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">16</span><span class="p">,</span> <span class="mi">8</span><span class="p">))</span>
+  
+  <span class="n">sentence</span> <span class="o">=</span> <span class="n">tokenizer_pt</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">sentence</span><span class="p">)</span>
+  
+  <span class="n">attention</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="n">attention</span><span class="p">[</span><span class="n">layer</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+  
+  <span class="k">for</span> <span class="n">head</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">attention</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+    <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="n">head</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+    
+    <span class="c1"># 画出注意力权重</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">matshow</span><span class="p">(</span><span class="n">attention</span><span class="p">[</span><span class="n">head</span><span class="p">][:</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">:],</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;viridis&#39;</span><span class="p">)</span>
+
+    <span class="n">fontdict</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;fontsize&#39;</span><span class="p">:</span> <span class="mi">10</span><span class="p">}</span>
+    
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xticks</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">sentence</span><span class="p">)</span><span class="o">+</span><span class="mi">2</span><span class="p">))</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_yticks</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">result</span><span class="p">)))</span>
+    
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">result</span><span class="p">)</span><span class="o">-</span><span class="mf">1.5</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.5</span><span class="p">)</span>
+        
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xticklabels</span><span class="p">(</span>
+        <span class="p">[</span><span class="s1">&#39;&lt;start&gt;&#39;</span><span class="p">]</span><span class="o">+</span><span class="p">[</span><span class="n">tokenizer_pt</span><span class="o">.</span><span class="n">decode</span><span class="p">([</span><span class="n">i</span><span class="p">])</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">sentence</span><span class="p">]</span><span class="o">+</span><span class="p">[</span><span class="s1">&#39;&lt;end&gt;&#39;</span><span class="p">],</span> 
+        <span class="n">fontdict</span><span class="o">=</span><span class="n">fontdict</span><span class="p">,</span> <span class="n">rotation</span><span class="o">=</span><span class="mi">90</span><span class="p">)</span>
+    
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_yticklabels</span><span class="p">([</span><span class="n">tokenizer_en</span><span class="o">.</span><span class="n">decode</span><span class="p">([</span><span class="n">i</span><span class="p">])</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">result</span> 
+                        <span class="k">if</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">tokenizer_en</span><span class="o">.</span><span class="n">vocab_size</span><span class="p">],</span> 
+                       <span class="n">fontdict</span><span class="o">=</span><span class="n">fontdict</span><span class="p">)</span>
+    
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;Head </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">head</span><span class="o">+</span><span class="mi">1</span><span class="p">))</span>
+  
+  <span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+  <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>单句子测试：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-Python" data-lang="Python">  <span class="k">def</span> <span class="nf">translate</span><span class="p">(</span><span class="n">sentence</span><span class="p">,</span> <span class="n">plot</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
+    <span class="n">result</span><span class="p">,</span> <span class="n">attention_weights</span> <span class="o">=</span> <span class="n">evaluate</span><span class="p">(</span><span class="n">sentence</span><span class="p">)</span>
+    
+    <span class="n">predicted_sentence</span> <span class="o">=</span> <span class="n">tokenizer_en</span><span class="o">.</span><span class="n">decode</span><span class="p">([</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">result</span> 
+                                              <span class="k">if</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">tokenizer_en</span><span class="o">.</span><span class="n">vocab_size</span><span class="p">])</span>  
+
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Input: </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">sentence</span><span class="p">))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Predicted translation: </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">predicted_sentence</span><span class="p">))</span>
+    
+    <span class="k">if</span> <span class="n">plot</span><span class="p">:</span>
+      <span class="n">plot_attention_weights</span><span class="p">(</span><span class="n">attention_weights</span><span class="p">,</span> <span class="n">sentence</span><span class="p">,</span> <span class="n">result</span><span class="p">,</span> <span class="n">plot</span><span class="p">)</span>
+
+  <span class="n">translate</span><span class="p">(</span><span class="s2">&#34;este é um problema que temos que resolver.&#34;</span><span class="p">)</span>
+<span class="nb">print</span> <span class="p">(</span><span class="s2">&#34;Real translation: this is a problem we have to solve .&#34;</span><span class="p">)</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>效果：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-Shell" data-lang="Shell">Input: este é um problema que temos que resolver.
+Predicted translation: this is a problem that we have to solve .... now .
+Real translation: this is a problem we have to solve .
+</code></pre></td></tr></table>
+</div>
+</div>
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+
+    
+        <link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/katex@0.13.13/dist/katex.min.css"integrity="sha384-RZU/ijkSsFbcmivfdRBQDtwuwVqK7GMOw6IMvKyeWL2K5UAlyp6WonmB8m7Jd0Hn"crossorigin="anonymous"
+            ><script 
+                src="https://cdn.jsdelivr.net/npm/katex@0.13.13/dist/katex.min.js"integrity="sha384-pK1WpvzWVBQiP0/GjnvRxV4mOb0oxFuyRxJlk6vVw146n3egcN5C925NCP7a7BY8"crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/katex@0.13.13/dist/contrib/auto-render.min.js"integrity="sha384-vZTG03m&#43;2yp6N6BNi5iM4rW4oIwk5DfcNdFfxkk9ZWpDriOkXX8voJBFrAO7MpVl"crossorigin="anonymous"
+                defer
+                >
+            </script><script>
+    window.addEventListener("DOMContentLoaded", () => {
+        renderMathInElement(document.querySelector(`.article-content`), {
+            delimiters: [
+                { left: "$$", right: "$$", display: true },
+                { left: "$", right: "$", display: false },
+                { left: "\\(", right: "\\)", display: false },
+                { left: "\\[", right: "\\]", display: true }
+            ]
+        });})
+</script>
+    
+</article>
+
+    
+
+    <aside class="related-contents--wrapper">
+    
+    
+        <h2 class="section-title">Related contents</h2>
+        <div class="related-contents">
+            <div class="flex article-list--tile">
+                
+                    
+<article class="has-image">
+    <a href="/p/transformer-from-zero-4/">
+        
+        
+            <div class="article-image">
+                <img src="/p/transformer-from-zero-4/the_transformer.02a726e225f7010356c7d65bfb3ee8d5_hu9dc15172e42e840ef18a078a4efb196f_44824_250x150_fill_box_smart1_3.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy"
+                        alt="Featured image of post 从 0 开始学习 Transformer 拾遗：文章本身的与解释"
+                        data-key="transformer-from-zero-4" 
+                        data-hash="md5-Aqcm4iX3AQNWx9Zb&#43;z7o1Q==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">从 0 开始学习 Transformer 拾遗：文章本身的与解释</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/transformer-from-zero-3/">
+        
+        
+            <div class="article-image">
+                <img src="/p/transformer-from-zero-3/the_transformer.02a726e225f7010356c7d65bfb3ee8d5_hu9dc15172e42e840ef18a078a4efb196f_44824_250x150_fill_box_smart1_3.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy"
+                        alt="Featured image of post 从 0 开始学习 Transformer 番外：Transformer 如何穿梭时空？"
+                        data-key="transformer-from-zero-3" 
+                        data-hash="md5-Aqcm4iX3AQNWx9Zb&#43;z7o1Q==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">从 0 开始学习 Transformer 番外：Transformer 如何穿梭时空？</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/transformer-from-zero-1/">
+        
+        
+            <div class="article-image">
+                <img src="/p/transformer-from-zero-1/the_transformer.02a726e225f7010356c7d65bfb3ee8d5_hu9dc15172e42e840ef18a078a4efb196f_44824_250x150_fill_box_smart1_3.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy"
+                        alt="Featured image of post 从 0 开始学习 Transformer 上篇：Transformer 搭建与理解"
+                        data-key="transformer-from-zero-1" 
+                        data-hash="md5-Aqcm4iX3AQNWx9Zb&#43;z7o1Q==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">从 0 开始学习 Transformer 上篇：Transformer 搭建与理解</h2>
+        </div>
+    </a>
+</article>
+                
+            </div>
+        </div>
+    
+</aside>
+
+     
+    
+        
+    <div class="disqus-container">
+    <div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "hugo-theme-stack" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+<style>
+    .disqus-container {
+        background-color: var(--card-background);
+        border-radius: var(--card-border-radius);
+        box-shadow: var(--shadow-l1);
+        padding: var(--card-padding);
+    }
+</style>
+
+<script>
+    window.addEventListener('onColorSchemeChange', (e) => {
+        if (DISQUS) {
+            DISQUS.reset({
+                reload: true
+            });
+        }
+    })
+</script>
+
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2019 - 
+        
+        2022 Lilith Sangreal
+    </section>
+    
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.8.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.css"integrity="sha256-c0uckgykQ9v5k&#43;IqViZOZKc47Jn7KQil4/MP3ySA3F8="crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.css"integrity="sha256-SBLU4vv6CA6lHsZ1XyTdhyjJxCjPif/TRkjnsyGAGnE="crossorigin="anonymous"
+            >
+
+            </main>
+    
+        <aside class="sidebar right-sidebar sticky">
+            <section class="widget archives">
+                <div class="widget-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+                </div>
+                <h2 class="widget-title section-title">Table of contents</h2>
+                
+                <div class="widget--toc">
+                    <nav id="TableOfContents">
+  <ol>
+    <li><a href="#1-前言">1. 前言</a></li>
+    <li><a href="#2-创造原训练集的编码表示">2. 创造原训练集的编码表示</a>
+      <ol>
+        <li><a href="#21-数据下载与读取">2.1. 数据下载与读取</a></li>
+        <li><a href="#22-创建子词分词器">2.2. 创建子词分词器</a></li>
+        <li><a href="#23-数据处理">2.3. 数据处理</a></li>
+      </ol>
+    </li>
+    <li><a href="#3-损失函数设计">3. 损失函数设计</a></li>
+    <li><a href="#4-优化器与学习率">4. 优化器与学习率</a></li>
+    <li><a href="#5-自回归原理">5. 自回归原理</a></li>
+    <li><a href="#6-训练">6. 训练</a>
+      <ol>
+        <li><a href="#61-超参数">6.1. 超参数</a></li>
+        <li><a href="#62-训练">6.2. 训练</a>
+          <ol>
+            <li><a href="#621-创建遮挡">6.2.1. 创建遮挡</a></li>
+            <li><a href="#622-创建训练步骤及保存模型">6.2.2. 创建训练步骤及保存模型</a></li>
+            <li><a href="#623-开始训练">6.2.3. 开始训练</a></li>
+          </ol>
+        </li>
+      </ol>
+    </li>
+    <li><a href="#7-评估">7. 评估</a></li>
+  </ol>
+</nav>
+                </div>
+            </section>
+        </aside>
+    
+
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.5/dist/vibrant.min.js"integrity="sha256-5NovOZc4iwiAWTYIFiIM7DxKUXKWvpVEuMEPLzcm5/g="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>

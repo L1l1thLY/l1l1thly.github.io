@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html lang="en-us">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='从 0 开始学习 Transformer 番外：Transformer 如何穿梭时空？'><title>从 0 开始学习 Transformer 番外：Transformer 如何穿梭时空？</title>
+
+<link rel='canonical' href='https://lilithsangreal.com/p/transformer-from-zero-3/'>
+
+<link rel="stylesheet" href="/scss/style.min.b949db8bead9abdc40291b93383b8da6abc3aa62e74f5580356c06ddbb792dab.css"><meta property='og:title' content='从 0 开始学习 Transformer 番外：Transformer 如何穿梭时空？'>
+<meta property='og:description' content='从 0 开始学习 Transformer 番外：Transformer 如何穿梭时空？'>
+<meta property='og:url' content='https://lilithsangreal.com/p/transformer-from-zero-3/'>
+<meta property='og:site_name' content='Lilith Sangreal'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2019-12-15T00:00:00&#43;00:00'/><meta property='article:modified_time' content='2019-12-15T00:00:00&#43;00:00'/><meta property='og:image' content='https://lilithsangreal.com/p/transformer-from-zero-3/the_transformer.png' />
+<meta name="twitter:title" content="从 0 开始学习 Transformer 番外：Transformer 如何穿梭时空？">
+<meta name="twitter:description" content="从 0 开始学习 Transformer 番外：Transformer 如何穿梭时空？"><meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content='https://lilithsangreal.com/p/transformer-from-zero-3/the_transformer.png' />
+    </head>
+    <body class="
+    article-page has-toc
+">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex 
+    
+        extended
+    
+">
+    
+        <div id="article-toolbar">
+            <a href="/" class="back-home">
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-chevron-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="15 6 9 12 15 18" />
+</svg>
+
+
+
+                <span>Back</span>
+            </a>
+        </div>
+    
+<main class="main full-width">
+    <article class="has-image main-article">
+    <header class="article-header">
+        <div class="article-image">
+            <a href="/p/transformer-from-zero-3/">
+                <img src="/p/transformer-from-zero-3/the_transformer_hu9dc15172e42e840ef18a078a4efb196f_44824_800x0_resize_box_3.png"
+                        srcset="/p/transformer-from-zero-3/the_transformer_hu9dc15172e42e840ef18a078a4efb196f_44824_800x0_resize_box_3.png 800w, /p/transformer-from-zero-3/the_transformer_hu9dc15172e42e840ef18a078a4efb196f_44824_1600x0_resize_box_3.png 1600w"
+                        width="800" 
+                        height="209" 
+                        loading="lazy"
+                        alt="Featured image of post 从 0 开始学习 Transformer 番外：Transformer 如何穿梭时空？" />
+                
+            </a>
+        </div>
+    
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/nlp/" >
+                NLP
+            </a>
+        
+            <a href="/categories/deep-learning/" >
+                Deep Learning
+            </a>
+        
+            <a href="/categories/%E4%BB%8E-0-%E5%BC%80%E5%A7%8B-transformer/" >
+                从 0 开始 Transformer
+            </a>
+        
+    </header>
+    
+
+    <h2 class="article-title">
+        <a href="/p/transformer-from-zero-3/">从 0 开始学习 Transformer 番外：Transformer 如何穿梭时空？</a>
+    </h2>
+
+    
+    <h3 class="article-subtitle">
+        从 0 开始学习 Transformer 番外：Transformer 如何穿梭时空？
+    </h3>
+    
+
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">Dec 15, 2019</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    2 minute read
+                </time>
+            </div>
+        
+    </footer>
+    
+</div>
+</header>
+
+    <section class="article-content">
+    
+    
+    <h1 id="从-0-开始学习-transformer-番外transformer-如何穿梭时空">从 0 开始学习 Transformer 番外：Transformer 如何穿梭时空？</h1>
+<!-- raw HTML omitted -->
+<ul>
+<li><a class="link" href="#%e4%bb%8e-0-%e5%bc%80%e5%a7%8b%e5%ad%a6%e4%b9%a0-transformer-%e7%95%aa%e5%a4%96transformer-%e5%a6%82%e4%bd%95%e7%a9%bf%e6%a2%ad%e6%97%b6%e7%a9%ba" >从 0 开始学习 Transformer 番外：Transformer 如何穿梭时空？</a>
+<ul>
+<li><a class="link" href="#1-%e5%89%8d%e8%a8%80" >1. 前言</a></li>
+<li><a class="link" href="#2-transformer-%e7%a9%bf%e8%b6%8a%e6%97%b6%e7%a9%ba%e4%ba%86" >2. Transformer 穿越时空了？</a></li>
+<li><a class="link" href="#3-%e4%bd%bf%e7%94%a8%e7%9c%9f%e5%80%bc%e6%a8%a1%e6%8b%9f%e8%be%93%e5%87%ba%e9%85%8d%e5%90%88%e5%89%8d%e7%9e%bb%e9%81%ae%e6%8c%a1" >3. 使用真值模拟输出配合前瞻遮挡</a></li>
+</ul>
+</li>
+</ul>
+<!-- raw HTML omitted -->
+<h2 id="1-前言">1. 前言</h2>
+<p>讲解 Transfomer 在训练阶段为何无需循环调用模型即可完成导师监督（teacher-forcing）法。讲解前瞻遮挡原理的精妙用法：通过一次正向传播，模拟模型逐个得到得到整个目标句子的预测过程。</p>
+<h2 id="2-transformer-穿越时空了">2. Transformer 穿越时空了？</h2>
+<p>首先，我们来看看 Transofrmer 是如何完成导师监督的（下面这是一张动图，依然来自<a class="link" href="https://jalammar.github.io/illustrated-transformer/"  target="_blank" rel="noopener"
+    >Jay Alammar</a>，有可能加载不出来，请参考原文The Decoder Side部分)：</p>
+<p><img src="/p/transformer-from-zero-3/attachments/enc_dec_trans.gif"
+	width="1438"
+	height="790"
+	srcset="/p/transformer-from-zero-3/attachments/enc_dec_trans_hu008d72f0cf7fd561f2e4d91327a6e9e1_3544662_480x0_resize_box.gif 480w, /p/transformer-from-zero-3/attachments/enc_dec_trans_hu008d72f0cf7fd561f2e4d91327a6e9e1_3544662_1024x0_resize_box.gif 1024w"
+	loading="lazy"
+	
+		alt="encoder-decoder"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="182"
+		data-flex-basis="436px"
+	
+></p>
+<p>这和本系列第二篇文章的 <code>7.评估</code> 部分是一致的：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-Python" data-lang="Python"><span class="o">...</span>
+  <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">MAX_LENGTH</span><span class="p">):</span>
+    <span class="n">enc_padding_mask</span><span class="p">,</span> <span class="n">combined_mask</span><span class="p">,</span> <span class="n">dec_padding_mask</span> <span class="o">=</span> <span class="n">create_masks</span><span class="p">(</span>
+        <span class="n">encoder_input</span><span class="p">,</span> <span class="n">output</span><span class="p">)</span>
+  
+    <span class="c1"># predictions.shape == (batch_size, seq_len, vocab_size)</span>
+    <span class="n">predictions</span><span class="p">,</span> <span class="n">attention_weights</span> <span class="o">=</span> <span class="n">transformer</span><span class="p">(</span><span class="n">encoder_input</span><span class="p">,</span> 
+                                                 <span class="n">output</span><span class="p">,</span>
+                                                 <span class="kc">False</span><span class="p">,</span>
+                                                 <span class="n">enc_padding_mask</span><span class="p">,</span>
+                                                 <span class="n">combined_mask</span><span class="p">,</span>
+                                                 <span class="n">dec_padding_mask</span><span class="p">)</span>
+    
+    <span class="c1"># 从 seq_len 维度选择最后一个词</span>
+    <span class="n">predictions</span> <span class="o">=</span> <span class="n">predictions</span><span class="p">[:</span> <span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">:,</span> <span class="p">:]</span>  <span class="c1"># (batch_size, 1, vocab_size)</span>
+
+    <span class="n">predicted_id</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">cast</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">predictions</span><span class="p">,</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">),</span> <span class="n">tf</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span>
+    
+    <span class="c1"># 如果 predicted_id 等于结束标记，就返回结果</span>
+    <span class="k">if</span> <span class="n">predicted_id</span> <span class="o">==</span> <span class="n">tokenizer_en</span><span class="o">.</span><span class="n">vocab_size</span><span class="o">+</span><span class="mi">1</span><span class="p">:</span>
+      <span class="k">return</span> <span class="n">tf</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span> <span class="n">attention_weights</span>
+    
+    <span class="c1"># 连接 predicted_id 与输出，作为解码器的输入传递到解码器。</span>
+    <span class="n">output</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">output</span><span class="p">,</span> <span class="n">predicted_id</span><span class="p">],</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+<span class="o">...</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>代码和动图过程一致。想要预测<code>I am a student</code>。首先我们将其处理成：<code>&lt;SOS&gt; I am a student</code> 作为解码器端的输入。而我们预期需要的得到的输出是 <code>I am a student &lt;EOS&gt;</code>。</p>
+<p>显然，第一次传输给解码器端的输入，只是一个开始符号：</p>
+<p><code>&lt;SOS&gt;</code></p>
+<p>此时预测出的是第一个单词:</p>
+<p><code>I</code></p>
+<p>然后，将预测出的第一个单词结合原输入一起输入解码器端：</p>
+<p><code>&lt;SOS&gt; I</code></p>
+<p>得到新的输出:</p>
+<p><code>I am</code></p>
+<p>这时我们将最后一个单词 <code>am</code> 结合上一步输入一起输入解码器端：</p>
+<p><code>&lt;SOS&gt; I am</code></p>
+<p>得到新的输出：</p>
+<p><code>&lt;SOS&gt; I am a</code></p>
+<p>反复此过程，直到新的输出最后一个单词代表结束符号 <code>&lt;EOS&gt;</code>。返回上一步输出（上步输出不包含 <code>&lt;EOS&gt;</code>）。</p>
+<p>显然，每一步预测都需要<strong>依赖上一步预测的结果</strong>。</p>
+<p>而看过前两篇文章的聪明网友一定发现了，我们在训练过程中，并没有循环调用这个步骤，而是直接将整个句子输入给编码器端。</p>
+<p>也就是说，训练过程并没有循环依赖前一次输出的步骤。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-Python" data-lang="Python"><span class="o">...</span>
+<span class="c1"># 一个训练步骤</span>
+<span class="nd">@tf</span><span class="o">.</span><span class="n">function</span><span class="p">(</span><span class="n">input_signature</span><span class="o">=</span><span class="n">train_step_signature</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">train_step</span><span class="p">(</span><span class="n">inp</span><span class="p">,</span> <span class="n">tar</span><span class="p">):</span>
+  <span class="n">tar_inp</span> <span class="o">=</span> <span class="n">tar</span><span class="p">[:,</span> <span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+  <span class="n">tar_real</span> <span class="o">=</span> <span class="n">tar</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">:]</span>
+  
+  <span class="n">enc_padding_mask</span><span class="p">,</span> <span class="n">combined_mask</span><span class="p">,</span> <span class="n">dec_padding_mask</span> <span class="o">=</span> <span class="n">create_masks</span><span class="p">(</span><span class="n">inp</span><span class="p">,</span> <span class="n">tar_inp</span><span class="p">)</span>
+  
+  <span class="k">with</span> <span class="n">tf</span><span class="o">.</span><span class="n">GradientTape</span><span class="p">()</span> <span class="k">as</span> <span class="n">tape</span><span class="p">:</span>
+    <span class="n">predictions</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">transformer</span><span class="p">(</span><span class="n">inp</span><span class="p">,</span> <span class="n">tar_inp</span><span class="p">,</span> 
+                                 <span class="kc">True</span><span class="p">,</span> 
+                                 <span class="n">enc_padding_mask</span><span class="p">,</span> 
+                                 <span class="n">combined_mask</span><span class="p">,</span> 
+                                 <span class="n">dec_padding_mask</span><span class="p">)</span>
+    <span class="n">loss</span> <span class="o">=</span> <span class="n">loss_function</span><span class="p">(</span><span class="n">tar_real</span><span class="p">,</span> <span class="n">predictions</span><span class="p">)</span>
+<span class="o">...</span>
+<span class="c1"># 训练多个步骤</span>
+<span class="c1"># inp -&gt; portuguese, tar -&gt; english</span>
+  <span class="k">for</span> <span class="p">(</span><span class="n">batch</span><span class="p">,</span> <span class="p">(</span><span class="n">inp</span><span class="p">,</span> <span class="n">tar</span><span class="p">))</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">train_dataset</span><span class="p">):</span>
+    <span class="n">train_step</span><span class="p">(</span><span class="n">inp</span><span class="p">,</span> <span class="n">tar</span><span class="p">)</span>
+<span class="o">...</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>Transformer 是如何在训练阶段通过一次预测过程就完成了本应循环一个句子长度那么多次的预测过程呢？莫非 Transformer 穿越时空了吗？</p>
+<h2 id="3-使用真值模拟输出配合前瞻遮挡">3. 使用真值模拟输出配合前瞻遮挡</h2>
+<p>因为后续的计算，如残差、拆成多头、编码器解码器注意力、全连接网络等等，都不会改变<strong>前瞻遮挡对于原输入句子和输出句子的意义</strong>（不放心的同学可以结合代码追踪运行一下），所以将解码器端无伤大雅地简化为一个<strong>带有前瞻遮挡的自注意力机制</strong>。</p>
+<p>假设我们已经预测出了 <code>I am a</code>，需要预测出 <code>I am a Student</code></p>
+<p>那么输入序列将是 <code>&lt;SOS&gt; I am a</code>。其表示为 <code>(seq_len, depth)</code> （因为只考虑一个句子和单头，所以省略了前置维度<code>(batch, head_num)</code>）。</p>
+<p>对于注意力机制，Key 和 Query 都是输入序列。显然，其自注意力权重<code>(seq_len, seq_len)</code>示意图如下：</p>
+<p><img src="/p/transformer-from-zero-3/attachments/attention_mat.png"
+	width="905"
+	height="304"
+	srcset="/p/transformer-from-zero-3/attachments/attention_mat_hu1c7360b39f8366092233bc6b3fa167ec_7887_480x0_resize_box_3.png 480w, /p/transformer-from-zero-3/attachments/attention_mat_hu1c7360b39f8366092233bc6b3fa167ec_7887_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="atten_mat"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="297"
+		data-flex-basis="714px"
+	
+></p>
+<p>而生成的前瞻遮挡<code>(seq_len, seq_len)</code>示意图如下：</p>
+<p><img src="/p/transformer-from-zero-3/attachments/mask_mat.png"
+	width="889"
+	height="299"
+	srcset="/p/transformer-from-zero-3/attachments/mask_mat_hub1709c22cb77ae62ac76065a2f5b6dbd_10915_480x0_resize_box_3.png 480w, /p/transformer-from-zero-3/attachments/mask_mat_hub1709c22cb77ae62ac76065a2f5b6dbd_10915_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="mask_mat"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="297"
+		data-flex-basis="713px"
+	
+></p>
+<p>由于前瞻遮挡的存在，最终注意力权重将只留下左下标为 0 的深蓝色部分。</p>
+<p>这样的注意力矩阵乘上和 <code>&lt;SOS&gt; I am a</code> 依次对应的 Value <code>(seq_len, depth)</code>：</p>
+<p><img src="/p/transformer-from-zero-3/attachments/value_mat.png"
+	width="879"
+	height="301"
+	srcset="/p/transformer-from-zero-3/attachments/value_mat_huf3e1e20e8aa5980b1a78f5e272b9e106_5707_480x0_resize_box_3.png 480w, /p/transformer-from-zero-3/attachments/value_mat_huf3e1e20e8aa5980b1a78f5e272b9e106_5707_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="value_mat"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="292"
+		data-flex-basis="700px"
+	
+></p>
+<p>得到的结果<code>(seq_len, depth)</code>，便应该是 <code>I am a Student</code> 的表示。</p>
+<p><img src="/p/transformer-from-zero-3/attachments/output_mat.png"
+	width="876"
+	height="279"
+	srcset="/p/transformer-from-zero-3/attachments/output_mat_hu163084a5601872cfd75d6b463263827e_5708_480x0_resize_box_3.png 480w, /p/transformer-from-zero-3/attachments/output_mat_hu163084a5601872cfd75d6b463263827e_5708_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="output_mat"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="313"
+		data-flex-basis="753px"
+	
+></p>
+<p>观察此乘法的过程（注意力权重点乘Value），由于前瞻遮挡的存在，这输出中的 <code>I</code> 实际上只来自 <code>&lt;SOS&gt;</code> 。而 <code>am</code> 则来自 <code>&lt;SOS&gt; I</code> 的加权求和。同样的， <code>a</code> 来自 <code>&lt;SOS&gt; I am</code> 的加权求和。</p>
+<p>如此巧妙！不需要反复调用Tranformer，显然，由于前瞻遮挡，注意力权重求和的过程已经潜在地完成了每一步导师监督（teacher-forcing）法的过程。</p>
+<p>在预测过程中，由于我们没有目标序列的真值，我们无法提前知道结束符号 <code>EOS</code> 前每一步的输出。但训练过程中，我们早已经拥有了 <code>EOS</code> 前所有的真值，将真值作为模型 “本应该” 的输出序列，再输入解码器层，前瞻遮挡将潜在地一次完成每一步导师监督（teacher-forcing）法的过程。</p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+
+    
+        <link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/katex@0.13.13/dist/katex.min.css"integrity="sha384-RZU/ijkSsFbcmivfdRBQDtwuwVqK7GMOw6IMvKyeWL2K5UAlyp6WonmB8m7Jd0Hn"crossorigin="anonymous"
+            ><script 
+                src="https://cdn.jsdelivr.net/npm/katex@0.13.13/dist/katex.min.js"integrity="sha384-pK1WpvzWVBQiP0/GjnvRxV4mOb0oxFuyRxJlk6vVw146n3egcN5C925NCP7a7BY8"crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/katex@0.13.13/dist/contrib/auto-render.min.js"integrity="sha384-vZTG03m&#43;2yp6N6BNi5iM4rW4oIwk5DfcNdFfxkk9ZWpDriOkXX8voJBFrAO7MpVl"crossorigin="anonymous"
+                defer
+                >
+            </script><script>
+    window.addEventListener("DOMContentLoaded", () => {
+        renderMathInElement(document.querySelector(`.article-content`), {
+            delimiters: [
+                { left: "$$", right: "$$", display: true },
+                { left: "$", right: "$", display: false },
+                { left: "\\(", right: "\\)", display: false },
+                { left: "\\[", right: "\\]", display: true }
+            ]
+        });})
+</script>
+    
+</article>
+
+    
+
+    <aside class="related-contents--wrapper">
+    
+    
+        <h2 class="section-title">Related contents</h2>
+        <div class="related-contents">
+            <div class="flex article-list--tile">
+                
+                    
+<article class="has-image">
+    <a href="/p/transformer-from-zero-4/">
+        
+        
+            <div class="article-image">
+                <img src="/p/transformer-from-zero-4/the_transformer.02a726e225f7010356c7d65bfb3ee8d5_hu9dc15172e42e840ef18a078a4efb196f_44824_250x150_fill_box_smart1_3.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy"
+                        alt="Featured image of post 从 0 开始学习 Transformer 拾遗：文章本身的与解释"
+                        data-key="transformer-from-zero-4" 
+                        data-hash="md5-Aqcm4iX3AQNWx9Zb&#43;z7o1Q==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">从 0 开始学习 Transformer 拾遗：文章本身的与解释</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/transformer-from-zero-2/">
+        
+        
+            <div class="article-image">
+                <img src="/p/transformer-from-zero-2/the_transformer.02a726e225f7010356c7d65bfb3ee8d5_hu9dc15172e42e840ef18a078a4efb196f_44824_250x150_fill_box_smart1_3.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy"
+                        alt="Featured image of post 从 0 开始学习 Transformer 下篇：Transformer 训练与评估"
+                        data-key="transformer-from-zero-2" 
+                        data-hash="md5-Aqcm4iX3AQNWx9Zb&#43;z7o1Q==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">从 0 开始学习 Transformer 下篇：Transformer 训练与评估</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/transformer-from-zero-1/">
+        
+        
+            <div class="article-image">
+                <img src="/p/transformer-from-zero-1/the_transformer.02a726e225f7010356c7d65bfb3ee8d5_hu9dc15172e42e840ef18a078a4efb196f_44824_250x150_fill_box_smart1_3.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy"
+                        alt="Featured image of post 从 0 开始学习 Transformer 上篇：Transformer 搭建与理解"
+                        data-key="transformer-from-zero-1" 
+                        data-hash="md5-Aqcm4iX3AQNWx9Zb&#43;z7o1Q==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">从 0 开始学习 Transformer 上篇：Transformer 搭建与理解</h2>
+        </div>
+    </a>
+</article>
+                
+            </div>
+        </div>
+    
+</aside>
+
+     
+    
+        
+    <div class="disqus-container">
+    <div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "hugo-theme-stack" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+<style>
+    .disqus-container {
+        background-color: var(--card-background);
+        border-radius: var(--card-border-radius);
+        box-shadow: var(--shadow-l1);
+        padding: var(--card-padding);
+    }
+</style>
+
+<script>
+    window.addEventListener('onColorSchemeChange', (e) => {
+        if (DISQUS) {
+            DISQUS.reset({
+                reload: true
+            });
+        }
+    })
+</script>
+
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2019 - 
+        
+        2022 Lilith Sangreal
+    </section>
+    
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.8.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.css"integrity="sha256-c0uckgykQ9v5k&#43;IqViZOZKc47Jn7KQil4/MP3ySA3F8="crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.css"integrity="sha256-SBLU4vv6CA6lHsZ1XyTdhyjJxCjPif/TRkjnsyGAGnE="crossorigin="anonymous"
+            >
+
+            </main>
+    
+        <aside class="sidebar right-sidebar sticky">
+            <section class="widget archives">
+                <div class="widget-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+                </div>
+                <h2 class="widget-title section-title">Table of contents</h2>
+                
+                <div class="widget--toc">
+                    <nav id="TableOfContents">
+  <ol>
+    <li><a href="#1-前言">1. 前言</a></li>
+    <li><a href="#2-transformer-穿越时空了">2. Transformer 穿越时空了？</a></li>
+    <li><a href="#3-使用真值模拟输出配合前瞻遮挡">3. 使用真值模拟输出配合前瞻遮挡</a></li>
+  </ol>
+</nav>
+                </div>
+            </section>
+        </aside>
+    
+
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.5/dist/vibrant.min.js"integrity="sha256-5NovOZc4iwiAWTYIFiIM7DxKUXKWvpVEuMEPLzcm5/g="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>

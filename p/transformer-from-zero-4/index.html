@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="en-us">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='从 0 开始学习 Transformer 拾遗：文章本身的与解释'><title>从 0 开始学习 Transformer 拾遗：文章本身的与解释</title>
+
+<link rel='canonical' href='https://lilithsangreal.com/p/transformer-from-zero-4/'>
+
+<link rel="stylesheet" href="/scss/style.min.b949db8bead9abdc40291b93383b8da6abc3aa62e74f5580356c06ddbb792dab.css"><meta property='og:title' content='从 0 开始学习 Transformer 拾遗：文章本身的与解释'>
+<meta property='og:description' content='从 0 开始学习 Transformer 拾遗：文章本身的与解释'>
+<meta property='og:url' content='https://lilithsangreal.com/p/transformer-from-zero-4/'>
+<meta property='og:site_name' content='Lilith Sangreal'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2020-01-17T00:00:00&#43;00:00'/><meta property='article:modified_time' content='2020-01-17T00:00:00&#43;00:00'/><meta property='og:image' content='https://lilithsangreal.com/p/transformer-from-zero-4/the_transformer.png' />
+<meta name="twitter:title" content="从 0 开始学习 Transformer 拾遗：文章本身的与解释">
+<meta name="twitter:description" content="从 0 开始学习 Transformer 拾遗：文章本身的与解释"><meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content='https://lilithsangreal.com/p/transformer-from-zero-4/the_transformer.png' />
+    </head>
+    <body class="
+    article-page has-toc
+">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex 
+    
+        extended
+    
+">
+    
+        <div id="article-toolbar">
+            <a href="/" class="back-home">
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-chevron-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="15 6 9 12 15 18" />
+</svg>
+
+
+
+                <span>Back</span>
+            </a>
+        </div>
+    
+<main class="main full-width">
+    <article class="has-image main-article">
+    <header class="article-header">
+        <div class="article-image">
+            <a href="/p/transformer-from-zero-4/">
+                <img src="/p/transformer-from-zero-4/the_transformer_hu9dc15172e42e840ef18a078a4efb196f_44824_800x0_resize_box_3.png"
+                        srcset="/p/transformer-from-zero-4/the_transformer_hu9dc15172e42e840ef18a078a4efb196f_44824_800x0_resize_box_3.png 800w, /p/transformer-from-zero-4/the_transformer_hu9dc15172e42e840ef18a078a4efb196f_44824_1600x0_resize_box_3.png 1600w"
+                        width="800" 
+                        height="209" 
+                        loading="lazy"
+                        alt="Featured image of post 从 0 开始学习 Transformer 拾遗：文章本身的与解释" />
+                
+            </a>
+        </div>
+    
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/nlp/" >
+                NLP
+            </a>
+        
+            <a href="/categories/deep-learning/" >
+                Deep Learning
+            </a>
+        
+            <a href="/categories/%E4%BB%8E-0-%E5%BC%80%E5%A7%8B-transformer/" >
+                从 0 开始 Transformer
+            </a>
+        
+    </header>
+    
+
+    <h2 class="article-title">
+        <a href="/p/transformer-from-zero-4/">从 0 开始学习 Transformer 拾遗：文章本身的与解释</a>
+    </h2>
+
+    
+    <h3 class="article-subtitle">
+        从 0 开始学习 Transformer 拾遗：文章本身的与解释
+    </h3>
+    
+
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">Jan 17, 2020</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    1 minute read
+                </time>
+            </div>
+        
+    </footer>
+    
+</div>
+</header>
+
+    <section class="article-content">
+    
+    
+    <h1 id="从-0-开始学习-transformer-拾遗文章本身的与解释">从 0 开始学习 Transformer 拾遗：文章本身的与解释</h1>
+<p><strong>首先感谢中科院计算所王子和先生提供的宝贵意见。</strong></p>
+<p>由于文章结构的关系，为了能够同时兼顾代码的真实和描述的通俗。我使用了一些可能会有一定误导性的举例说明。在这里做一些解释。</p>
+<h2 id="1-关于-batch_size">1. 关于 batch_size</h2>
+<p>在本系列上篇的 5.2.2. 使用向量化来提升效率，一节中。我使用了这样的描述：</p>
+<blockquote>
+<p>举个例子：若有 <code>batch_size</code> 批次，每批次 <code>N</code> 条的 Query，Key。 其计算完全可以组织成 <code>(batch_size, N, seq_len_q, depth)</code>点乘<code>(batch_size, N, seq_len_q, depth)</code>的转置，最终得到<code>(batch_size, N, seq_len_q, seq_len_k)</code> 形状的张量。</p>
+</blockquote>
+<p>熟悉深度学习的同学会发现，<code>batch_size</code> 这样的名字通常是用来描述一个批次的尺寸的，而并非描述批次数量。在 NLP 中，一次训练为一个批（batch），而一批若有 64 个句子，则 <code>batch_size</code> 为 64。在Transformer的实现中，它也是这样的含义。</p>
+<p>举这个例子时，我是从最右维度为最小单位描述的，那么从最右数，第一维度是词嵌入（或特征向量）的维度，第二个维度是句子的维度，那第三个维度只能是批次的尺寸（而事实上，第三个维度<code>N</code> 是多头注意力的头数，是一个临时加入的维度，第四个维度才是批次的尺寸），描述这段文字的时候还没有介绍多头注意力，所以无奈之举将 <code>batch_size</code> 临时改了含义。</p>
+<h2 id="2-关于多头注意力的计算图示带来的误导">2. 关于多头注意力的计算图示带来的误导</h2>
+<p><img src="/p/transformer-from-zero-4/attachments/mul_attention2.png"
+	width="1436"
+	height="804"
+	srcset="/p/transformer-from-zero-4/attachments/mul_attention2_hua474a07e32ad4c44bf3c82d3f49b46fc_166831_480x0_resize_box_3.png 480w, /p/transformer-from-zero-4/attachments/mul_attention2_hua474a07e32ad4c44bf3c82d3f49b46fc_166831_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="mul_attention1"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="178"
+		data-flex-basis="428px"
+	
+></p>
+<p>这张图引用自国外的知名博客（在本系列上篇中提及）。显然为了能够更加直观易懂，这张图并非是基于 Transformer 真实的实现绘制的，而是按照多头注意力的原理绘制的。</p>
+<p>但是一些读者看到这篇文章再结合代码可能会带来一些困惑。</p>
+<p>在代码中，有两个关键的尺寸 <code>depth</code> 和 <code>d_model</code>。事实上，前者和后者的唯一关系是，前者刚好是后者拆成的 8 份之一，两者之间的转换只存在于拆分多头步骤，并没有其他任何映射关系（全连接网络）。</p>
+<p>由于这张图的抽象化：词嵌入的矩阵看起来显然小于 8 个头的 K Q V；最后多头拼接的一个长长的结果$W^O$转换成一个 $Z$，读者可能会认为词嵌入的深度是 <code>depth</code> ，再经过一次全连接网络得到一个<code>d_model</code> 然后拆成多头，最后输出结果拼成 <code>d_model</code> 再经过一次全连接得到 <code>depth</code>，循环往复。</p>
+<p>事实上并不是这样，在多个编码器解码器层中，从一开始的词嵌入的深度就是 <code>d_model</code>，经过一次全连接网络得到映射后的KQV——深度同样是 <code>d_model</code>，然后拆成多头，计算后拼接恰好也是<code>d_model</code>。再回到一开始，循环往复。</p>
+<p>也就是说，每一层注意力机制外，只有一层全连接网络。</p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+
+    
+        <link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/katex@0.13.13/dist/katex.min.css"integrity="sha384-RZU/ijkSsFbcmivfdRBQDtwuwVqK7GMOw6IMvKyeWL2K5UAlyp6WonmB8m7Jd0Hn"crossorigin="anonymous"
+            ><script 
+                src="https://cdn.jsdelivr.net/npm/katex@0.13.13/dist/katex.min.js"integrity="sha384-pK1WpvzWVBQiP0/GjnvRxV4mOb0oxFuyRxJlk6vVw146n3egcN5C925NCP7a7BY8"crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/katex@0.13.13/dist/contrib/auto-render.min.js"integrity="sha384-vZTG03m&#43;2yp6N6BNi5iM4rW4oIwk5DfcNdFfxkk9ZWpDriOkXX8voJBFrAO7MpVl"crossorigin="anonymous"
+                defer
+                >
+            </script><script>
+    window.addEventListener("DOMContentLoaded", () => {
+        renderMathInElement(document.querySelector(`.article-content`), {
+            delimiters: [
+                { left: "$$", right: "$$", display: true },
+                { left: "$", right: "$", display: false },
+                { left: "\\(", right: "\\)", display: false },
+                { left: "\\[", right: "\\]", display: true }
+            ]
+        });})
+</script>
+    
+</article>
+
+    
+
+    <aside class="related-contents--wrapper">
+    
+    
+        <h2 class="section-title">Related contents</h2>
+        <div class="related-contents">
+            <div class="flex article-list--tile">
+                
+                    
+<article class="has-image">
+    <a href="/p/transformer-from-zero-3/">
+        
+        
+            <div class="article-image">
+                <img src="/p/transformer-from-zero-3/the_transformer.02a726e225f7010356c7d65bfb3ee8d5_hu9dc15172e42e840ef18a078a4efb196f_44824_250x150_fill_box_smart1_3.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy"
+                        alt="Featured image of post 从 0 开始学习 Transformer 番外：Transformer 如何穿梭时空？"
+                        data-key="transformer-from-zero-3" 
+                        data-hash="md5-Aqcm4iX3AQNWx9Zb&#43;z7o1Q==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">从 0 开始学习 Transformer 番外：Transformer 如何穿梭时空？</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/transformer-from-zero-2/">
+        
+        
+            <div class="article-image">
+                <img src="/p/transformer-from-zero-2/the_transformer.02a726e225f7010356c7d65bfb3ee8d5_hu9dc15172e42e840ef18a078a4efb196f_44824_250x150_fill_box_smart1_3.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy"
+                        alt="Featured image of post 从 0 开始学习 Transformer 下篇：Transformer 训练与评估"
+                        data-key="transformer-from-zero-2" 
+                        data-hash="md5-Aqcm4iX3AQNWx9Zb&#43;z7o1Q==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">从 0 开始学习 Transformer 下篇：Transformer 训练与评估</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/transformer-from-zero-1/">
+        
+        
+            <div class="article-image">
+                <img src="/p/transformer-from-zero-1/the_transformer.02a726e225f7010356c7d65bfb3ee8d5_hu9dc15172e42e840ef18a078a4efb196f_44824_250x150_fill_box_smart1_3.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy"
+                        alt="Featured image of post 从 0 开始学习 Transformer 上篇：Transformer 搭建与理解"
+                        data-key="transformer-from-zero-1" 
+                        data-hash="md5-Aqcm4iX3AQNWx9Zb&#43;z7o1Q==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">从 0 开始学习 Transformer 上篇：Transformer 搭建与理解</h2>
+        </div>
+    </a>
+</article>
+                
+            </div>
+        </div>
+    
+</aside>
+
+     
+    
+        
+    <div class="disqus-container">
+    <div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "hugo-theme-stack" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+<style>
+    .disqus-container {
+        background-color: var(--card-background);
+        border-radius: var(--card-border-radius);
+        box-shadow: var(--shadow-l1);
+        padding: var(--card-padding);
+    }
+</style>
+
+<script>
+    window.addEventListener('onColorSchemeChange', (e) => {
+        if (DISQUS) {
+            DISQUS.reset({
+                reload: true
+            });
+        }
+    })
+</script>
+
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2019 - 
+        
+        2022 Lilith Sangreal
+    </section>
+    
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.8.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.css"integrity="sha256-c0uckgykQ9v5k&#43;IqViZOZKc47Jn7KQil4/MP3ySA3F8="crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.css"integrity="sha256-SBLU4vv6CA6lHsZ1XyTdhyjJxCjPif/TRkjnsyGAGnE="crossorigin="anonymous"
+            >
+
+            </main>
+    
+        <aside class="sidebar right-sidebar sticky">
+            <section class="widget archives">
+                <div class="widget-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+                </div>
+                <h2 class="widget-title section-title">Table of contents</h2>
+                
+                <div class="widget--toc">
+                    <nav id="TableOfContents">
+  <ol>
+    <li><a href="#1-关于-batch_size">1. 关于 batch_size</a></li>
+    <li><a href="#2-关于多头注意力的计算图示带来的误导">2. 关于多头注意力的计算图示带来的误导</a></li>
+  </ol>
+</nav>
+                </div>
+            </section>
+        </aside>
+    
+
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.5/dist/vibrant.min.js"integrity="sha256-5NovOZc4iwiAWTYIFiIM7DxKUXKWvpVEuMEPLzcm5/g="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>
