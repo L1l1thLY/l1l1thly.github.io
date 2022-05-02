@@ -2,25 +2,37 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
-    <loc>https://lilithsangreal.com/about/</loc>
-    <lastmod>2022-02-22T00:00:00+00:00</lastmod>
+    <loc>https://lilithsangreal.com/categories/c&#43;&#43;/</loc>
+    <lastmod>2022-04-29T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://lilithsangreal.com/categories/</loc>
+    <lastmod>2022-04-29T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://lilithsangreal.com/</loc>
+    <lastmod>2022-04-29T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://lilithsangreal.com/post/</loc>
+    <lastmod>2022-04-29T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://lilithsangreal.com/categories/protobuf/</loc>
+    <lastmod>2022-04-29T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://lilithsangreal.com/categories/protocol-buffers/</loc>
+    <lastmod>2022-04-29T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://lilithsangreal.com/p/google-protocol-buffers-notes/</loc>
+    <lastmod>2022-04-29T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://lilithsangreal.com/about/</loc>
     <lastmod>2022-02-22T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://lilithsangreal.com/page/</loc>
     <lastmod>2022-02-22T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://lilithsangreal.com/categories/</loc>
-    <lastmod>2020-01-17T00:00:00+00:00</lastmod>
-  </url><url>
     <loc>https://lilithsangreal.com/categories/deep-learning/</loc>
     <lastmod>2020-01-17T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://lilithsangreal.com/categories/nlp/</loc>
-    <lastmod>2020-01-17T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>https://lilithsangreal.com/post/</loc>
     <lastmod>2020-01-17T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://lilithsangreal.com/categories/%E4%BB%8E-0-%E5%BC%80%E5%A7%8B-transformer/</loc>
