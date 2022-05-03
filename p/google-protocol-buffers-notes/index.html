@@ -15,7 +15,7 @@
     <meta name="twitter:image" content='https://lilithsangreal.com/p/google-protocol-buffers-notes/attachments/2022-04-29-16-27-11.png' />
     </head>
     <body class="
-    article-page 
+    article-page has-toc
 ">
     <script>
         (function() {
@@ -41,193 +41,22 @@
 </script>
 <div class="container main-container flex 
     
-        on-phone--column extended
+        extended
     
 ">
     
-        <aside class="sidebar left-sidebar sticky">
-    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="Toggle Menu">
-        <span class="hamburger-box">
-            <span class="hamburger-inner"></span>
-        </span>
-    </button>
-
-    <header class="site-info">
-        
-            
-            <figure class="site-avatar">
-                <a href="/">
-                
-                    
-                    
-                    
-                        
-                        <img src="/images/avatar_hub2e5e0ee896a35ef30e87da7e9f71a6e_16593_300x0_resize_q75_box.jpeg" width="300"
-                            height="300" class="site-logo" loading="lazy" alt="Avatar">
-                    
-                
-                </a>
-                
-                    <span class="emoji">🌞</span>
-                
-            </figure>
-            
-        
-        
-        <h1 class="site-name"><a href="/">Lilith Sangreal</a></h1>
-        <h2 class="site-description">暴风雨来临，电闪又雷鸣。</h2><ol class="social-menu">
-                
-                    <li>
-                        <a 
-                            href='https://github.com/L1l1thLY'
-                            target="_blank"
-                            title="GitHub"
-                        >
-                            
-                            
-                                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
-</svg>
-
-
-
-                            
-                        </a>
-                    </li>
-                
-            </ol></header>
-
-    <ol class="menu" id="main-menu">
-        
-        
-        
-
-        <li >
-            <a href='/' target="_blank">
-                
-                
-                
-                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+        <div id="article-toolbar">
+            <a href="/" class="back-home">
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-chevron-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
   <path stroke="none" d="M0 0h24v24H0z"/>
-  <polyline points="5 12 3 12 12 3 21 12 19 12" />
-  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
-  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+  <polyline points="15 6 9 12 15 18" />
 </svg>
 
 
 
-                
-                <span>Home</span>
+                <span>Back</span>
             </a>
-        </li>
-        
-        
-
-        <li >
-            <a href='/about/' >
-                
-                
-                
-                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <path stroke="none" d="M0 0h24v24H0z"/>
-  <circle cx="12" cy="7" r="4" />
-  <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
-</svg>
-
-
-
-                
-                <span>About</span>
-            </a>
-        </li>
-        
-        
-
-        <li >
-            <a href='/archives/' >
-                
-                
-                
-                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <path stroke="none" d="M0 0h24v24H0z"/>
-  <rect x="3" y="4" width="18" height="4" rx="2" />
-  <path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-10" />
-  <line x1="10" y1="12" x2="14" y2="12" />
-</svg>
-
-
-
-                
-                <span>Archives</span>
-            </a>
-        </li>
-        
-        
-
-        <li >
-            <a href='/search/' >
-                
-                
-                
-                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <path stroke="none" d="M0 0h24v24H0z"/>
-  <circle cx="10" cy="10" r="7" />
-  <line x1="21" y1="21" x2="15" y2="15" />
-</svg>
-
-
-
-                
-                <span>Search</span>
-            </a>
-        </li>
-        
-        
-
-        <li >
-            <a href='/links/' >
-                
-                
-                
-                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-link" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <path stroke="none" d="M0 0h24v24H0z"/>
-  <path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5" />
-  <path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5" />
-</svg>
-
-
-
-                
-                <span>Links</span>
-            </a>
-        </li>
-        
-
-        
-            <li id="dark-mode-toggle">
-                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <path stroke="none" d="M0 0h24v24H0z"/>
-  <circle cx="8" cy="12" r="2" />
-  <rect x="2" y="6" width="20" height="12" rx="6" />
-</svg>
-
-
-
-                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <path stroke="none" d="M0 0h24v24H0z"/>
-  <circle cx="16" cy="12" r="2" />
-  <rect x="2" y="6" width="20" height="12" rx="6" />
-</svg>
-
-
-
-                <span>Dark Mode</span>
-            </li>
-        
-    </ol>
-</aside>
-
+        </div>
     
 <main class="main full-width">
     <article class="has-image main-article">
@@ -315,6 +144,13 @@
     
     
     <h1 id="protocol-buffers-编译器源码阅读">Protocol Buffers 编译器源码阅读</h1>
+<h2 id="前言">前言</h2>
+<p>Protocol Buffers （简称 pb/protobuf） 是谷歌公司开发的一款跨平台跨语言的结构数据序列化框架，可以使用 protobuf 的提供的编译器将定义好的数据模型（ proto文件 ）编译为各种语言，提供对应的特殊数据结构的序列化、反序列化能力。protobuf 性能好，语法简洁，广泛应用于 rpc 框架中，为其提供编解码的能力。</p>
+<p>除此之外，protobuf 还是一个优秀的 C++ 开源项目 <a class="link" href="https://github.com/protocolbuffers/protobuf"  target="_blank" rel="noopener"
+    >Github</a>，在社区里询问阅读什么项目提升自己的 C++ 编码能力时，也有很多人推荐阅读 protobuf 的源码。</p>
+<p>出于工作上的原因，最近我也对 protobuf 的编译器源码（Protocol buffers 3）进行一定阅读，发现它的代码整洁，逻辑清晰，设计也非常好。因此写一篇这样的文章记录一下阅读的一些收获。</p>
+<h2 id="编译器相关知识">编译器相关知识</h2>
+<p>如果完全没有编译器相关的知识，那么阅读 protobuf 的源码是无从下手的。和寻常的编译器一样，protobuf 也可以分为编译器前端和后端，并完成了一个从源语言到目标语言的转换。对于传统编程语言来说，即是从源代码到机器直接执行的机器码的转换。</p>
 <p><img src="/p/google-protocol-buffers-notes/attachments/2022-04-29-16-43-54.png"
 	width="2458"
 	height="592"
@@ -325,6 +161,32 @@
 		class="gallery-image" 
 		data-flex-grow="415"
 		data-flex-basis="996px"
+	
+></p>
+<p>如图所示，对于 protobuf 来说，源语言就是一个 proto 文件，定义了数据结构。而目标语言则是对应语言的源代码。以便于各种语言直接调用使用。</p>
+<p><img src="/p/google-protocol-buffers-notes/attachments/2022-05-02-20-18-41.png"
+	width="1958"
+	height="426"
+	srcset="/p/google-protocol-buffers-notes/attachments/2022-05-02-20-18-41_hu41127c18d30142f992fd9fc3cb5ea7a0_104474_480x0_resize_box_3.png 480w, /p/google-protocol-buffers-notes/attachments/2022-05-02-20-18-41_hu41127c18d30142f992fd9fc3cb5ea7a0_104474_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="459"
+		data-flex-basis="1103px"
+	
+></p>
+<p>目前 protobuf 支持的语言如下。也就是说，定义好的 proto 文件会转换为下列语言的源代码。</p>
+<p><img src="/p/google-protocol-buffers-notes/attachments/2022-05-02-20-17-51.png"
+	width="954"
+	height="592"
+	srcset="/p/google-protocol-buffers-notes/attachments/2022-05-02-20-17-51_hu6add5649c71dabf928d57d6fdc51d6a7_78843_480x0_resize_box_3.png 480w, /p/google-protocol-buffers-notes/attachments/2022-05-02-20-17-51_hu6add5649c71dabf928d57d6fdc51d6a7_78843_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="161"
+		data-flex-basis="386px"
 	
 ></p>
 <p><img src="/p/google-protocol-buffers-notes/attachments/2022-04-29-16-50-08.png"
@@ -339,6 +201,22 @@
 		data-flex-basis="717px"
 	
 ></p>
+<p>对于编译器来说，前端主要完成的工作是词法分析，语法分析，语义分析。</p>
+<p>假设我们已经完成了预编译器的工作（一般包括去除空格，插入头文件，展开宏等等……事实上，根据不同的语言复杂程度，预编译器的工作也可能会非常复杂）。假设我们的语言非常简单，不需要引入什么头文件，展开宏等等，那么输入的目标语言将会被去除多余的空格和换行符。</p>
+<p>这样，对于编译器来说，目标语言只是一串连续的字母和特殊符号的序列，比如：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback">whiletrue;
+</code></pre></td></tr></table>
+</div>
+</div><p>单个字母和符号一般不能表达什么含义，因此 <strong>词法分析</strong> 是将单词组合拆分成 token（单词）的形式， 如上述代码中的 <code>while</code> 和 <code>true</code>。经过词法分析，字母和特殊符号的序列就转化为了一串由单词形式组成的序列。</p>
+<p>而 <strong>语法分析</strong> 则是将这个单词的序列组织成一个抽象语法树（Abstract Syntax Tree，AST），后文会针对protobuf使用的语法分析方式介绍这一过程的实例。</p>
+<p>至此为止，其实编译器也只是将源语言，从一种不包含结构的序列形式转换成了含有结构的形式。这其中产生了任何的理解了吗？没有，至此位置，计算机只是对数据进行了一些处理工作，但并不知道我们的代码做了什么事情。</p>
+<p>但是组织一棵树的形式，则为语言初步理解源代码做了什么，做的事情是否合法提供了条件。编译器会反复阅读这棵树，根据这棵树的结构来分析语义，来判断程序员输入的东西是否合理。在这个过程中，编译器会为AST的每个节点填写一些属性。这就是 <strong>语义分析</strong>。</p>
+<h3 id="ll1-文法">LL(1) 文法</h3>
 
 </section>
 
@@ -536,6 +414,37 @@
             >
 
             </main>
+    
+        <aside class="sidebar right-sidebar sticky">
+            <section class="widget archives">
+                <div class="widget-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+                </div>
+                <h2 class="widget-title section-title">Table of contents</h2>
+                
+                <div class="widget--toc">
+                    <nav id="TableOfContents">
+  <ol>
+    <li><a href="#前言">前言</a></li>
+    <li><a href="#编译器相关知识">编译器相关知识</a>
+      <ol>
+        <li><a href="#ll1-文法">LL(1) 文法</a></li>
+      </ol>
+    </li>
+  </ol>
+</nav>
+                </div>
+            </section>
+        </aside>
     
 
         </div>
