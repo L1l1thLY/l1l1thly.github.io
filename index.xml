@@ -6,7 +6,170 @@
         <description>Recent content on Lilith Sangreal</description>
         <generator>Hugo -- gohugo.io</generator>
         <language>en-us</language>
-        <lastBuildDate>Fri, 29 Apr 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://lilithsangreal.com/index.xml" rel="self" type="application/rss+xml" /><item>
+        <lastBuildDate>Fri, 26 Aug 2022 19:46:00 +0800</lastBuildDate><atom:link href="https://lilithsangreal.com/index.xml" rel="self" type="application/rss+xml" /><item>
+        <title>iOS 性能指标工具集笔记</title>
+        <link>https://lilithsangreal.com/p/ios-%E6%80%A7%E8%83%BD%E6%8C%87%E6%A0%87%E5%B7%A5%E5%85%B7%E9%9B%86%E7%AC%94%E8%AE%B0/</link>
+        <pubDate>Fri, 26 Aug 2022 19:46:00 +0800</pubDate>
+        
+        <guid>https://lilithsangreal.com/p/ios-%E6%80%A7%E8%83%BD%E6%8C%87%E6%A0%87%E5%B7%A5%E5%85%B7%E9%9B%86%E7%AC%94%E8%AE%B0/</guid>
+        <description>&lt;h1 id=&#34;ios-性能指标工具集笔记&#34;&gt;iOS 性能指标工具集笔记&lt;/h1&gt;
+&lt;h2 id=&#34;综述&#34;&gt;综述&lt;/h2&gt;
+&lt;p&gt;优秀的产品对于应用的功耗表现也有所要求。因此 iOS 在开发过程中会使用 Instruments、Energy Gauges 和 Profiling 来分析和改进应用的功耗表现。对于 Beta 测试，也可以利用 Instruments 进行分析。&lt;/p&gt;
+&lt;p&gt;不考虑第三方框架，已经发布的 TestFlight / App Store 包，虽然我们仍有机会获取到一些崩溃日志（隐私日志里面的Crash日志等）。但这些很难让开发者量化分析应用的功耗表现，显然，我们需要更多数据。&lt;/p&gt;
+&lt;p&gt;为此苹果在 2019 年伴随iOS13和 Xcode11 发布了&lt;a class=&#34;link&#34; href=&#34;https://developer.apple.com/videos/play/wwdc2019/417&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;一系列工具&lt;/a&gt;用于收集和分析用于手机功耗表现相关的数据，这些工具大量出现了 Metrics 这个关键词，我认为可以直接翻译为指标，其实苹果是给用户提供了更多可量化的指标数据及其相关工具、框架，这是第一批发布的指标工具：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;XCTest Metrics：可以测量部分功能的性能和电池的寿命指标&lt;/li&gt;
+&lt;li&gt;MetricKit：一个用于收集诸多用户电池和性能表现相关数据的框架&lt;/li&gt;
+&lt;li&gt;Xcode Metrics Organizer：一个统计大盘数据概率，可以看所有用户的性能表现&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;img src=&#34;https://lilithsangreal.com/p/ios-%E6%80%A7%E8%83%BD%E6%8C%87%E6%A0%87%E5%B7%A5%E5%85%B7%E9%9B%86%E7%AC%94%E8%AE%B0/attachments/2022-08-29-20-24-13.png&#34;
+	width=&#34;1524&#34;
+	height=&#34;724&#34;
+	srcset=&#34;https://lilithsangreal.com/p/ios-%E6%80%A7%E8%83%BD%E6%8C%87%E6%A0%87%E5%B7%A5%E5%85%B7%E9%9B%86%E7%AC%94%E8%AE%B0/attachments/2022-08-29-20-24-13_hu8395fd6d9c64c5b16e27c74a7878ef13_475992_480x0_resize_box_3.png 480w, https://lilithsangreal.com/p/ios-%E6%80%A7%E8%83%BD%E6%8C%87%E6%A0%87%E5%B7%A5%E5%85%B7%E9%9B%86%E7%AC%94%E8%AE%B0/attachments/2022-08-29-20-24-13_hu8395fd6d9c64c5b16e27c74a7878ef13_475992_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;苹果描述的应用场景&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;210&#34;
+		data-flex-basis=&#34;505px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;上图为苹果描述的应用场景。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;首批提供的指标如下：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Battery Metrics：提供CPU、位置、显示、网络、蓝牙、多媒体和相册的功耗表现&lt;/li&gt;
+&lt;li&gt;Performance Metrics：提供挂起、磁盘、应用启动、内存和自定义间隔&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;在 2020 年，苹果再一次提升了这些指标工具的能力，发布了 &lt;a class=&#34;link&#34; href=&#34;https://developer.apple.com/videos/play/wwdc2020/10081&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Metric Kit2.0&lt;/a&gt;，拓展了三个指标集合 5:24&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;CPU 指令：能够给出一天内究竟有多少指令执行了，极度精确地给出App究竟做了多少事&lt;/li&gt;
+&lt;li&gt;滚动故障：用户感受到的动画丢帧/不流畅占正常动画的比例，并进一步介绍如何&lt;a class=&#34;link&#34; href=&#34;https://developer.apple.com/videos/play/wwdc2020/10077&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;用XCTest来排查与解决动画故障&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;APP 退出：给出一天内，APP究竟为什么退出了，退出了多少次。一个应用，除了正常退出，也会有很多情况&lt;a class=&#34;link&#34; href=&#34;https://developer.apple.com/videos/play/wwdc2020/10081&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;被苹果干掉&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;除了指标集合，苹果还推出了可以帮助定位和修复问题的数据工具 MetricKit 2.0 Diagnostics 8:14，包含指标类型如下：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;挂起：采样App对用户长时间无反应（主线程阻塞等）时的堆栈&lt;/li&gt;
+&lt;li&gt;CPU 异常：采样高CPU占用时的堆栈&lt;/li&gt;
+&lt;li&gt;磁盘写入异常：采样总写入次数过多，异常过量写入发生时的堆栈（突破每日1GB）&lt;/li&gt;
+&lt;li&gt;Crash：采样崩溃发生时的虚拟内存信息和堆栈&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;同时，升级了&lt;a class=&#34;link&#34; href=&#34;https://developer.apple.com/videos/play/wwdc2020/10076&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Xcode Metrics Organizer 分析性能指标的能力&lt;/a&gt;。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://lilithsangreal.com/p/ios-%E6%80%A7%E8%83%BD%E6%8C%87%E6%A0%87%E5%B7%A5%E5%85%B7%E9%9B%86%E7%AC%94%E8%AE%B0/attachments/2022-08-29-20-38-54.png&#34;
+	width=&#34;1266&#34;
+	height=&#34;548&#34;
+	srcset=&#34;https://lilithsangreal.com/p/ios-%E6%80%A7%E8%83%BD%E6%8C%87%E6%A0%87%E5%B7%A5%E5%85%B7%E9%9B%86%E7%AC%94%E8%AE%B0/attachments/2022-08-29-20-38-54_hu6618b3758494ae7799fa43085cda1b3d_197961_480x0_resize_box_3.png 480w, https://lilithsangreal.com/p/ios-%E6%80%A7%E8%83%BD%E6%8C%87%E6%A0%87%E5%B7%A5%E5%85%B7%E9%9B%86%E7%AC%94%E8%AE%B0/attachments/2022-08-29-20-38-54_hu6618b3758494ae7799fa43085cda1b3d_197961_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;231&#34;
+		data-flex-basis=&#34;554px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;h2 id=&#34;metrickit&#34;&gt;MetricKit&lt;/h2&gt;
+&lt;h3 id=&#34;battery-metrics-电池性能指标&#34;&gt;Battery Metrics 电池性能指标&lt;/h3&gt;
+&lt;h4 id=&#34;processing-metrics-处理器指标&#34;&gt;Processing Metrics 处理器指标&lt;/h4&gt;
+&lt;p&gt;提供了一下CPU/GPU时间，可以利用这些时间找寻一些不应该有的UI渲染和CPU工作。可以用于量化比较不同的功能算法实现效率。&lt;/p&gt;
+&lt;h4 id=&#34;location-metrics-定位指标&#34;&gt;Location Metrics 定位指标&lt;/h4&gt;
+&lt;p&gt;统计程序在前后台共计用了多久定位功能，定位功能的精确度有多高，防止定位持续空转或使用了过于精确的定位能力消耗额外电量。&lt;/p&gt;
+&lt;h4 id=&#34;display-metrics-显示指标&#34;&gt;Display Metrics 显示指标&lt;/h4&gt;
+&lt;p&gt;提供了平均像素亮度（APL），用于量化目前的UI设计会消耗多少电量。&lt;/p&gt;
+&lt;h4 id=&#34;networking-metrics-网络指标&#34;&gt;Networking Metrics 网络指标&lt;/h4&gt;
+&lt;p&gt;上传下载的字节数，网络的连通性。&lt;/p&gt;
+&lt;h3 id=&#34;performance-metrics-体验表现指标&#34;&gt;Performance Metrics 体验表现指标&lt;/h3&gt;
+&lt;h4 id=&#34;hang-metrics-无响应指标&#34;&gt;Hang Metrics 无响应指标&lt;/h4&gt;
+&lt;p&gt;提供一个直方图，表示界面对用户没有响应的时间比例。如果有异常，一般是UI线程做事情太多了，需要移到其他线程。&lt;/p&gt;
+&lt;h4 id=&#34;disk-metrics-磁盘指标&#34;&gt;Disk Metrics 磁盘指标&lt;/h4&gt;
+&lt;p&gt;提供了一些指标来判断是否有意料之外的磁盘写入。&lt;/p&gt;
+&lt;h4 id=&#34;application-launch-metrics-应用指标&#34;&gt;Application Launch Metrics 应用指标&lt;/h4&gt;
+&lt;p&gt;提供柱形图来量化启动和恢复的时间消耗，以便采取手段&lt;a class=&#34;link&#34; href=&#34;https://developer.apple.com/videos/play/wwdc2019/423/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;优化启动速度&lt;/a&gt;。&lt;/p&gt;
+&lt;h4 id=&#34;memory-metrics-内存指标&#34;&gt;Memory Metrics 内存指标&lt;/h4&gt;
+&lt;p&gt;提供挂起（suspended）平均内存和内存峰值。&lt;/p&gt;
+&lt;h2 id=&#34;xctest&#34;&gt;XCTest&lt;/h2&gt;
+&lt;p&gt;已有的Debug面板（可以Debug环境下看到CPU、内存、网络耗电量等等）和Instrument可以解决一些性能上的诊断问题：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://lilithsangreal.com/p/ios-%E6%80%A7%E8%83%BD%E6%8C%87%E6%A0%87%E5%B7%A5%E5%85%B7%E9%9B%86%E7%AC%94%E8%AE%B0/attachments/2022-08-30-22-16-54.png&#34;
+	width=&#34;3236&#34;
+	height=&#34;1034&#34;
+	srcset=&#34;https://lilithsangreal.com/p/ios-%E6%80%A7%E8%83%BD%E6%8C%87%E6%A0%87%E5%B7%A5%E5%85%B7%E9%9B%86%E7%AC%94%E8%AE%B0/attachments/2022-08-30-22-16-54_hu4bf90363a73f1c2e500e995c3533dfc4_2341238_480x0_resize_box_3.png 480w, https://lilithsangreal.com/p/ios-%E6%80%A7%E8%83%BD%E6%8C%87%E6%A0%87%E5%B7%A5%E5%85%B7%E9%9B%86%E7%AC%94%E8%AE%B0/attachments/2022-08-30-22-16-54_hu4bf90363a73f1c2e500e995c3533dfc4_2341238_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;312&#34;
+		data-flex-basis=&#34;751px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;新增的 XCTest 工具则是以一种单元测试的形式来测量业务逻辑的性能指标。把一些业务逻辑包裹在一个用例里面，并设定预期的性能指标，如APP启动速度：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://lilithsangreal.com/p/ios-%E6%80%A7%E8%83%BD%E6%8C%87%E6%A0%87%E5%B7%A5%E5%85%B7%E9%9B%86%E7%AC%94%E8%AE%B0/attachments/2022-08-30-22-25-13.png&#34;
+	width=&#34;882&#34;
+	height=&#34;200&#34;
+	srcset=&#34;https://lilithsangreal.com/p/ios-%E6%80%A7%E8%83%BD%E6%8C%87%E6%A0%87%E5%B7%A5%E5%85%B7%E9%9B%86%E7%AC%94%E8%AE%B0/attachments/2022-08-30-22-25-13_hudd58c299f11947cb9f34adf1dee892aa_147869_480x0_resize_box_3.png 480w, https://lilithsangreal.com/p/ios-%E6%80%A7%E8%83%BD%E6%8C%87%E6%A0%87%E5%B7%A5%E5%85%B7%E9%9B%86%E7%AC%94%E8%AE%B0/attachments/2022-08-30-22-25-13_hudd58c299f11947cb9f34adf1dee892aa_147869_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;441&#34;
+		data-flex-basis=&#34;1058px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;如果没能达到预期的指标，则会产生一个用例失败：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://lilithsangreal.com/p/ios-%E6%80%A7%E8%83%BD%E6%8C%87%E6%A0%87%E5%B7%A5%E5%85%B7%E9%9B%86%E7%AC%94%E8%AE%B0/attachments/2022-08-30-22-21-53.png&#34;
+	width=&#34;1104&#34;
+	height=&#34;396&#34;
+	srcset=&#34;https://lilithsangreal.com/p/ios-%E6%80%A7%E8%83%BD%E6%8C%87%E6%A0%87%E5%B7%A5%E5%85%B7%E9%9B%86%E7%AC%94%E8%AE%B0/attachments/2022-08-30-22-21-53_hucfe1a1cb878817941327e499ab463bac_563560_480x0_resize_box_3.png 480w, https://lilithsangreal.com/p/ios-%E6%80%A7%E8%83%BD%E6%8C%87%E6%A0%87%E5%B7%A5%E5%85%B7%E9%9B%86%E7%AC%94%E8%AE%B0/attachments/2022-08-30-22-21-53_hucfe1a1cb878817941327e499ab463bac_563560_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;278&#34;
+		data-flex-basis=&#34;669px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;也可以编写测量内存表现等多个维度的单元测试：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://lilithsangreal.com/p/ios-%E6%80%A7%E8%83%BD%E6%8C%87%E6%A0%87%E5%B7%A5%E5%85%B7%E9%9B%86%E7%AC%94%E8%AE%B0/attachments/2022-08-30-22-27-42.png&#34;
+	width=&#34;882&#34;
+	height=&#34;200&#34;
+	srcset=&#34;https://lilithsangreal.com/p/ios-%E6%80%A7%E8%83%BD%E6%8C%87%E6%A0%87%E5%B7%A5%E5%85%B7%E9%9B%86%E7%AC%94%E8%AE%B0/attachments/2022-08-30-22-27-42_hudd58c299f11947cb9f34adf1dee892aa_147869_480x0_resize_box_3.png 480w, https://lilithsangreal.com/p/ios-%E6%80%A7%E8%83%BD%E6%8C%87%E6%A0%87%E5%B7%A5%E5%85%B7%E9%9B%86%E7%AC%94%E8%AE%B0/attachments/2022-08-30-22-27-42_hudd58c299f11947cb9f34adf1dee892aa_147869_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;441&#34;
+		data-flex-basis=&#34;1058px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;h2 id=&#34;参考链接&#34;&gt;参考链接&lt;/h2&gt;
+&lt;p&gt;&lt;a class=&#34;link&#34; href=&#34;https://developer.apple.com/videos/play/wwdc2019/417&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;WWDC 2019 - Improving Battery Life and Performance&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a class=&#34;link&#34; href=&#34;https://developer.apple.com/videos/play/wwdc2020/10081&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;WWDC 2020 - What&amp;rsquo;s new in MetricKit&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a class=&#34;link&#34; href=&#34;https://developer.apple.com/videos/play/wwdc2020/10077&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;WWDC 2020 - Eliminate animation hitches with XCTest&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a class=&#34;link&#34; href=&#34;https://developer.apple.com/videos/play/wwdc2020/10078&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;WWDC 2020 - Why is my app getting killed?&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a class=&#34;link&#34; href=&#34;https://developer.apple.com/videos/play/wwdc2020/10076&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;WWDC 2020 - Diagnose performance issues with the Xcode Organizer&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a class=&#34;link&#34; href=&#34;https://developer.apple.com/videos/play/wwdc2021/10181&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;WWDC 2021 - Ultimate application performance survival guide&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a class=&#34;link&#34; href=&#34;https://developer.apple.com/videos/play/wwdc2021/10258&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;WWDC 2021 - Understand and eliminate hangs from your app&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a class=&#34;link&#34; href=&#34;https://developer.apple.com/videos/play/wwdc2021/10087&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;WWDC 2021 - Diagnose Power and Performance regressions in your app&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a class=&#34;link&#34; href=&#34;https://developer.apple.com/videos/play/wwdc2022/10082&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;WWDC 2022 - Track down hangs with Xcode and on-device detection&lt;/a&gt;&lt;/p&gt;
+</description>
+        </item>
+        <item>
         <title>Protocol Buffers 编译器源码阅读</title>
         <link>https://lilithsangreal.com/p/google-protocol-buffers-notes/</link>
         <pubDate>Fri, 29 Apr 2022 00:00:00 +0000</pubDate>

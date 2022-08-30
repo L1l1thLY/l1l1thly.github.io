@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>iOS on Lilith Sangreal</title>
+    <link>https://lilithsangreal.com/categories/ios/</link>
+    <description>Recent content in iOS on Lilith Sangreal</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Fri, 26 Aug 2022 19:46:00 +0800</lastBuildDate><atom:link href="https://lilithsangreal.com/categories/ios/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>iOS 性能指标工具集笔记</title>
+      <link>https://lilithsangreal.com/p/ios-%E6%80%A7%E8%83%BD%E6%8C%87%E6%A0%87%E5%B7%A5%E5%85%B7%E9%9B%86%E7%AC%94%E8%AE%B0/</link>
+      <pubDate>Fri, 26 Aug 2022 19:46:00 +0800</pubDate>
+      
+      <guid>https://lilithsangreal.com/p/ios-%E6%80%A7%E8%83%BD%E6%8C%87%E6%A0%87%E5%B7%A5%E5%85%B7%E9%9B%86%E7%AC%94%E8%AE%B0/</guid>
+      <description>iOS 性能指标工具集笔记 综述 优秀的产品对于应用的功耗表现也有所要求。因此 iOS 在开发过程中会使用 Instruments、Energy Gauges 和 Profiling 来分析和改进应用的功耗表现。对于 Beta 测试，也可以利用 Instruments 进行分析。
+不考虑第三方框架，已经发布的 TestFlight / App Store 包，虽然我们仍有机会获取到一些崩溃日志（隐私日志里面的Crash日志等）。但这些很难让开发者量化分析应用的功耗表现，显然，我们需要更多数据。
+为此苹果在 2019 年伴随iOS13和 Xcode11 发布了一系列工具用于收集和分析用于手机功耗表现相关的数据，这些工具大量出现了 Metrics 这个关键词，我认为可以直接翻译为指标，其实苹果是给用户提供了更多可量化的指标数据及其相关工具、框架，这是第一批发布的指标工具：
+ XCTest Metrics：可以测量部分功能的性能和电池的寿命指标 MetricKit：一个用于收集诸多用户电池和性能表现相关数据的框架 Xcode Metrics Organizer：一个统计大盘数据概率，可以看所有用户的性能表现   上图为苹果描述的应用场景。
+ 首批提供的指标如下：
+ Battery Metrics：提供CPU、位置、显示、网络、蓝牙、多媒体和相册的功耗表现 Performance Metrics：提供挂起、磁盘、应用启动、内存和自定义间隔  在 2020 年，苹果再一次提升了这些指标工具的能力，发布了 Metric Kit2.0，拓展了三个指标集合 5:24
+ CPU 指令：能够给出一天内究竟有多少指令执行了，极度精确地给出App究竟做了多少事 滚动故障：用户感受到的动画丢帧/不流畅占正常动画的比例，并进一步介绍如何用XCTest来排查与解决动画故障 APP 退出：给出一天内，APP究竟为什么退出了，退出了多少次。一个应用，除了正常退出，也会有很多情况被苹果干掉  除了指标集合，苹果还推出了可以帮助定位和修复问题的数据工具 MetricKit 2.0 Diagnostics 8:14，包含指标类型如下：
+ 挂起：采样App对用户长时间无反应（主线程阻塞等）时的堆栈 CPU 异常：采样高CPU占用时的堆栈 磁盘写入异常：采样总写入次数过多，异常过量写入发生时的堆栈（突破每日1GB） Crash：采样崩溃发生时的虚拟内存信息和堆栈  同时，升级了Xcode Metrics Organizer 分析性能指标的能力。</description>
+    </item>
+    
+  </channel>
+</rss>
