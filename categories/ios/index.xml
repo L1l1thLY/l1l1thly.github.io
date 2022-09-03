@@ -6,14 +6,26 @@
     <description>Recent content in iOS on Lilith Sangreal</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Fri, 26 Aug 2022 19:46:00 +0800</lastBuildDate><atom:link href="https://lilithsangreal.com/categories/ios/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sat, 03 Sep 2022 22:29:08 +0800</lastBuildDate><atom:link href="https://lilithsangreal.com/categories/ios/index.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title>iOS 性能指标工具集笔记</title>
-      <link>https://lilithsangreal.com/p/ios-%E6%80%A7%E8%83%BD%E6%8C%87%E6%A0%87%E5%B7%A5%E5%85%B7%E9%9B%86%E7%AC%94%E8%AE%B0/</link>
+      <title>iOS 性能指标工具集笔记 Vol.2 XCTest</title>
+      <link>https://lilithsangreal.com/p/ios-%E6%80%A7%E8%83%BD%E6%8C%87%E6%A0%87%E5%B7%A5%E5%85%B7%E9%9B%86%E7%AC%94%E8%AE%B0-vol.2-xctest/</link>
+      <pubDate>Sat, 03 Sep 2022 22:29:08 +0800</pubDate>
+      
+      <guid>https://lilithsangreal.com/p/ios-%E6%80%A7%E8%83%BD%E6%8C%87%E6%A0%87%E5%B7%A5%E5%85%B7%E9%9B%86%E7%AC%94%E8%AE%B0-vol.2-xctest/</guid>
+      <description>iOS 性能指标工具集笔记 Vol.2 XCTest 已有的Debug面板（可以Debug环境下看到CPU、内存、网络耗电量等等）和Instrument可以解决一些性能上的诊断问题：
+新增的 XCTest 工具则是以一种单元测试的形式来测量业务逻辑的性能指标。把一些业务逻辑包裹在一个用例里面，并设定预期的性能指标，如APP启动速度：
+如果没能达到预期的指标，则会产生一个用例失败：
+也可以编写测量内存表现等多个维度的单元测试：</description>
+    </item>
+    
+    <item>
+      <title>iOS 性能指标工具集笔记 Vol.1 MetricKit</title>
+      <link>https://lilithsangreal.com/p/ios-%E6%80%A7%E8%83%BD%E6%8C%87%E6%A0%87%E5%B7%A5%E5%85%B7%E9%9B%86%E7%AC%94%E8%AE%B0-vol.1-metrickit/</link>
       <pubDate>Fri, 26 Aug 2022 19:46:00 +0800</pubDate>
       
-      <guid>https://lilithsangreal.com/p/ios-%E6%80%A7%E8%83%BD%E6%8C%87%E6%A0%87%E5%B7%A5%E5%85%B7%E9%9B%86%E7%AC%94%E8%AE%B0/</guid>
-      <description>iOS 性能指标工具集笔记 综述 优秀的产品对于应用的功耗表现也有所要求。因此 iOS 在开发过程中会使用 Instruments、Energy Gauges 和 Profiling 来分析和改进应用的功耗表现。对于 Beta 测试，也可以利用 Instruments 进行分析。
+      <guid>https://lilithsangreal.com/p/ios-%E6%80%A7%E8%83%BD%E6%8C%87%E6%A0%87%E5%B7%A5%E5%85%B7%E9%9B%86%E7%AC%94%E8%AE%B0-vol.1-metrickit/</guid>
+      <description>iOS 性能指标工具集笔记 Vol.1 MetricKit 综述 优秀的产品对于应用的功耗表现也有所要求。因此 iOS 在开发过程中会使用 Instruments、Energy Gauges 和 Profiling 来分析和改进应用的功耗表现。对于 Beta 测试，也可以利用 Instruments 进行分析。
 不考虑第三方框架，已经发布的 TestFlight / App Store 包，虽然我们仍有机会获取到一些崩溃日志（隐私日志里面的Crash日志等）。但这些很难让开发者量化分析应用的功耗表现，显然，我们需要更多数据。
 为此苹果在 2019 年伴随iOS13和 Xcode11 发布了一系列工具用于收集和分析用于手机功耗表现相关的数据，这些工具大量出现了 Metrics 这个关键词，我认为可以直接翻译为指标，其实苹果是给用户提供了更多可量化的指标数据及其相关工具、框架，这是第一批发布的指标工具：
  XCTest Metrics：可以测量部分功能的性能和电池的寿命指标 MetricKit：一个用于收集诸多用户电池和性能表现相关数据的框架 Xcode Metrics Organizer：一个统计大盘数据概率，可以看所有用户的性能表现   上图为苹果描述的应用场景。

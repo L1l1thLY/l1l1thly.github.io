@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="en-us">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='iOS 性能指标工具集笔记 Vol.1 MetricKit 综述 优秀的产品对于应用的功耗表现也有所要求。因此 iOS 在开发过程中会使用 Instruments、Energy Gauges 和 Profiling 来分析和改进应用的功耗表现。对于 Beta 测试，也可以利用 Instruments 进行分析。
+不考虑第三方框架，已经发布的 TestFlight / App Store 包，虽然我们仍有机会获取到一些崩溃日志（隐私日志里面的Crash日志等）。但这些很难让开发者量化分析应用的功耗表现，显然，我们需要更多数据。
+为此苹果在 2019 年伴随iOS13和 Xcode11 发布了一系列工具用于收集和分析用于手机功耗表现相关的数据，这些工具大量出现了 Metrics 这个关键词，我认为可以直接翻译为指标，其实苹果是给用户提供了更多可量化的指标数据及其相关工具、框架，这是第一批发布的指标工具：
+ XCTest Metrics：可以测量部分功能的性能和电池的寿命指标 MetricKit：一个用于收集诸多用户电池和性能表现相关数据的框架 Xcode Metrics Organizer：一个统计大盘数据概率，可以看所有用户的性能表现   上图为苹果描述的应用场景。
+ 首批提供的指标如下：
+ Battery Metrics：提供CPU、位置、显示、网络、蓝牙、多媒体和相册的功耗表现 Performance Metrics：提供挂起、磁盘、应用启动、内存和自定义间隔  在 2020 年，苹果再一次提升了这些指标工具的能力，发布了 Metric Kit2.0，拓展了三个指标集合 5:24
+ CPU 指令：能够给出一天内究竟有多少指令执行了，极度精确地给出App究竟做了多少事 滚动故障：用户感受到的动画丢帧/不流畅占正常动画的比例，并进一步介绍如何用XCTest来排查与解决动画故障 APP 退出：给出一天内，APP究竟为什么退出了，退出了多少次。一个应用，除了正常退出，也会有很多情况被苹果干掉  除了指标集合，苹果还推出了可以帮助定位和修复问题的数据工具 MetricKit 2.0 Diagnostics 8:14，包含指标类型如下：
+ 挂起：采样App对用户长时间无反应（主线程阻塞等）时的堆栈 CPU 异常：采样高CPU占用时的堆栈 磁盘写入异常：采样总写入次数过多，异常过量写入发生时的堆栈（突破每日1GB） Crash：采样崩溃发生时的虚拟内存信息和堆栈  同时，升级了Xcode Metrics Organizer 分析性能指标的能力。'><title>iOS 性能指标工具集笔记 Vol.1 MetricKit</title>
+
+<link rel='canonical' href='https://lilithsangreal.com/p/ios-%E6%80%A7%E8%83%BD%E6%8C%87%E6%A0%87%E5%B7%A5%E5%85%B7%E9%9B%86%E7%AC%94%E8%AE%B0-vol.1-metrickit/'>
+
+<link rel="stylesheet" href="/scss/style.min.b949db8bead9abdc40291b93383b8da6abc3aa62e74f5580356c06ddbb792dab.css"><meta property='og:title' content='iOS 性能指标工具集笔记 Vol.1 MetricKit'>
+<meta property='og:description' content='iOS 性能指标工具集笔记 Vol.1 MetricKit 综述 优秀的产品对于应用的功耗表现也有所要求。因此 iOS 在开发过程中会使用 Instruments、Energy Gauges 和 Profiling 来分析和改进应用的功耗表现。对于 Beta 测试，也可以利用 Instruments 进行分析。
+不考虑第三方框架，已经发布的 TestFlight / App Store 包，虽然我们仍有机会获取到一些崩溃日志（隐私日志里面的Crash日志等）。但这些很难让开发者量化分析应用的功耗表现，显然，我们需要更多数据。
+为此苹果在 2019 年伴随iOS13和 Xcode11 发布了一系列工具用于收集和分析用于手机功耗表现相关的数据，这些工具大量出现了 Metrics 这个关键词，我认为可以直接翻译为指标，其实苹果是给用户提供了更多可量化的指标数据及其相关工具、框架，这是第一批发布的指标工具：
+ XCTest Metrics：可以测量部分功能的性能和电池的寿命指标 MetricKit：一个用于收集诸多用户电池和性能表现相关数据的框架 Xcode Metrics Organizer：一个统计大盘数据概率，可以看所有用户的性能表现   上图为苹果描述的应用场景。
+ 首批提供的指标如下：
+ Battery Metrics：提供CPU、位置、显示、网络、蓝牙、多媒体和相册的功耗表现 Performance Metrics：提供挂起、磁盘、应用启动、内存和自定义间隔  在 2020 年，苹果再一次提升了这些指标工具的能力，发布了 Metric Kit2.0，拓展了三个指标集合 5:24
+ CPU 指令：能够给出一天内究竟有多少指令执行了，极度精确地给出App究竟做了多少事 滚动故障：用户感受到的动画丢帧/不流畅占正常动画的比例，并进一步介绍如何用XCTest来排查与解决动画故障 APP 退出：给出一天内，APP究竟为什么退出了，退出了多少次。一个应用，除了正常退出，也会有很多情况被苹果干掉  除了指标集合，苹果还推出了可以帮助定位和修复问题的数据工具 MetricKit 2.0 Diagnostics 8:14，包含指标类型如下：
+ 挂起：采样App对用户长时间无反应（主线程阻塞等）时的堆栈 CPU 异常：采样高CPU占用时的堆栈 磁盘写入异常：采样总写入次数过多，异常过量写入发生时的堆栈（突破每日1GB） Crash：采样崩溃发生时的虚拟内存信息和堆栈  同时，升级了Xcode Metrics Organizer 分析性能指标的能力。'>
+<meta property='og:url' content='https://lilithsangreal.com/p/ios-%E6%80%A7%E8%83%BD%E6%8C%87%E6%A0%87%E5%B7%A5%E5%85%B7%E9%9B%86%E7%AC%94%E8%AE%B0-vol.1-metrickit/'>
+<meta property='og:site_name' content='Lilith Sangreal'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2022-08-26T19:46:00&#43;08:00'/><meta property='article:modified_time' content='2022-08-26T19:46:00&#43;08:00'/>
+<meta name="twitter:title" content="iOS 性能指标工具集笔记 Vol.1 MetricKit">
+<meta name="twitter:description" content="iOS 性能指标工具集笔记 Vol.1 MetricKit 综述 优秀的产品对于应用的功耗表现也有所要求。因此 iOS 在开发过程中会使用 Instruments、Energy Gauges 和 Profiling 来分析和改进应用的功耗表现。对于 Beta 测试，也可以利用 Instruments 进行分析。
+不考虑第三方框架，已经发布的 TestFlight / App Store 包，虽然我们仍有机会获取到一些崩溃日志（隐私日志里面的Crash日志等）。但这些很难让开发者量化分析应用的功耗表现，显然，我们需要更多数据。
+为此苹果在 2019 年伴随iOS13和 Xcode11 发布了一系列工具用于收集和分析用于手机功耗表现相关的数据，这些工具大量出现了 Metrics 这个关键词，我认为可以直接翻译为指标，其实苹果是给用户提供了更多可量化的指标数据及其相关工具、框架，这是第一批发布的指标工具：
+ XCTest Metrics：可以测量部分功能的性能和电池的寿命指标 MetricKit：一个用于收集诸多用户电池和性能表现相关数据的框架 Xcode Metrics Organizer：一个统计大盘数据概率，可以看所有用户的性能表现   上图为苹果描述的应用场景。
+ 首批提供的指标如下：
+ Battery Metrics：提供CPU、位置、显示、网络、蓝牙、多媒体和相册的功耗表现 Performance Metrics：提供挂起、磁盘、应用启动、内存和自定义间隔  在 2020 年，苹果再一次提升了这些指标工具的能力，发布了 Metric Kit2.0，拓展了三个指标集合 5:24
+ CPU 指令：能够给出一天内究竟有多少指令执行了，极度精确地给出App究竟做了多少事 滚动故障：用户感受到的动画丢帧/不流畅占正常动画的比例，并进一步介绍如何用XCTest来排查与解决动画故障 APP 退出：给出一天内，APP究竟为什么退出了，退出了多少次。一个应用，除了正常退出，也会有很多情况被苹果干掉  除了指标集合，苹果还推出了可以帮助定位和修复问题的数据工具 MetricKit 2.0 Diagnostics 8:14，包含指标类型如下：
+ 挂起：采样App对用户长时间无反应（主线程阻塞等）时的堆栈 CPU 异常：采样高CPU占用时的堆栈 磁盘写入异常：采样总写入次数过多，异常过量写入发生时的堆栈（突破每日1GB） Crash：采样崩溃发生时的虚拟内存信息和堆栈  同时，升级了Xcode Metrics Organizer 分析性能指标的能力。">
+    </head>
+    <body class="
+    article-page has-toc
+">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex 
+    
+        extended
+    
+">
+    
+        <div id="article-toolbar">
+            <a href="/" class="back-home">
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-chevron-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="15 6 9 12 15 18" />
+</svg>
+
+
+
+                <span>Back</span>
+            </a>
+        </div>
+    
+<main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/ios/" >
+                iOS
+            </a>
+        
+    </header>
+    
+
+    <h2 class="article-title">
+        <a href="/p/ios-%E6%80%A7%E8%83%BD%E6%8C%87%E6%A0%87%E5%B7%A5%E5%85%B7%E9%9B%86%E7%AC%94%E8%AE%B0-vol.1-metrickit/">iOS 性能指标工具集笔记 Vol.1 MetricKit</a>
+    </h2>
+
+    
+
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">Aug 26, 2022</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    3 minute read
+                </time>
+            </div>
+        
+    </footer>
+    
+</div>
+</header>
+
+    <section class="article-content">
+    
+    
+    <h1 id="ios-性能指标工具集笔记-vol1-metrickit">iOS 性能指标工具集笔记 Vol.1 MetricKit</h1>
+<h2 id="综述">综述</h2>
+<p>优秀的产品对于应用的功耗表现也有所要求。因此 iOS 在开发过程中会使用 Instruments、Energy Gauges 和 Profiling 来分析和改进应用的功耗表现。对于 Beta 测试，也可以利用 Instruments 进行分析。</p>
+<p>不考虑第三方框架，已经发布的 TestFlight / App Store 包，虽然我们仍有机会获取到一些崩溃日志（隐私日志里面的Crash日志等）。但这些很难让开发者量化分析应用的功耗表现，显然，我们需要更多数据。</p>
+<p>为此苹果在 2019 年伴随iOS13和 Xcode11 发布了<a class="link" href="https://developer.apple.com/videos/play/wwdc2019/417"  target="_blank" rel="noopener"
+    >一系列工具</a>用于收集和分析用于手机功耗表现相关的数据，这些工具大量出现了 Metrics 这个关键词，我认为可以直接翻译为指标，其实苹果是给用户提供了更多可量化的指标数据及其相关工具、框架，这是第一批发布的指标工具：</p>
+<ul>
+<li>XCTest Metrics：可以测量部分功能的性能和电池的寿命指标</li>
+<li>MetricKit：一个用于收集诸多用户电池和性能表现相关数据的框架</li>
+<li>Xcode Metrics Organizer：一个统计大盘数据概率，可以看所有用户的性能表现</li>
+</ul>
+<p><img src="/p/ios-%E6%80%A7%E8%83%BD%E6%8C%87%E6%A0%87%E5%B7%A5%E5%85%B7%E9%9B%86%E7%AC%94%E8%AE%B0-vol.1-metrickit/attachments/2022-08-29-20-24-13.png"
+	width="1524"
+	height="724"
+	srcset="/p/ios-%E6%80%A7%E8%83%BD%E6%8C%87%E6%A0%87%E5%B7%A5%E5%85%B7%E9%9B%86%E7%AC%94%E8%AE%B0-vol.1-metrickit/attachments/2022-08-29-20-24-13_hu8395fd6d9c64c5b16e27c74a7878ef13_475992_480x0_resize_box_3.png 480w, /p/ios-%E6%80%A7%E8%83%BD%E6%8C%87%E6%A0%87%E5%B7%A5%E5%85%B7%E9%9B%86%E7%AC%94%E8%AE%B0-vol.1-metrickit/attachments/2022-08-29-20-24-13_hu8395fd6d9c64c5b16e27c74a7878ef13_475992_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="苹果描述的应用场景"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="210"
+		data-flex-basis="505px"
+	
+></p>
+<blockquote>
+<p>上图为苹果描述的应用场景。</p>
+</blockquote>
+<p>首批提供的指标如下：</p>
+<ul>
+<li>Battery Metrics：提供CPU、位置、显示、网络、蓝牙、多媒体和相册的功耗表现</li>
+<li>Performance Metrics：提供挂起、磁盘、应用启动、内存和自定义间隔</li>
+</ul>
+<p>在 2020 年，苹果再一次提升了这些指标工具的能力，发布了 <a class="link" href="https://developer.apple.com/videos/play/wwdc2020/10081"  target="_blank" rel="noopener"
+    >Metric Kit2.0</a>，拓展了三个指标集合 5:24</p>
+<ul>
+<li>CPU 指令：能够给出一天内究竟有多少指令执行了，极度精确地给出App究竟做了多少事</li>
+<li>滚动故障：用户感受到的动画丢帧/不流畅占正常动画的比例，并进一步介绍如何<a class="link" href="https://developer.apple.com/videos/play/wwdc2020/10077"  target="_blank" rel="noopener"
+    >用XCTest来排查与解决动画故障</a></li>
+<li>APP 退出：给出一天内，APP究竟为什么退出了，退出了多少次。一个应用，除了正常退出，也会有很多情况<a class="link" href="https://developer.apple.com/videos/play/wwdc2020/10081"  target="_blank" rel="noopener"
+    >被苹果干掉</a></li>
+</ul>
+<p>除了指标集合，苹果还推出了可以帮助定位和修复问题的数据工具 MetricKit 2.0 Diagnostics 8:14，包含指标类型如下：</p>
+<ul>
+<li>挂起：采样App对用户长时间无反应（主线程阻塞等）时的堆栈</li>
+<li>CPU 异常：采样高CPU占用时的堆栈</li>
+<li>磁盘写入异常：采样总写入次数过多，异常过量写入发生时的堆栈（突破每日1GB）</li>
+<li>Crash：采样崩溃发生时的虚拟内存信息和堆栈</li>
+</ul>
+<p>同时，升级了<a class="link" href="https://developer.apple.com/videos/play/wwdc2020/10076"  target="_blank" rel="noopener"
+    >Xcode Metrics Organizer 分析性能指标的能力</a>。</p>
+<h2 id="metrickit-如何工作">MetricKit 如何工作</h2>
+<p>一旦为 App 接入了 MetricKit 之后，MetricKit 会在24小时之内收集性能指标，并在生成一份报告。</p>
+<p><img src="/p/ios-%E6%80%A7%E8%83%BD%E6%8C%87%E6%A0%87%E5%B7%A5%E5%85%B7%E9%9B%86%E7%AC%94%E8%AE%B0-vol.1-metrickit/attachments/2022-09-03-21-55-01.png"
+	width="1358"
+	height="554"
+	srcset="/p/ios-%E6%80%A7%E8%83%BD%E6%8C%87%E6%A0%87%E5%B7%A5%E5%85%B7%E9%9B%86%E7%AC%94%E8%AE%B0-vol.1-metrickit/attachments/2022-09-03-21-55-01_hu7f74c7ce1f9fca8a349e6e35c48ebbb4_466991_480x0_resize_box_3.png 480w, /p/ios-%E6%80%A7%E8%83%BD%E6%8C%87%E6%A0%87%E5%B7%A5%E5%85%B7%E9%9B%86%E7%AC%94%E8%AE%B0-vol.1-metrickit/attachments/2022-09-03-21-55-01_hu7f74c7ce1f9fca8a349e6e35c48ebbb4_466991_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="245"
+		data-flex-basis="588px"
+	
+></p>
+<p>同时，它也可以利用 <strong>mxSignPost</strong> 收集一些关键代码段的性能数据：</p>
+<p><img src="/p/ios-%E6%80%A7%E8%83%BD%E6%8C%87%E6%A0%87%E5%B7%A5%E5%85%B7%E9%9B%86%E7%AC%94%E8%AE%B0-vol.1-metrickit/attachments/2022-09-03-21-57-12.png"
+	width="1358"
+	height="554"
+	srcset="/p/ios-%E6%80%A7%E8%83%BD%E6%8C%87%E6%A0%87%E5%B7%A5%E5%85%B7%E9%9B%86%E7%AC%94%E8%AE%B0-vol.1-metrickit/attachments/2022-09-03-21-57-12_hu7f74c7ce1f9fca8a349e6e35c48ebbb4_466991_480x0_resize_box_3.png 480w, /p/ios-%E6%80%A7%E8%83%BD%E6%8C%87%E6%A0%87%E5%B7%A5%E5%85%B7%E9%9B%86%E7%AC%94%E8%AE%B0-vol.1-metrickit/attachments/2022-09-03-21-57-12_hu7f74c7ce1f9fca8a349e6e35c48ebbb4_466991_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="245"
+		data-flex-basis="588px"
+	
+></p>
+<h2 id="metrics-10-battery-metrics-电池性能指标简介">Metrics 1.0 Battery Metrics 电池性能指标简介</h2>
+<p>那么 MetricKit 究竟收集了哪些数据和诊断呢？</p>
+<h3 id="processing-metrics-处理器指标">Processing Metrics 处理器指标</h3>
+<p>提供了一下CPU/GPU时间，可以利用这些时间找寻一些不应该有的UI渲染和CPU工作。可以用于量化比较不同的功能算法实现效率。</p>
+<h3 id="location-metrics-定位指标">Location Metrics 定位指标</h3>
+<p>统计程序在前后台共计用了多久定位功能，定位功能的精确度有多高，防止定位持续空转或使用了过于精确的定位能力消耗额外电量。</p>
+<h3 id="display-metrics-显示指标">Display Metrics 显示指标</h3>
+<p>提供了平均像素亮度（APL），用于量化目前的UI设计会消耗多少电量。</p>
+<h3 id="networking-metrics-网络指标">Networking Metrics 网络指标</h3>
+<p>上传下载的字节数，网络的连通性。</p>
+<h2 id="metrics-10-performance-体验表现指标简介">Metrics 1.0 Performance 体验表现指标简介</h2>
+<h3 id="hang-metrics-无响应指标">Hang Metrics 无响应指标</h3>
+<p>提供一个直方图，表示界面对用户没有响应的时间比例。如果有异常，一般是UI线程做事情太多了，需要移到其他线程。</p>
+<h3 id="disk-metrics-磁盘指标">Disk Metrics 磁盘指标</h3>
+<p>提供了一些指标来判断是否有意料之外的磁盘写入。</p>
+<h3 id="application-launch-metrics-应用指标">Application Launch Metrics 应用指标</h3>
+<p>提供柱形图来量化启动和恢复的时间消耗，以便采取手段<a class="link" href="https://developer.apple.com/videos/play/wwdc2019/423/"  target="_blank" rel="noopener"
+    >优化启动速度</a>。</p>
+<h3 id="memory-metrics-内存指标">Memory Metrics 内存指标</h3>
+<p>提供挂起（suspended）平均内存和内存峰值。</p>
+<h2 id="使用-metrickit">使用 MetricKit</h2>
+<h3 id="接入-metrickit">接入 MetricKit</h3>
+<p>假设需要获取性能指标的类是一个新的VC，接入方法如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-ObjectiveC" data-lang="ObjectiveC"><span class="c1">//
+</span><span class="c1">//  MetricViewController.m
+</span><span class="c1">//  UIPlayground
+</span><span class="c1">//
+</span><span class="c1">//  Created by LilithSangreal on 2022/9/3.
+</span><span class="c1">//  Copyright © 2022 LilithSangreal. All rights reserved.
+</span><span class="c1">//
+</span><span class="c1"></span>
+<span class="cp">#import &#34;MetricViewController.h&#34;
+</span><span class="cp"></span><span class="c1">// 1. 引入 MetricKit 框架头文件
+</span><span class="c1"></span><span class="cp">#import &lt;MetricKit/MetricKit.h&gt;
+</span><span class="cp"></span>
+<span class="k">@interface</span> <span class="nc">MetricViewController</span> <span class="p">()</span> <span class="o">&lt;</span><span class="n">MXMetricManagerSubscriber</span><span class="o">&gt;</span>
+<span class="c1">// 2. [可选] 声明一个 Manager 变量，主要用于移除订阅，如果在AppDelegate里面使用，可能不需要移除
+</span><span class="c1"></span><span class="k">@property</span> <span class="p">(</span><span class="k">strong</span><span class="p">,</span> <span class="k">nonatomic</span><span class="p">)</span> <span class="n">MXMetricManager</span> <span class="o">*</span><span class="n">metricManager</span><span class="p">;</span>
+<span class="k">@end</span>
+
+<span class="k">@implementation</span> <span class="nc">MetricViewController</span>
+
+<span class="p">-</span> <span class="p">(</span><span class="kt">instancetype</span><span class="p">)</span><span class="nf">init</span> <span class="p">{</span>
+    <span class="nb">self</span> <span class="o">=</span> <span class="p">[</span><span class="nb">super</span> <span class="n">init</span><span class="p">];</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nb">self</span><span class="p">)</span> <span class="p">{</span>
+        <span class="c1">// 3. 获取 MetricManager 单例
+</span><span class="c1"></span>        <span class="n">_metricManager</span> <span class="o">=</span> <span class="p">[</span><span class="n">MXMetricManager</span> <span class="n">sharedManager</span><span class="p">];</span>
+        <span class="c1">// 4. 将订阅对象放入 Manager 中
+</span><span class="c1"></span>        <span class="p">[</span><span class="n">_metricManager</span> <span class="nl">addSubscriber</span><span class="p">:</span><span class="nb">self</span><span class="p">];</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="nb">self</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="p">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">dealloc</span> <span class="p">{</span>
+    <span class="c1">// 5. [可选] 析构的时候需要移除观察者
+</span><span class="c1"></span>    <span class="p">[</span><span class="n">_metricManager</span> <span class="nl">removeSubscriber</span><span class="p">:</span><span class="nb">self</span><span class="p">];</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h3 id="获取-metrickit-指标">获取 MetricKit 指标</h3>
+<p>需要实现协议方法来获取指标信息，这个方法 iOS13 以上才可以使用。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-ObjectiveC" data-lang="ObjectiveC"><span class="p">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">didReceiveMetricPayloads:</span><span class="p">(</span><span class="n">NSArray</span><span class="o">&lt;</span><span class="n">MXMetricPayload</span> <span class="o">*&gt;</span> <span class="o">*</span><span class="p">)</span><span class="nv">payloads</span> <span class="p">{</span>
+    <span class="k">for</span> <span class="p">(</span><span class="n">MXMetricPayload</span> <span class="o">*</span><span class="n">payload</span> <span class="k">in</span> <span class="n">payloads</span><span class="p">)</span> <span class="p">{</span>
+        <span class="c1">// ...可以上传服务器、存入本地、写入文件等等...
+</span><span class="c1"></span>    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h3 id="metrickit-20获取-mxdiagnostic-信息">【MetricKit 2.0】获取 MXDiagnostic 信息</h3>
+<p>实现协议方法来获取诊断信息，这个方法 iOS14 以上才可以使用。</p>
+<p>接下来需要实现协议方法来获取指标信息</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-ObjectiveC" data-lang="ObjectiveC"><span class="p">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">didReceiveDiagnosticPayloads:</span><span class="p">(</span><span class="n">NSArray</span><span class="o">&lt;</span><span class="n">MXDiagnosticPayload</span> <span class="o">*&gt;</span> <span class="o">*</span><span class="p">)</span><span class="nv">payloads</span> <span class="p">{</span>
+    <span class="k">for</span> <span class="p">(</span><span class="n">MXDiagnosticPayload</span> <span class="o">*</span><span class="n">payload</span> <span class="k">in</span> <span class="n">payloads</span><span class="p">)</span> <span class="p">{</span>
+        <span class="c1">// ...可以上传服务器、存入本地、写入文件等等...
+</span><span class="c1"></span>    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h3 id="分析关键代码段落的性能指标信息-mxsignpost">分析关键代码段落的性能指标信息 mxSignPost</h3>
+<p>假设需要分析 doSomething 方法的功耗性能：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-ObjectiveC" data-lang="ObjectiveC"><span class="p">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">viewDidLoad</span> <span class="p">{</span>
+    <span class="p">[</span><span class="nb">super</span> <span class="n">viewDidLoad</span><span class="p">];</span>
+    
+    <span class="c1">// 1. 创建 OSLog Handle，为它起个分类名吧
+</span><span class="c1"></span>    <span class="n">os_log_t</span> <span class="n">doSomeThingHandle</span> <span class="o">=</span> <span class="p">[</span><span class="n">MXMetricManager</span> <span class="nl">makeLogHandleWithCategory</span><span class="p">:</span><span class="s">@&#34;DoSomeThingCategory&#34;</span><span class="p">];</span>
+    <span class="n">os_signpost_id_t</span> <span class="n">doSomeThingHandleID</span> <span class="o">=</span> <span class="n">os_signpost_id_generate</span><span class="p">(</span><span class="n">doSomeThingHandle</span><span class="p">);</span>
+    
+    <span class="c1">// 2. 标记关键代码段落开始，为它起个名字吧
+</span><span class="c1"></span>    <span class="n">MXSignpostIntervalBegin</span><span class="p">(</span><span class="n">doSomeThingHandle</span><span class="p">,</span> <span class="n">doSomeThingHandleID</span><span class="p">,</span> <span class="s">@&#34;DoSomeThingAwesome&#34;</span><span class="p">);</span>
+    
+    <span class="p">[</span><span class="nb">self</span> <span class="n">doSomethingAwesome</span><span class="p">];</span>
+    
+    <span class="c1">// 3. 标记关键代码段落结束
+</span><span class="c1"></span>    <span class="n">MXSignpostIntervalEnd</span><span class="p">(</span><span class="n">doSomeThingHandle</span><span class="p">,</span> <span class="n">doSomeThingHandleID</span><span class="p">,</span> <span class="s">@&#34;DoSomeThingAwesome&#34;</span><span class="p">);</span>
+    
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h3 id="自测数据回包需要真机">自测数据回包（需要真机）</h3>
+<p>Xcode - Debug - Simulate MetricKit Payloads</p>
+<p>会产生一个虚假的数据回包，仅供验证是否正确接入框架。</p>
+<h2 id="下一篇">下一篇</h2>
+<p><a class="link" href="" >iOS 性能指标工具集笔记 Vol.2 XCTest</a></p>
+<h2 id="参考链接">参考链接</h2>
+<p><a class="link" href="https://developer.apple.com/videos/play/wwdc2019/417"  target="_blank" rel="noopener"
+    >WWDC 2019 - Improving Battery Life and Performance</a></p>
+<p><a class="link" href="https://developer.apple.com/videos/play/wwdc2020/10081"  target="_blank" rel="noopener"
+    >WWDC 2020 - What&rsquo;s new in MetricKit</a></p>
+<p><a class="link" href="https://developer.apple.com/videos/play/wwdc2020/10077"  target="_blank" rel="noopener"
+    >WWDC 2020 - Eliminate animation hitches with XCTest</a></p>
+<p><a class="link" href="https://developer.apple.com/videos/play/wwdc2020/10078"  target="_blank" rel="noopener"
+    >WWDC 2020 - Why is my app getting killed?</a></p>
+<p><a class="link" href="https://developer.apple.com/videos/play/wwdc2020/10076"  target="_blank" rel="noopener"
+    >WWDC 2020 - Diagnose performance issues with the Xcode Organizer</a></p>
+<p><a class="link" href="https://developer.apple.com/videos/play/wwdc2021/10181"  target="_blank" rel="noopener"
+    >WWDC 2021 - Ultimate application performance survival guide</a></p>
+<p><a class="link" href="https://developer.apple.com/videos/play/wwdc2021/10258"  target="_blank" rel="noopener"
+    >WWDC 2021 - Understand and eliminate hangs from your app</a></p>
+<p><a class="link" href="https://developer.apple.com/videos/play/wwdc2021/10087"  target="_blank" rel="noopener"
+    >WWDC 2021 - Diagnose Power and Performance regressions in your app</a></p>
+<p><a class="link" href="https://developer.apple.com/videos/play/wwdc2022/10082"  target="_blank" rel="noopener"
+    >WWDC 2022 - Track down hangs with Xcode and on-device detection</a></p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+
+    
+        <link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/katex@0.13.13/dist/katex.min.css"integrity="sha384-RZU/ijkSsFbcmivfdRBQDtwuwVqK7GMOw6IMvKyeWL2K5UAlyp6WonmB8m7Jd0Hn"crossorigin="anonymous"
+            ><script 
+                src="https://cdn.jsdelivr.net/npm/katex@0.13.13/dist/katex.min.js"integrity="sha384-pK1WpvzWVBQiP0/GjnvRxV4mOb0oxFuyRxJlk6vVw146n3egcN5C925NCP7a7BY8"crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/katex@0.13.13/dist/contrib/auto-render.min.js"integrity="sha384-vZTG03m&#43;2yp6N6BNi5iM4rW4oIwk5DfcNdFfxkk9ZWpDriOkXX8voJBFrAO7MpVl"crossorigin="anonymous"
+                defer
+                >
+            </script><script>
+    window.addEventListener("DOMContentLoaded", () => {
+        renderMathInElement(document.querySelector(`.article-content`), {
+            delimiters: [
+                { left: "$$", right: "$$", display: true },
+                { left: "$", right: "$", display: false },
+                { left: "\\(", right: "\\)", display: false },
+                { left: "\\[", right: "\\]", display: true }
+            ]
+        });})
+</script>
+    
+</article>
+
+    
+
+    <aside class="related-contents--wrapper">
+    
+    
+        <h2 class="section-title">Related contents</h2>
+        <div class="related-contents">
+            <div class="flex article-list--tile">
+                
+                    
+<article class="">
+    <a href="/p/ios-%E6%80%A7%E8%83%BD%E6%8C%87%E6%A0%87%E5%B7%A5%E5%85%B7%E9%9B%86%E7%AC%94%E8%AE%B0-vol.2-xctest/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">iOS 性能指标工具集笔记 Vol.2 XCTest</h2>
+        </div>
+    </a>
+</article>
+                
+            </div>
+        </div>
+    
+</aside>
+
+     
+    
+        
+    <div class="disqus-container">
+    <div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "hugo-theme-stack" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+<style>
+    .disqus-container {
+        background-color: var(--card-background);
+        border-radius: var(--card-border-radius);
+        box-shadow: var(--shadow-l1);
+        padding: var(--card-padding);
+    }
+</style>
+
+<script>
+    window.addEventListener('onColorSchemeChange', (e) => {
+        if (DISQUS) {
+            DISQUS.reset({
+                reload: true
+            });
+        }
+    })
+</script>
+
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2019 - 
+        
+        2022 Lilith Sangreal
+    </section>
+    
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.8.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.css"integrity="sha256-c0uckgykQ9v5k&#43;IqViZOZKc47Jn7KQil4/MP3ySA3F8="crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.css"integrity="sha256-SBLU4vv6CA6lHsZ1XyTdhyjJxCjPif/TRkjnsyGAGnE="crossorigin="anonymous"
+            >
+
+            </main>
+    
+        <aside class="sidebar right-sidebar sticky">
+            <section class="widget archives">
+                <div class="widget-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+                </div>
+                <h2 class="widget-title section-title">Table of contents</h2>
+                
+                <div class="widget--toc">
+                    <nav id="TableOfContents">
+  <ol>
+    <li><a href="#综述">综述</a></li>
+    <li><a href="#metrickit-如何工作">MetricKit 如何工作</a></li>
+    <li><a href="#metrics-10-battery-metrics-电池性能指标简介">Metrics 1.0 Battery Metrics 电池性能指标简介</a>
+      <ol>
+        <li><a href="#processing-metrics-处理器指标">Processing Metrics 处理器指标</a></li>
+        <li><a href="#location-metrics-定位指标">Location Metrics 定位指标</a></li>
+        <li><a href="#display-metrics-显示指标">Display Metrics 显示指标</a></li>
+        <li><a href="#networking-metrics-网络指标">Networking Metrics 网络指标</a></li>
+      </ol>
+    </li>
+    <li><a href="#metrics-10-performance-体验表现指标简介">Metrics 1.0 Performance 体验表现指标简介</a>
+      <ol>
+        <li><a href="#hang-metrics-无响应指标">Hang Metrics 无响应指标</a></li>
+        <li><a href="#disk-metrics-磁盘指标">Disk Metrics 磁盘指标</a></li>
+        <li><a href="#application-launch-metrics-应用指标">Application Launch Metrics 应用指标</a></li>
+        <li><a href="#memory-metrics-内存指标">Memory Metrics 内存指标</a></li>
+      </ol>
+    </li>
+    <li><a href="#使用-metrickit">使用 MetricKit</a>
+      <ol>
+        <li><a href="#接入-metrickit">接入 MetricKit</a></li>
+        <li><a href="#获取-metrickit-指标">获取 MetricKit 指标</a></li>
+        <li><a href="#metrickit-20获取-mxdiagnostic-信息">【MetricKit 2.0】获取 MXDiagnostic 信息</a></li>
+        <li><a href="#分析关键代码段落的性能指标信息-mxsignpost">分析关键代码段落的性能指标信息 mxSignPost</a></li>
+        <li><a href="#自测数据回包需要真机">自测数据回包（需要真机）</a></li>
+      </ol>
+    </li>
+    <li><a href="#下一篇">下一篇</a></li>
+    <li><a href="#参考链接">参考链接</a></li>
+  </ol>
+</nav>
+                </div>
+            </section>
+        </aside>
+    
+
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.5/dist/vibrant.min.js"integrity="sha256-5NovOZc4iwiAWTYIFiIM7DxKUXKWvpVEuMEPLzcm5/g="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>
