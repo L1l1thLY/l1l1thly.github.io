@@ -7,7 +7,7 @@
 XCTest Metrics：以一种类似单元测试的方式，测量部分关键代码的性能和电池指标的框架 MetricKit：一个用于收集诸多用户电池和性能表现相关数据的框架 Xcode Metrics Organizer：一个统计大盘数据，可以看AppStore所有用户历史版本的性能表现 上图为苹果描述的应用场景。
 首批提供的指标如下：
 Battery Metrics：提供CPU、位置、显示、网络、蓝牙、多媒体和相册的功耗表现 Performance Metrics：提供挂起、磁盘、应用启动、内存和自定义间隔 在 2020 年，苹果再一次提升了这些指标工具的能力，发布了 Metric Kit2.0，拓展了三个指标集合 5:24
-CPU 指令：能够给出一天内究竟有多少指令执行了，极度精确地给出App究竟做了多少事 滚动故障：用户感受到的动画丢帧/不流畅占正常动画的比例，并进一步介绍如何用XCTest来排查与解决动画故障 APP 退出：给出一天内，APP究竟为什么退出了，退出了多少次。一个应用，除了正常退出，也会有很多情况被苹果干掉 除了指标集合，苹果还推出了可以帮助定位和修复问题的数据工具 MetricKit 2.0 Diagnostics，包含指标类型如下：
+CPU 指令：能够给出一天内究竟有多少指令执行了，极度精确地给出App究竟做了多少事 滚动故障：用户感受到的动画丢帧/不流畅占正常动画的比例，并进一步介绍如何用XCTest来排查与解决动画故障 APP 退出：给出一天内，APP究竟为什么退出了，退出了多少次。一个应用，除了正常退出，也会有很多情况被苹果干掉。本文在后面小节 进程退出原因MXAppExitMetric 进一步讨论。 除了指标集合，苹果还推出了可以帮助定位和修复问题的数据工具 MetricKit 2.0 Diagnostics，包含指标类型如下：
 挂起：采样App对用户长时间无反应（主线程阻塞等）时的堆栈 CPU 异常：采样高CPU占用时的堆栈 磁盘写入异常：采样总写入次数过多，异常过量写入发生时的堆栈（突破每日1GB） Crash：采样崩溃发生的原因，发生时的虚拟内存信息和堆栈 同时，升级了Xcode Metrics Organizer 分析性能指标的能力。
 MetricKit 如何工作 一旦为 App 接入了 MetricKit 之后，MetricKit 会在24小时之内收集性能指标，并在生成一份报告。'><title>iOS 性能指标工具集笔记 Vol.1 MetricKit</title>
 
@@ -20,7 +20,7 @@ MetricKit 如何工作 一旦为 App 接入了 MetricKit 之后，MetricKit 会�
 XCTest Metrics：以一种类似单元测试的方式，测量部分关键代码的性能和电池指标的框架 MetricKit：一个用于收集诸多用户电池和性能表现相关数据的框架 Xcode Metrics Organizer：一个统计大盘数据，可以看AppStore所有用户历史版本的性能表现 上图为苹果描述的应用场景。
 首批提供的指标如下：
 Battery Metrics：提供CPU、位置、显示、网络、蓝牙、多媒体和相册的功耗表现 Performance Metrics：提供挂起、磁盘、应用启动、内存和自定义间隔 在 2020 年，苹果再一次提升了这些指标工具的能力，发布了 Metric Kit2.0，拓展了三个指标集合 5:24
-CPU 指令：能够给出一天内究竟有多少指令执行了，极度精确地给出App究竟做了多少事 滚动故障：用户感受到的动画丢帧/不流畅占正常动画的比例，并进一步介绍如何用XCTest来排查与解决动画故障 APP 退出：给出一天内，APP究竟为什么退出了，退出了多少次。一个应用，除了正常退出，也会有很多情况被苹果干掉 除了指标集合，苹果还推出了可以帮助定位和修复问题的数据工具 MetricKit 2.0 Diagnostics，包含指标类型如下：
+CPU 指令：能够给出一天内究竟有多少指令执行了，极度精确地给出App究竟做了多少事 滚动故障：用户感受到的动画丢帧/不流畅占正常动画的比例，并进一步介绍如何用XCTest来排查与解决动画故障 APP 退出：给出一天内，APP究竟为什么退出了，退出了多少次。一个应用，除了正常退出，也会有很多情况被苹果干掉。本文在后面小节 进程退出原因MXAppExitMetric 进一步讨论。 除了指标集合，苹果还推出了可以帮助定位和修复问题的数据工具 MetricKit 2.0 Diagnostics，包含指标类型如下：
 挂起：采样App对用户长时间无反应（主线程阻塞等）时的堆栈 CPU 异常：采样高CPU占用时的堆栈 磁盘写入异常：采样总写入次数过多，异常过量写入发生时的堆栈（突破每日1GB） Crash：采样崩溃发生的原因，发生时的虚拟内存信息和堆栈 同时，升级了Xcode Metrics Organizer 分析性能指标的能力。
 MetricKit 如何工作 一旦为 App 接入了 MetricKit 之后，MetricKit 会在24小时之内收集性能指标，并在生成一份报告。'>
 <meta property='og:url' content='https://lilithsangreal.com/p/ios-%E6%80%A7%E8%83%BD%E6%8C%87%E6%A0%87%E5%B7%A5%E5%85%B7%E9%9B%86%E7%AC%94%E8%AE%B0-vol.1-metrickit/'>
@@ -33,7 +33,7 @@ MetricKit 如何工作 一旦为 App 接入了 MetricKit 之后，MetricKit 会�
 XCTest Metrics：以一种类似单元测试的方式，测量部分关键代码的性能和电池指标的框架 MetricKit：一个用于收集诸多用户电池和性能表现相关数据的框架 Xcode Metrics Organizer：一个统计大盘数据，可以看AppStore所有用户历史版本的性能表现 上图为苹果描述的应用场景。
 首批提供的指标如下：
 Battery Metrics：提供CPU、位置、显示、网络、蓝牙、多媒体和相册的功耗表现 Performance Metrics：提供挂起、磁盘、应用启动、内存和自定义间隔 在 2020 年，苹果再一次提升了这些指标工具的能力，发布了 Metric Kit2.0，拓展了三个指标集合 5:24
-CPU 指令：能够给出一天内究竟有多少指令执行了，极度精确地给出App究竟做了多少事 滚动故障：用户感受到的动画丢帧/不流畅占正常动画的比例，并进一步介绍如何用XCTest来排查与解决动画故障 APP 退出：给出一天内，APP究竟为什么退出了，退出了多少次。一个应用，除了正常退出，也会有很多情况被苹果干掉 除了指标集合，苹果还推出了可以帮助定位和修复问题的数据工具 MetricKit 2.0 Diagnostics，包含指标类型如下：
+CPU 指令：能够给出一天内究竟有多少指令执行了，极度精确地给出App究竟做了多少事 滚动故障：用户感受到的动画丢帧/不流畅占正常动画的比例，并进一步介绍如何用XCTest来排查与解决动画故障 APP 退出：给出一天内，APP究竟为什么退出了，退出了多少次。一个应用，除了正常退出，也会有很多情况被苹果干掉。本文在后面小节 进程退出原因MXAppExitMetric 进一步讨论。 除了指标集合，苹果还推出了可以帮助定位和修复问题的数据工具 MetricKit 2.0 Diagnostics，包含指标类型如下：
 挂起：采样App对用户长时间无反应（主线程阻塞等）时的堆栈 CPU 异常：采样高CPU占用时的堆栈 磁盘写入异常：采样总写入次数过多，异常过量写入发生时的堆栈（突破每日1GB） Crash：采样崩溃发生的原因，发生时的虚拟内存信息和堆栈 同时，升级了Xcode Metrics Organizer 分析性能指标的能力。
 MetricKit 如何工作 一旦为 App 接入了 MetricKit 之后，MetricKit 会在24小时之内收集性能指标，并在生成一份报告。">
     </head>
@@ -353,7 +353,7 @@ MetricKit 如何工作 一旦为 App 接入了 MetricKit 之后，MetricKit 会�
 <li>滚动故障：用户感受到的动画丢帧/不流畅占正常动画的比例，并进一步介绍如何<a class="link" href="https://developer.apple.com/videos/play/wwdc2020/10077"  target="_blank" rel="noopener"
     >用XCTest来排查与解决动画故障</a></li>
 <li>APP 退出：给出一天内，APP究竟为什么退出了，退出了多少次。一个应用，除了正常退出，也会有很多情况<a class="link" href="https://developer.apple.com/videos/play/wwdc2020/10081"  target="_blank" rel="noopener"
-    >被苹果干掉</a></li>
+    >被苹果干掉</a>。本文在后面小节 进程退出原因MXAppExitMetric 进一步讨论。</li>
 </ul>
 <p>除了指标集合，苹果还推出了可以帮助定位和修复问题的数据工具 MetricKit 2.0 Diagnostics，包含指标类型如下：</p>
 <ul>
@@ -720,7 +720,97 @@ MetricKit 如何工作 一旦为 App 接入了 MetricKit 之后，MetricKit 会�
 </span></span><span class="line"><span class="cl">        <span class="n">get_symbol</span><span class="p">(</span><span class="n">thread</span><span class="p">[</span><span class="s1">&#39;callStackRootFrames&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
 </span></span></code></pre></td></tr></table>
 </div>
-</div><h2 id="下一篇">下一篇</h2>
+</div><h2 id="应用场景进程退出原因分析指标-mxappexitmetric">应用场景：进程退出原因分析指标 MXAppExitMetric</h2>
+<p>应用在后台被杀死会影响用户的体验。如果用户有未保存的输入内容（同时应用开发者并没有进入后台的时候保存内容），就会因为进程被杀而导致丢失输入。同时进程被杀也会使用户下次切回APP时不得不再次启动，被迫欣赏闪屏页（和开屏广告）。</p>
+<p>但是由于进程异常退出/被 iOS 系统杀死的原因多种多样，往往很难定位问题。通过 MXAppExitMetric 可以获取软件退出的原因。分为前台退出和后台退出，这些指标都在 MXMetric payload 里面可以获取：</p>
+<ul>
+<li><code>payload.applicationExitMetrics.foregroundExitData</code></li>
+<li><code>payload.applicationExitMetrics.backgroundExitData</code></li>
+</ul>
+<p>有一点不方便的是，这两个数据对象不包含直接的转换为 Json 或者 Dictionary 的方法，如果需要整体打印，可能需要一些运行时的方法。下面打印一个例子：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">in MXForegroundExitData:
+</span></span><span class="line"><span class="cl">	[8|0x8]_cumulativeNormalAppExitCount (unsigned long): 0
+</span></span><span class="line"><span class="cl">	[16|0x10]_cumulativeMemoryResourceLimitExitCount (unsigned long): 0
+</span></span><span class="line"><span class="cl">	[24|0x18]_cumulativeBadAccessExitCount (unsigned long): 0
+</span></span><span class="line"><span class="cl">	[32|0x20]_cumulativeAbnormalExitCount (unsigned long): 0
+</span></span><span class="line"><span class="cl">	[40|0x28]_cumulativeIllegalInstructionExitCount (unsigned long): 0
+</span></span><span class="line"><span class="cl">	[48|0x30]_cumulativeAppWatchdogExitCount (unsigned long): 0
+</span></span><span class="line"><span class="cl">	[56|0x38]_cumulativeCPUResourceLimitExitCount (unsigned long): 0
+</span></span><span class="line"><span class="cl">in MXBackgroundExitData:
+</span></span><span class="line"><span class="cl">	[8|0x8]_cumulativeNormalAppExitCount (unsigned long): 0
+</span></span><span class="line"><span class="cl">	[16|0x10]_cumulativeMemoryResourceLimitExitCount (unsigned long): 0
+</span></span><span class="line"><span class="cl">	[24|0x18]_cumulativeCPUResourceLimitExitCount (unsigned long): 0
+</span></span><span class="line"><span class="cl">	[32|0x20]_cumulativeMemoryPressureExitCount (unsigned long): 1
+</span></span><span class="line"><span class="cl">	[40|0x28]_cumulativeBadAccessExitCount (unsigned long): 0
+</span></span><span class="line"><span class="cl">	[48|0x30]_cumulativeAbnormalExitCount (unsigned long): 0
+</span></span><span class="line"><span class="cl">	[56|0x38]_cumulativeIllegalInstructionExitCount (unsigned long): 0
+</span></span><span class="line"><span class="cl">	[64|0x40]_cumulativeAppWatchdogExitCount (unsigned long): 6
+</span></span><span class="line"><span class="cl">	[72|0x48]_cumulativeSuspendedWithLockedFileExitCount (unsigned long): 0
+</span></span><span class="line"><span class="cl">	[80|0x50]_cumulativeBackgroundTaskAssertionTimeoutExitCount (unsigned long): 1
+</span></span><span class="line"><span class="cl">	[88|0x58]_cumulativeBackgroundFetchCompletionTimeoutExitCount (unsigned long): 0
+</span></span><span class="line"><span class="cl">	[96|0x60]_cumulativeBackgroundURLSessionCompletionTimeoutExitCount (unsigned long): 0
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>可以看出他提供了多种多样的退出次数统计，而不同的退出一般发生的场景也不同：</p>
+<ul>
+<li>
+<p>前/后台正常退出：cumulativeNormalAppExitCount</p>
+</li>
+<li>
+<p>前/后台异常退出：cumulativeAbnormalExitCount，这种退出一般发生在未捕获的OC异常、调用了中止方法或者其他导致中止信号的方法调用。</p>
+</li>
+<li>
+<p>前/后台WatchDog退出：cumulativeAppWatchdogExitCount，这种退出一般发生在启动/关闭或者响应系统事件耗费的时间过长，如果进入后台 / 前台耗费的时间过多，也会触发这种退出（<code>applicationDidEnterBackground</code> 和 <code>applicationWillEnterForeground</code>）</p>
+</li>
+<li>
+<p>前/后台内存超限：cumulativeMemoryResourceLimitExitCount</p>
+</li>
+<li>
+<p>前/后台CPU超限：cumulativeCPUResourceLimitExitCount</p>
+</li>
+<li>
+<p>前/后台异常访问退出（Crash）：cumulativeBadAccessExitCount，这种一般出现数组越界、野指针或者写入只读内存等等。</p>
+</li>
+<li>
+<p>前/后台非法指令退出（Crash）：cumulativeIllegalInstructionExitCount，调用一个没有正确配置好的函数指针会触发这种退出</p>
+</li>
+<li>
+<p>后台内存压力退出：cumulativeMemoryPressureExitCount，为了获得更多内存，iOS自动清理杀死了你的进程（目前实践上来看，不能每次都能在jetsam报告中找到对应报告）。此类退出通常无法完全避免，苹果的建议是保存好当前的视图层次结构，保存用户输入的草稿、播放的位置并尽可能应用UIKit State Restoration来减少影响。</p>
+</li>
+<li>
+<p>后台挂起时锁定文件退出：cumulativeSuspendedWithLockedFileExitCount，一般发生在正在挂起应用时候去写入数据库</p>
+</li>
+<li>
+<p>后台任务超时退出：cumulativeBackgroundTaskAssertionTimeoutExitCount，向系统申请执行后台任务的时间，但却一直没有调用 endBackgroundTask。</p>
+</li>
+</ul>
+<p>但光有这些数量往往不能直接定位到问题。这时可以使用instrument或者Debug分析，也可以借助前文介绍的 MXDiagnostic 数据信息。如 MXCrashDiagnostic 可以拿到前/后台WatchDog退出发生时的堆栈。MXCPUExceptionDiagnostic 可以看到CPU超限的时候的堆栈。</p>
+<h2 id="下一篇">下一篇</h2>
 <p><a class="link" href="" >iOS 性能指标工具集笔记 Vol.2 XCTest</a></p>
 <h2 id="参考链接">参考链接</h2>
 <p><a class="link" href="https://developer.apple.com/videos/play/wwdc2019/417"  target="_blank" rel="noopener"
