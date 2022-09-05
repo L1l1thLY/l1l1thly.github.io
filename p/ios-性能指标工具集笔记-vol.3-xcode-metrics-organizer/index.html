@@ -1,17 +1,26 @@
 <!DOCTYPE html>
 <html lang="en-us" dir="ltr">
     <head><meta charset='utf-8'>
-<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='iOS 性能指标工具集笔记 Vol.3 Xcode Metrics Organizer 简介 使用 Xcode - Window - Organizer 点击 Metrics 选择发布的 App 可以看到电池寿命、启动时间、无响应率、内存和磁盘写入数据。'><title>iOS 性能指标工具集笔记 Vol.3 Xcode Metrics Organizer</title>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='iOS 性能指标工具集笔记 Vol.3 Xcode Metrics Organizer 简介 使用 Xcode - Window - Organizer 点击 Metrics 选择发布的 App 可以看到电池寿命、启动时间、无响应率、内存和磁盘写入的大盘统计数据。如下图所示：
+可以在右上角的下拉栏里专门看某一个型号设备的数据
+历史版本的内存最大占用和后台内存占用 历史版本的前台和后台电池消耗细节大盘统计数据 这些数据会按照网络、运算、显示、定位和其他来分类。
+启动时间 不响应用户的时间比例（Hang Rate） 磁盘写入量 '><title>iOS 性能指标工具集笔记 Vol.3 Xcode Metrics Organizer</title>
 
 <link rel='canonical' href='https://lilithsangreal.com/p/ios-%E6%80%A7%E8%83%BD%E6%8C%87%E6%A0%87%E5%B7%A5%E5%85%B7%E9%9B%86%E7%AC%94%E8%AE%B0-vol.3-xcode-metrics-organizer/'>
 
 <link rel="stylesheet" href="/scss/style.min.ac77dcf8b111b51da39a92990f431923f210f3876d85798a2125667f96dc33a4.css"><meta property='og:title' content='iOS 性能指标工具集笔记 Vol.3 Xcode Metrics Organizer'>
-<meta property='og:description' content='iOS 性能指标工具集笔记 Vol.3 Xcode Metrics Organizer 简介 使用 Xcode - Window - Organizer 点击 Metrics 选择发布的 App 可以看到电池寿命、启动时间、无响应率、内存和磁盘写入数据。'>
+<meta property='og:description' content='iOS 性能指标工具集笔记 Vol.3 Xcode Metrics Organizer 简介 使用 Xcode - Window - Organizer 点击 Metrics 选择发布的 App 可以看到电池寿命、启动时间、无响应率、内存和磁盘写入的大盘统计数据。如下图所示：
+可以在右上角的下拉栏里专门看某一个型号设备的数据
+历史版本的内存最大占用和后台内存占用 历史版本的前台和后台电池消耗细节大盘统计数据 这些数据会按照网络、运算、显示、定位和其他来分类。
+启动时间 不响应用户的时间比例（Hang Rate） 磁盘写入量 '>
 <meta property='og:url' content='https://lilithsangreal.com/p/ios-%E6%80%A7%E8%83%BD%E6%8C%87%E6%A0%87%E5%B7%A5%E5%85%B7%E9%9B%86%E7%AC%94%E8%AE%B0-vol.3-xcode-metrics-organizer/'>
 <meta property='og:site_name' content='Lilith Sangreal'>
 <meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2022-09-05T11:19:31&#43;08:00'/><meta property='article:modified_time' content='2022-09-05T11:19:31&#43;08:00'/>
 <meta name="twitter:title" content="iOS 性能指标工具集笔记 Vol.3 Xcode Metrics Organizer">
-<meta name="twitter:description" content="iOS 性能指标工具集笔记 Vol.3 Xcode Metrics Organizer 简介 使用 Xcode - Window - Organizer 点击 Metrics 选择发布的 App 可以看到电池寿命、启动时间、无响应率、内存和磁盘写入数据。">
+<meta name="twitter:description" content="iOS 性能指标工具集笔记 Vol.3 Xcode Metrics Organizer 简介 使用 Xcode - Window - Organizer 点击 Metrics 选择发布的 App 可以看到电池寿命、启动时间、无响应率、内存和磁盘写入的大盘统计数据。如下图所示：
+可以在右上角的下拉栏里专门看某一个型号设备的数据
+历史版本的内存最大占用和后台内存占用 历史版本的前台和后台电池消耗细节大盘统计数据 这些数据会按照网络、运算、显示、定位和其他来分类。
+启动时间 不响应用户的时间比例（Hang Rate） 磁盘写入量 ">
     </head>
     <body class="
     article-page
@@ -317,7 +326,13 @@
 <ol start="3">
 <li>选择发布的 App</li>
 </ol>
-<p>可以看到电池寿命、启动时间、无响应率、内存和磁盘写入数据。</p>
+<p>可以看到电池寿命、启动时间、无响应率、内存和磁盘写入的大盘统计数据。如下图所示：</p>
+<blockquote>
+<p>可以在右上角的下拉栏里专门看某一个型号设备的数据</p>
+</blockquote>
+<ul>
+<li>历史版本的内存最大占用和后台内存占用</li>
+</ul>
 <p><img src="/p/ios-%E6%80%A7%E8%83%BD%E6%8C%87%E6%A0%87%E5%B7%A5%E5%85%B7%E9%9B%86%E7%AC%94%E8%AE%B0-vol.3-xcode-metrics-organizer/2022-09-05-11-30-29.png"
 	width="1620"
 	height="726"
@@ -328,6 +343,67 @@
 		class="gallery-image" 
 		data-flex-grow="223"
 		data-flex-basis="535px"
+	
+></p>
+<ul>
+<li>历史版本的前台和后台电池消耗细节大盘统计数据</li>
+</ul>
+<p>这些数据会按照网络、运算、显示、定位和其他来分类。</p>
+<p><img src="/p/ios-%E6%80%A7%E8%83%BD%E6%8C%87%E6%A0%87%E5%B7%A5%E5%85%B7%E9%9B%86%E7%AC%94%E8%AE%B0-vol.3-xcode-metrics-organizer/2022-09-05-15-20-57.png"
+	width="2862"
+	height="1380"
+	srcset="/p/ios-%E6%80%A7%E8%83%BD%E6%8C%87%E6%A0%87%E5%B7%A5%E5%85%B7%E9%9B%86%E7%AC%94%E8%AE%B0-vol.3-xcode-metrics-organizer/2022-09-05-15-20-57_hu46c462dfd250b3cec3da718584bbdd82_2515321_480x0_resize_box_3.png 480w, /p/ios-%E6%80%A7%E8%83%BD%E6%8C%87%E6%A0%87%E5%B7%A5%E5%85%B7%E9%9B%86%E7%AC%94%E8%AE%B0-vol.3-xcode-metrics-organizer/2022-09-05-15-20-57_hu46c462dfd250b3cec3da718584bbdd82_2515321_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="207"
+		data-flex-basis="497px"
+	
+></p>
+<ul>
+<li>启动时间</li>
+</ul>
+<p><img src="/p/ios-%E6%80%A7%E8%83%BD%E6%8C%87%E6%A0%87%E5%B7%A5%E5%85%B7%E9%9B%86%E7%AC%94%E8%AE%B0-vol.3-xcode-metrics-organizer/2022-09-05-15-26-31.png"
+	width="3178"
+	height="842"
+	srcset="/p/ios-%E6%80%A7%E8%83%BD%E6%8C%87%E6%A0%87%E5%B7%A5%E5%85%B7%E9%9B%86%E7%AC%94%E8%AE%B0-vol.3-xcode-metrics-organizer/2022-09-05-15-26-31_hu719ab315163a13ab8a6806ff9eec038e_1732917_480x0_resize_box_3.png 480w, /p/ios-%E6%80%A7%E8%83%BD%E6%8C%87%E6%A0%87%E5%B7%A5%E5%85%B7%E9%9B%86%E7%AC%94%E8%AE%B0-vol.3-xcode-metrics-organizer/2022-09-05-15-26-31_hu719ab315163a13ab8a6806ff9eec038e_1732917_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="377"
+		data-flex-basis="905px"
+	
+></p>
+<ul>
+<li>不响应用户的时间比例（Hang Rate）</li>
+</ul>
+<p><img src="/p/ios-%E6%80%A7%E8%83%BD%E6%8C%87%E6%A0%87%E5%B7%A5%E5%85%B7%E9%9B%86%E7%AC%94%E8%AE%B0-vol.3-xcode-metrics-organizer/2022-09-05-15-27-12.png"
+	width="3154"
+	height="838"
+	srcset="/p/ios-%E6%80%A7%E8%83%BD%E6%8C%87%E6%A0%87%E5%B7%A5%E5%85%B7%E9%9B%86%E7%AC%94%E8%AE%B0-vol.3-xcode-metrics-organizer/2022-09-05-15-27-12_hu1af28db15f52f8520ac27cddc59bca74_2026900_480x0_resize_box_3.png 480w, /p/ios-%E6%80%A7%E8%83%BD%E6%8C%87%E6%A0%87%E5%B7%A5%E5%85%B7%E9%9B%86%E7%AC%94%E8%AE%B0-vol.3-xcode-metrics-organizer/2022-09-05-15-27-12_hu1af28db15f52f8520ac27cddc59bca74_2026900_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="376"
+		data-flex-basis="903px"
+	
+></p>
+<ul>
+<li>磁盘写入量</li>
+</ul>
+<p><img src="/p/ios-%E6%80%A7%E8%83%BD%E6%8C%87%E6%A0%87%E5%B7%A5%E5%85%B7%E9%9B%86%E7%AC%94%E8%AE%B0-vol.3-xcode-metrics-organizer/2022-09-05-15-28-05.png"
+	width="3158"
+	height="812"
+	srcset="/p/ios-%E6%80%A7%E8%83%BD%E6%8C%87%E6%A0%87%E5%B7%A5%E5%85%B7%E9%9B%86%E7%AC%94%E8%AE%B0-vol.3-xcode-metrics-organizer/2022-09-05-15-28-05_hu5032a1a037575b28e43d33669ebcddff_1564077_480x0_resize_box_3.png 480w, /p/ios-%E6%80%A7%E8%83%BD%E6%8C%87%E6%A0%87%E5%B7%A5%E5%85%B7%E9%9B%86%E7%AC%94%E8%AE%B0-vol.3-xcode-metrics-organizer/2022-09-05-15-28-05_hu5032a1a037575b28e43d33669ebcddff_1564077_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="388"
+		data-flex-basis="933px"
 	
 ></p>
 

@@ -48,7 +48,13 @@
 &lt;ol start=&#34;3&#34;&gt;
 &lt;li&gt;选择发布的 App&lt;/li&gt;
 &lt;/ol&gt;
-&lt;p&gt;可以看到电池寿命、启动时间、无响应率、内存和磁盘写入数据。&lt;/p&gt;
+&lt;p&gt;可以看到电池寿命、启动时间、无响应率、内存和磁盘写入的大盘统计数据。如下图所示：&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;可以在右上角的下拉栏里专门看某一个型号设备的数据&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;ul&gt;
+&lt;li&gt;历史版本的内存最大占用和后台内存占用&lt;/li&gt;
+&lt;/ul&gt;
 &lt;p&gt;&lt;img src=&#34;https://lilithsangreal.com/p/ios-%E6%80%A7%E8%83%BD%E6%8C%87%E6%A0%87%E5%B7%A5%E5%85%B7%E9%9B%86%E7%AC%94%E8%AE%B0-vol.3-xcode-metrics-organizer/2022-09-05-11-30-29.png&#34;
 	width=&#34;1620&#34;
 	height=&#34;726&#34;
@@ -59,6 +65,67 @@
 		class=&#34;gallery-image&#34; 
 		data-flex-grow=&#34;223&#34;
 		data-flex-basis=&#34;535px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;历史版本的前台和后台电池消耗细节大盘统计数据&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;这些数据会按照网络、运算、显示、定位和其他来分类。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://lilithsangreal.com/p/ios-%E6%80%A7%E8%83%BD%E6%8C%87%E6%A0%87%E5%B7%A5%E5%85%B7%E9%9B%86%E7%AC%94%E8%AE%B0-vol.3-xcode-metrics-organizer/2022-09-05-15-20-57.png&#34;
+	width=&#34;2862&#34;
+	height=&#34;1380&#34;
+	srcset=&#34;https://lilithsangreal.com/p/ios-%E6%80%A7%E8%83%BD%E6%8C%87%E6%A0%87%E5%B7%A5%E5%85%B7%E9%9B%86%E7%AC%94%E8%AE%B0-vol.3-xcode-metrics-organizer/2022-09-05-15-20-57_hu46c462dfd250b3cec3da718584bbdd82_2515321_480x0_resize_box_3.png 480w, https://lilithsangreal.com/p/ios-%E6%80%A7%E8%83%BD%E6%8C%87%E6%A0%87%E5%B7%A5%E5%85%B7%E9%9B%86%E7%AC%94%E8%AE%B0-vol.3-xcode-metrics-organizer/2022-09-05-15-20-57_hu46c462dfd250b3cec3da718584bbdd82_2515321_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;207&#34;
+		data-flex-basis=&#34;497px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;启动时间&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;img src=&#34;https://lilithsangreal.com/p/ios-%E6%80%A7%E8%83%BD%E6%8C%87%E6%A0%87%E5%B7%A5%E5%85%B7%E9%9B%86%E7%AC%94%E8%AE%B0-vol.3-xcode-metrics-organizer/2022-09-05-15-26-31.png&#34;
+	width=&#34;3178&#34;
+	height=&#34;842&#34;
+	srcset=&#34;https://lilithsangreal.com/p/ios-%E6%80%A7%E8%83%BD%E6%8C%87%E6%A0%87%E5%B7%A5%E5%85%B7%E9%9B%86%E7%AC%94%E8%AE%B0-vol.3-xcode-metrics-organizer/2022-09-05-15-26-31_hu719ab315163a13ab8a6806ff9eec038e_1732917_480x0_resize_box_3.png 480w, https://lilithsangreal.com/p/ios-%E6%80%A7%E8%83%BD%E6%8C%87%E6%A0%87%E5%B7%A5%E5%85%B7%E9%9B%86%E7%AC%94%E8%AE%B0-vol.3-xcode-metrics-organizer/2022-09-05-15-26-31_hu719ab315163a13ab8a6806ff9eec038e_1732917_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;377&#34;
+		data-flex-basis=&#34;905px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;不响应用户的时间比例（Hang Rate）&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;img src=&#34;https://lilithsangreal.com/p/ios-%E6%80%A7%E8%83%BD%E6%8C%87%E6%A0%87%E5%B7%A5%E5%85%B7%E9%9B%86%E7%AC%94%E8%AE%B0-vol.3-xcode-metrics-organizer/2022-09-05-15-27-12.png&#34;
+	width=&#34;3154&#34;
+	height=&#34;838&#34;
+	srcset=&#34;https://lilithsangreal.com/p/ios-%E6%80%A7%E8%83%BD%E6%8C%87%E6%A0%87%E5%B7%A5%E5%85%B7%E9%9B%86%E7%AC%94%E8%AE%B0-vol.3-xcode-metrics-organizer/2022-09-05-15-27-12_hu1af28db15f52f8520ac27cddc59bca74_2026900_480x0_resize_box_3.png 480w, https://lilithsangreal.com/p/ios-%E6%80%A7%E8%83%BD%E6%8C%87%E6%A0%87%E5%B7%A5%E5%85%B7%E9%9B%86%E7%AC%94%E8%AE%B0-vol.3-xcode-metrics-organizer/2022-09-05-15-27-12_hu1af28db15f52f8520ac27cddc59bca74_2026900_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;376&#34;
+		data-flex-basis=&#34;903px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;磁盘写入量&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;img src=&#34;https://lilithsangreal.com/p/ios-%E6%80%A7%E8%83%BD%E6%8C%87%E6%A0%87%E5%B7%A5%E5%85%B7%E9%9B%86%E7%AC%94%E8%AE%B0-vol.3-xcode-metrics-organizer/2022-09-05-15-28-05.png&#34;
+	width=&#34;3158&#34;
+	height=&#34;812&#34;
+	srcset=&#34;https://lilithsangreal.com/p/ios-%E6%80%A7%E8%83%BD%E6%8C%87%E6%A0%87%E5%B7%A5%E5%85%B7%E9%9B%86%E7%AC%94%E8%AE%B0-vol.3-xcode-metrics-organizer/2022-09-05-15-28-05_hu5032a1a037575b28e43d33669ebcddff_1564077_480x0_resize_box_3.png 480w, https://lilithsangreal.com/p/ios-%E6%80%A7%E8%83%BD%E6%8C%87%E6%A0%87%E5%B7%A5%E5%85%B7%E9%9B%86%E7%AC%94%E8%AE%B0-vol.3-xcode-metrics-organizer/2022-09-05-15-28-05_hu5032a1a037575b28e43d33669ebcddff_1564077_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;388&#34;
+		data-flex-basis=&#34;933px&#34;
 	
 &gt;&lt;/p&gt;
 </description>
