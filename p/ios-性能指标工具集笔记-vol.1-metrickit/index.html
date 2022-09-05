@@ -1,26 +1,28 @@
 <!DOCTYPE html>
-<html lang="en-us">
+<html lang="en-us" dir="ltr">
     <head><meta charset='utf-8'>
 <meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='iOS 性能指标工具集笔记 Vol.1 MetricKit 综述 优秀的产品对于应用的功耗表现也有所要求。因此 iOS 在开发过程中会使用 Instruments、Energy Gauges 和 Profiling 来分析和改进应用的功耗表现。对于 Beta 测试，也可以利用 Instruments 进行分析。
 不考虑第三方框架，已经发布的 TestFlight / App Store 包，虽然我们仍有机会获取到一些崩溃日志（隐私日志里面的Crash日志等）。但这些很难让开发者量化分析应用的功耗表现，显然，我们需要更多数据。
 为此苹果在 2019 年伴随iOS13和 Xcode11 发布了一系列工具用于收集和分析用于手机功耗表现相关的数据，这些工具大量出现了 Metrics 这个关键词，我认为可以直接翻译为指标，其实苹果是给用户提供了更多可量化的指标数据及其相关工具、框架，这是第一批发布的指标工具：
- XCTest Metrics：可以测量部分功能的性能和电池的寿命指标 MetricKit：一个用于收集诸多用户电池和性能表现相关数据的框架 Xcode Metrics Organizer：一个统计大盘数据概率，可以看所有用户的性能表现   上图为苹果描述的应用场景。
- 首批提供的指标如下：
- Battery Metrics：提供CPU、位置、显示、网络、蓝牙、多媒体和相册的功耗表现 Performance Metrics：提供挂起、磁盘、应用启动、内存和自定义间隔  在 2020 年，苹果再一次提升了这些指标工具的能力，发布了 Metric Kit2.0，拓展了三个指标集合 5:24
- CPU 指令：能够给出一天内究竟有多少指令执行了，极度精确地给出App究竟做了多少事 滚动故障：用户感受到的动画丢帧/不流畅占正常动画的比例，并进一步介绍如何用XCTest来排查与解决动画故障 APP 退出：给出一天内，APP究竟为什么退出了，退出了多少次。一个应用，除了正常退出，也会有很多情况被苹果干掉  除了指标集合，苹果还推出了可以帮助定位和修复问题的数据工具 MetricKit 2.0 Diagnostics 8:14，包含指标类型如下：
- 挂起：采样App对用户长时间无反应（主线程阻塞等）时的堆栈 CPU 异常：采样高CPU占用时的堆栈 磁盘写入异常：采样总写入次数过多，异常过量写入发生时的堆栈（突破每日1GB） Crash：采样崩溃发生时的虚拟内存信息和堆栈  同时，升级了Xcode Metrics Organizer 分析性能指标的能力。'><title>iOS 性能指标工具集笔记 Vol.1 MetricKit</title>
+XCTest Metrics：可以测量部分功能的性能和电池的寿命指标 MetricKit：一个用于收集诸多用户电池和性能表现相关数据的框架 Xcode Metrics Organizer：一个统计大盘数据概率，可以看所有用户的性能表现 上图为苹果描述的应用场景。
+首批提供的指标如下：
+Battery Metrics：提供CPU、位置、显示、网络、蓝牙、多媒体和相册的功耗表现 Performance Metrics：提供挂起、磁盘、应用启动、内存和自定义间隔 在 2020 年，苹果再一次提升了这些指标工具的能力，发布了 Metric Kit2.0，拓展了三个指标集合 5:24
+CPU 指令：能够给出一天内究竟有多少指令执行了，极度精确地给出App究竟做了多少事 滚动故障：用户感受到的动画丢帧/不流畅占正常动画的比例，并进一步介绍如何用XCTest来排查与解决动画故障 APP 退出：给出一天内，APP究竟为什么退出了，退出了多少次。一个应用，除了正常退出，也会有很多情况被苹果干掉 除了指标集合，苹果还推出了可以帮助定位和修复问题的数据工具 MetricKit 2.0 Diagnostics 8:14，包含指标类型如下：
+挂起：采样App对用户长时间无反应（主线程阻塞等）时的堆栈 CPU 异常：采样高CPU占用时的堆栈 磁盘写入异常：采样总写入次数过多，异常过量写入发生时的堆栈（突破每日1GB） Crash：采样崩溃发生时的虚拟内存信息和堆栈 同时，升级了Xcode Metrics Organizer 分析性能指标的能力。
+MetricKit 如何工作 一旦为 App 接入了 MetricKit 之后，MetricKit 会在24小时之内收集性能指标，并在生成一份报告。'><title>iOS 性能指标工具集笔记 Vol.1 MetricKit</title>
 
 <link rel='canonical' href='https://lilithsangreal.com/p/ios-%E6%80%A7%E8%83%BD%E6%8C%87%E6%A0%87%E5%B7%A5%E5%85%B7%E9%9B%86%E7%AC%94%E8%AE%B0-vol.1-metrickit/'>
 
-<link rel="stylesheet" href="/scss/style.min.b949db8bead9abdc40291b93383b8da6abc3aa62e74f5580356c06ddbb792dab.css"><meta property='og:title' content='iOS 性能指标工具集笔记 Vol.1 MetricKit'>
+<link rel="stylesheet" href="/scss/style.min.ac77dcf8b111b51da39a92990f431923f210f3876d85798a2125667f96dc33a4.css"><meta property='og:title' content='iOS 性能指标工具集笔记 Vol.1 MetricKit'>
 <meta property='og:description' content='iOS 性能指标工具集笔记 Vol.1 MetricKit 综述 优秀的产品对于应用的功耗表现也有所要求。因此 iOS 在开发过程中会使用 Instruments、Energy Gauges 和 Profiling 来分析和改进应用的功耗表现。对于 Beta 测试，也可以利用 Instruments 进行分析。
 不考虑第三方框架，已经发布的 TestFlight / App Store 包，虽然我们仍有机会获取到一些崩溃日志（隐私日志里面的Crash日志等）。但这些很难让开发者量化分析应用的功耗表现，显然，我们需要更多数据。
 为此苹果在 2019 年伴随iOS13和 Xcode11 发布了一系列工具用于收集和分析用于手机功耗表现相关的数据，这些工具大量出现了 Metrics 这个关键词，我认为可以直接翻译为指标，其实苹果是给用户提供了更多可量化的指标数据及其相关工具、框架，这是第一批发布的指标工具：
- XCTest Metrics：可以测量部分功能的性能和电池的寿命指标 MetricKit：一个用于收集诸多用户电池和性能表现相关数据的框架 Xcode Metrics Organizer：一个统计大盘数据概率，可以看所有用户的性能表现   上图为苹果描述的应用场景。
- 首批提供的指标如下：
- Battery Metrics：提供CPU、位置、显示、网络、蓝牙、多媒体和相册的功耗表现 Performance Metrics：提供挂起、磁盘、应用启动、内存和自定义间隔  在 2020 年，苹果再一次提升了这些指标工具的能力，发布了 Metric Kit2.0，拓展了三个指标集合 5:24
- CPU 指令：能够给出一天内究竟有多少指令执行了，极度精确地给出App究竟做了多少事 滚动故障：用户感受到的动画丢帧/不流畅占正常动画的比例，并进一步介绍如何用XCTest来排查与解决动画故障 APP 退出：给出一天内，APP究竟为什么退出了，退出了多少次。一个应用，除了正常退出，也会有很多情况被苹果干掉  除了指标集合，苹果还推出了可以帮助定位和修复问题的数据工具 MetricKit 2.0 Diagnostics 8:14，包含指标类型如下：
- 挂起：采样App对用户长时间无反应（主线程阻塞等）时的堆栈 CPU 异常：采样高CPU占用时的堆栈 磁盘写入异常：采样总写入次数过多，异常过量写入发生时的堆栈（突破每日1GB） Crash：采样崩溃发生时的虚拟内存信息和堆栈  同时，升级了Xcode Metrics Organizer 分析性能指标的能力。'>
+XCTest Metrics：可以测量部分功能的性能和电池的寿命指标 MetricKit：一个用于收集诸多用户电池和性能表现相关数据的框架 Xcode Metrics Organizer：一个统计大盘数据概率，可以看所有用户的性能表现 上图为苹果描述的应用场景。
+首批提供的指标如下：
+Battery Metrics：提供CPU、位置、显示、网络、蓝牙、多媒体和相册的功耗表现 Performance Metrics：提供挂起、磁盘、应用启动、内存和自定义间隔 在 2020 年，苹果再一次提升了这些指标工具的能力，发布了 Metric Kit2.0，拓展了三个指标集合 5:24
+CPU 指令：能够给出一天内究竟有多少指令执行了，极度精确地给出App究竟做了多少事 滚动故障：用户感受到的动画丢帧/不流畅占正常动画的比例，并进一步介绍如何用XCTest来排查与解决动画故障 APP 退出：给出一天内，APP究竟为什么退出了，退出了多少次。一个应用，除了正常退出，也会有很多情况被苹果干掉 除了指标集合，苹果还推出了可以帮助定位和修复问题的数据工具 MetricKit 2.0 Diagnostics 8:14，包含指标类型如下：
+挂起：采样App对用户长时间无反应（主线程阻塞等）时的堆栈 CPU 异常：采样高CPU占用时的堆栈 磁盘写入异常：采样总写入次数过多，异常过量写入发生时的堆栈（突破每日1GB） Crash：采样崩溃发生时的虚拟内存信息和堆栈 同时，升级了Xcode Metrics Organizer 分析性能指标的能力。
+MetricKit 如何工作 一旦为 App 接入了 MetricKit 之后，MetricKit 会在24小时之内收集性能指标，并在生成一份报告。'>
 <meta property='og:url' content='https://lilithsangreal.com/p/ios-%E6%80%A7%E8%83%BD%E6%8C%87%E6%A0%87%E5%B7%A5%E5%85%B7%E9%9B%86%E7%AC%94%E8%AE%B0-vol.1-metrickit/'>
 <meta property='og:site_name' content='Lilith Sangreal'>
 <meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2022-08-26T19:46:00&#43;08:00'/><meta property='article:modified_time' content='2022-08-26T19:46:00&#43;08:00'/>
@@ -28,15 +30,16 @@
 <meta name="twitter:description" content="iOS 性能指标工具集笔记 Vol.1 MetricKit 综述 优秀的产品对于应用的功耗表现也有所要求。因此 iOS 在开发过程中会使用 Instruments、Energy Gauges 和 Profiling 来分析和改进应用的功耗表现。对于 Beta 测试，也可以利用 Instruments 进行分析。
 不考虑第三方框架，已经发布的 TestFlight / App Store 包，虽然我们仍有机会获取到一些崩溃日志（隐私日志里面的Crash日志等）。但这些很难让开发者量化分析应用的功耗表现，显然，我们需要更多数据。
 为此苹果在 2019 年伴随iOS13和 Xcode11 发布了一系列工具用于收集和分析用于手机功耗表现相关的数据，这些工具大量出现了 Metrics 这个关键词，我认为可以直接翻译为指标，其实苹果是给用户提供了更多可量化的指标数据及其相关工具、框架，这是第一批发布的指标工具：
- XCTest Metrics：可以测量部分功能的性能和电池的寿命指标 MetricKit：一个用于收集诸多用户电池和性能表现相关数据的框架 Xcode Metrics Organizer：一个统计大盘数据概率，可以看所有用户的性能表现   上图为苹果描述的应用场景。
- 首批提供的指标如下：
- Battery Metrics：提供CPU、位置、显示、网络、蓝牙、多媒体和相册的功耗表现 Performance Metrics：提供挂起、磁盘、应用启动、内存和自定义间隔  在 2020 年，苹果再一次提升了这些指标工具的能力，发布了 Metric Kit2.0，拓展了三个指标集合 5:24
- CPU 指令：能够给出一天内究竟有多少指令执行了，极度精确地给出App究竟做了多少事 滚动故障：用户感受到的动画丢帧/不流畅占正常动画的比例，并进一步介绍如何用XCTest来排查与解决动画故障 APP 退出：给出一天内，APP究竟为什么退出了，退出了多少次。一个应用，除了正常退出，也会有很多情况被苹果干掉  除了指标集合，苹果还推出了可以帮助定位和修复问题的数据工具 MetricKit 2.0 Diagnostics 8:14，包含指标类型如下：
- 挂起：采样App对用户长时间无反应（主线程阻塞等）时的堆栈 CPU 异常：采样高CPU占用时的堆栈 磁盘写入异常：采样总写入次数过多，异常过量写入发生时的堆栈（突破每日1GB） Crash：采样崩溃发生时的虚拟内存信息和堆栈  同时，升级了Xcode Metrics Organizer 分析性能指标的能力。">
+XCTest Metrics：可以测量部分功能的性能和电池的寿命指标 MetricKit：一个用于收集诸多用户电池和性能表现相关数据的框架 Xcode Metrics Organizer：一个统计大盘数据概率，可以看所有用户的性能表现 上图为苹果描述的应用场景。
+首批提供的指标如下：
+Battery Metrics：提供CPU、位置、显示、网络、蓝牙、多媒体和相册的功耗表现 Performance Metrics：提供挂起、磁盘、应用启动、内存和自定义间隔 在 2020 年，苹果再一次提升了这些指标工具的能力，发布了 Metric Kit2.0，拓展了三个指标集合 5:24
+CPU 指令：能够给出一天内究竟有多少指令执行了，极度精确地给出App究竟做了多少事 滚动故障：用户感受到的动画丢帧/不流畅占正常动画的比例，并进一步介绍如何用XCTest来排查与解决动画故障 APP 退出：给出一天内，APP究竟为什么退出了，退出了多少次。一个应用，除了正常退出，也会有很多情况被苹果干掉 除了指标集合，苹果还推出了可以帮助定位和修复问题的数据工具 MetricKit 2.0 Diagnostics 8:14，包含指标类型如下：
+挂起：采样App对用户长时间无反应（主线程阻塞等）时的堆栈 CPU 异常：采样高CPU占用时的堆栈 磁盘写入异常：采样总写入次数过多，异常过量写入发生时的堆栈（突破每日1GB） Crash：采样崩溃发生时的虚拟内存信息和堆栈 同时，升级了Xcode Metrics Organizer 分析性能指标的能力。
+MetricKit 如何工作 一旦为 App 接入了 MetricKit 之后，MetricKit 会在24小时之内收集性能指标，并在生成一份报告。">
     </head>
     <body class="
-    article-page has-toc
-">
+    article-page
+    ">
     <script>
         (function() {
             const colorSchemeKey = 'StackColorScheme';
@@ -59,25 +62,192 @@
         }
     })();
 </script>
-<div class="container main-container flex 
-    
-        extended
-    
-">
-    
-        <div id="article-toolbar">
-            <a href="/" class="back-home">
-                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-chevron-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <path stroke="none" d="M0 0h24v24H0z"/>
-  <polyline points="15 6 9 12 15 18" />
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="Toggle Menu">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/images/avatar_hub2e5e0ee896a35ef30e87da7e9f71a6e_16593_300x0_resize_q75_box.jpeg" width="300"
+                            height="300" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+                    <span class="emoji">🌞</span>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">Lilith Sangreal</a></h1>
+            <h2 class="site-description">暴风雨来临，电闪又雷鸣。</h2>
+        </div>
+    </header><ol class="social-menu">
+            
+                <li>
+                    <a 
+                        href='https://github.com/L1l1thLY'
+                        target="_blank"
+                        title="GitHub"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
 </svg>
 
 
 
-                <span>Back</span>
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu">
+        
+        
+        
+
+        <li >
+            <a href='/' target="_blank">
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>Home</span>
             </a>
+        </li>
+        
+        
+
+        <li >
+            <a href='/about/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="7" r="4" />
+  <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+</svg>
+
+
+
+                
+                <span>About</span>
+            </a>
+        </li>
+        
+        
+
+        <li >
+            <a href='/archives/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <rect x="3" y="4" width="18" height="4" rx="2" />
+  <path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-10" />
+  <line x1="10" y1="12" x2="14" y2="12" />
+</svg>
+
+
+
+                
+                <span>Archives</span>
+            </a>
+        </li>
+        
+        
+
+        <li >
+            <a href='/search/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+                
+                <span>Search</span>
+            </a>
+        </li>
+        
+        
+
+        <li >
+            <a href='/links/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-link" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5" />
+  <path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5" />
+</svg>
+
+
+
+                
+                <span>Links</span>
+            </a>
+        </li>
+        
+
+        <div class="menu-bottom-section">
+            
+            
+                <li id="dark-mode-toggle">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                    <span>Dark Mode</span>
+                </li>
+            
         </div>
-    
+    </ol>
+</aside>
 <main class="main full-width">
     <article class="main-article">
     <header class="article-header">
@@ -93,11 +263,13 @@
     </header>
     
 
-    <h2 class="article-title">
-        <a href="/p/ios-%E6%80%A7%E8%83%BD%E6%8C%87%E6%A0%87%E5%B7%A5%E5%85%B7%E9%9B%86%E7%AC%94%E8%AE%B0-vol.1-metrickit/">iOS 性能指标工具集笔记 Vol.1 MetricKit</a>
-    </h2>
-
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/p/ios-%E6%80%A7%E8%83%BD%E6%8C%87%E6%A0%87%E5%B7%A5%E5%85%B7%E9%9B%86%E7%AC%94%E8%AE%B0-vol.1-metrickit/">iOS 性能指标工具集笔记 Vol.1 MetricKit</a>
+        </h2>
     
+        
+    </div>
 
     
     <footer class="article-time">
@@ -132,6 +304,8 @@
             </div>
         
     </footer>
+    
+
     
 </div>
 </header>
@@ -278,41 +452,41 @@
 </span><span class="lnt">34
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-ObjectiveC" data-lang="ObjectiveC"><span class="c1">//
-</span><span class="c1">//  MetricViewController.m
-</span><span class="c1">//  UIPlayground
-</span><span class="c1">//
-</span><span class="c1">//  Created by LilithSangreal on 2022/9/3.
-</span><span class="c1">//  Copyright © 2022 LilithSangreal. All rights reserved.
-</span><span class="c1">//
-</span><span class="c1"></span>
-<span class="cp">#import &#34;MetricViewController.h&#34;
-</span><span class="cp"></span><span class="c1">// 1. 引入 MetricKit 框架头文件
-</span><span class="c1"></span><span class="cp">#import &lt;MetricKit/MetricKit.h&gt;
-</span><span class="cp"></span>
-<span class="k">@interface</span> <span class="nc">MetricViewController</span> <span class="p">()</span> <span class="o">&lt;</span><span class="n">MXMetricManagerSubscriber</span><span class="o">&gt;</span>
-<span class="c1">// 2. [可选] 声明一个 Manager 变量，主要用于移除订阅，如果在AppDelegate里面使用，可能不需要移除
-</span><span class="c1"></span><span class="k">@property</span> <span class="p">(</span><span class="k">strong</span><span class="p">,</span> <span class="k">nonatomic</span><span class="p">)</span> <span class="n">MXMetricManager</span> <span class="o">*</span><span class="n">metricManager</span><span class="p">;</span>
-<span class="k">@end</span>
-
-<span class="k">@implementation</span> <span class="nc">MetricViewController</span>
-
-<span class="p">-</span> <span class="p">(</span><span class="kt">instancetype</span><span class="p">)</span><span class="nf">init</span> <span class="p">{</span>
-    <span class="nb">self</span> <span class="o">=</span> <span class="p">[</span><span class="nb">super</span> <span class="n">init</span><span class="p">];</span>
-    <span class="k">if</span> <span class="p">(</span><span class="nb">self</span><span class="p">)</span> <span class="p">{</span>
-        <span class="c1">// 3. 获取 MetricManager 单例
-</span><span class="c1"></span>        <span class="n">_metricManager</span> <span class="o">=</span> <span class="p">[</span><span class="n">MXMetricManager</span> <span class="n">sharedManager</span><span class="p">];</span>
-        <span class="c1">// 4. 将订阅对象放入 Manager 中
-</span><span class="c1"></span>        <span class="p">[</span><span class="n">_metricManager</span> <span class="nl">addSubscriber</span><span class="p">:</span><span class="nb">self</span><span class="p">];</span>
-    <span class="p">}</span>
-    <span class="k">return</span> <span class="nb">self</span><span class="p">;</span>
-<span class="p">}</span>
-
-<span class="p">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">dealloc</span> <span class="p">{</span>
-    <span class="c1">// 5. [可选] 析构的时候需要移除观察者
-</span><span class="c1"></span>    <span class="p">[</span><span class="n">_metricManager</span> <span class="nl">removeSubscriber</span><span class="p">:</span><span class="nb">self</span><span class="p">];</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-ObjectiveC" data-lang="ObjectiveC"><span class="line"><span class="cl"><span class="c1">//
+</span></span></span><span class="line"><span class="cl"><span class="c1">//  MetricViewController.m
+</span></span></span><span class="line"><span class="cl"><span class="c1">//  UIPlayground
+</span></span></span><span class="line"><span class="cl"><span class="c1">//
+</span></span></span><span class="line"><span class="cl"><span class="c1">//  Created by LilithSangreal on 2022/9/3.
+</span></span></span><span class="line"><span class="cl"><span class="c1">//  Copyright © 2022 LilithSangreal. All rights reserved.
+</span></span></span><span class="line"><span class="cl"><span class="c1">//
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl"><span class="cp">#import &#34;MetricViewController.h&#34;
+</span></span></span><span class="line"><span class="cl"><span class="cp"></span><span class="c1">// 1. 引入 MetricKit 框架头文件
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="cp">#import &lt;MetricKit/MetricKit.h&gt;
+</span></span></span><span class="line"><span class="cl"><span class="cp"></span>
+</span></span><span class="line"><span class="cl"><span class="k">@interface</span> <span class="nc">MetricViewController</span> <span class="p">()</span> <span class="o">&lt;</span><span class="n">MXMetricManagerSubscriber</span><span class="o">&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="c1">// 2. [可选] 声明一个 Manager 变量，主要用于移除订阅，如果在AppDelegate里面使用，可能不需要移除
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="k">@property</span> <span class="p">(</span><span class="k">strong</span><span class="p">,</span> <span class="k">nonatomic</span><span class="p">)</span> <span class="n">MXMetricManager</span> <span class="o">*</span><span class="n">metricManager</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="k">@end</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">@implementation</span> <span class="nc">MetricViewController</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="p">-</span> <span class="p">(</span><span class="kt">instancetype</span><span class="p">)</span><span class="nf">init</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nb">self</span> <span class="o">=</span> <span class="p">[</span><span class="nb">super</span> <span class="n">init</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="p">(</span><span class="nb">self</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 3. 获取 MetricManager 单例
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">_metricManager</span> <span class="o">=</span> <span class="p">[</span><span class="n">MXMetricManager</span> <span class="n">sharedManager</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 4. 将订阅对象放入 Manager 中
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="p">[</span><span class="n">_metricManager</span> <span class="nl">addSubscriber</span><span class="p">:</span><span class="nb">self</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="nb">self</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="p">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">dealloc</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 5. [可选] 析构的时候需要移除观察者
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="p">[</span><span class="n">_metricManager</span> <span class="nl">removeSubscriber</span><span class="p">:</span><span class="nb">self</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><h3 id="获取-metrickit-指标">获取 MetricKit 指标</h3>
 <p>需要实现协议方法来获取指标信息，这个方法 iOS13 以上才可以使用。</p>
@@ -325,12 +499,12 @@
 </span><span class="lnt">5
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-ObjectiveC" data-lang="ObjectiveC"><span class="p">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">didReceiveMetricPayloads:</span><span class="p">(</span><span class="n">NSArray</span><span class="o">&lt;</span><span class="n">MXMetricPayload</span> <span class="o">*&gt;</span> <span class="o">*</span><span class="p">)</span><span class="nv">payloads</span> <span class="p">{</span>
-    <span class="k">for</span> <span class="p">(</span><span class="n">MXMetricPayload</span> <span class="o">*</span><span class="n">payload</span> <span class="k">in</span> <span class="n">payloads</span><span class="p">)</span> <span class="p">{</span>
-        <span class="c1">// ...可以上传服务器、存入本地、写入文件等等...
-</span><span class="c1"></span>    <span class="p">}</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-ObjectiveC" data-lang="ObjectiveC"><span class="line"><span class="cl"><span class="p">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">didReceiveMetricPayloads:</span><span class="p">(</span><span class="n">NSArray</span><span class="o">&lt;</span><span class="n">MXMetricPayload</span> <span class="o">*&gt;</span> <span class="o">*</span><span class="p">)</span><span class="nv">payloads</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="p">(</span><span class="n">MXMetricPayload</span> <span class="o">*</span><span class="n">payload</span> <span class="k">in</span> <span class="n">payloads</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// ...可以上传服务器、存入本地、写入文件等等...
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><h3 id="metrickit-20获取-mxdiagnostic-信息">【MetricKit 2.0】获取 MXDiagnostic 信息</h3>
 <p>实现协议方法来获取诊断信息，这个方法 iOS14 以上才可以使用。</p>
@@ -344,12 +518,12 @@
 </span><span class="lnt">5
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-ObjectiveC" data-lang="ObjectiveC"><span class="p">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">didReceiveDiagnosticPayloads:</span><span class="p">(</span><span class="n">NSArray</span><span class="o">&lt;</span><span class="n">MXDiagnosticPayload</span> <span class="o">*&gt;</span> <span class="o">*</span><span class="p">)</span><span class="nv">payloads</span> <span class="p">{</span>
-    <span class="k">for</span> <span class="p">(</span><span class="n">MXDiagnosticPayload</span> <span class="o">*</span><span class="n">payload</span> <span class="k">in</span> <span class="n">payloads</span><span class="p">)</span> <span class="p">{</span>
-        <span class="c1">// ...可以上传服务器、存入本地、写入文件等等...
-</span><span class="c1"></span>    <span class="p">}</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-ObjectiveC" data-lang="ObjectiveC"><span class="line"><span class="cl"><span class="p">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">didReceiveDiagnosticPayloads:</span><span class="p">(</span><span class="n">NSArray</span><span class="o">&lt;</span><span class="n">MXDiagnosticPayload</span> <span class="o">*&gt;</span> <span class="o">*</span><span class="p">)</span><span class="nv">payloads</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="p">(</span><span class="n">MXDiagnosticPayload</span> <span class="o">*</span><span class="n">payload</span> <span class="k">in</span> <span class="n">payloads</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// ...可以上传服务器、存入本地、写入文件等等...
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><h3 id="分析关键代码段落的性能指标信息-mxsignpost">分析关键代码段落的性能指标信息 mxSignPost</h3>
 <p>假设需要分析 doSomething 方法的功耗性能：</p>
@@ -373,23 +547,23 @@
 </span><span class="lnt">16
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-ObjectiveC" data-lang="ObjectiveC"><span class="p">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">viewDidLoad</span> <span class="p">{</span>
-    <span class="p">[</span><span class="nb">super</span> <span class="n">viewDidLoad</span><span class="p">];</span>
-    
-    <span class="c1">// 1. 创建 OSLog Handle，为它起个分类名吧
-</span><span class="c1"></span>    <span class="n">os_log_t</span> <span class="n">doSomeThingHandle</span> <span class="o">=</span> <span class="p">[</span><span class="n">MXMetricManager</span> <span class="nl">makeLogHandleWithCategory</span><span class="p">:</span><span class="s">@&#34;DoSomeThingCategory&#34;</span><span class="p">];</span>
-    <span class="n">os_signpost_id_t</span> <span class="n">doSomeThingHandleID</span> <span class="o">=</span> <span class="n">os_signpost_id_generate</span><span class="p">(</span><span class="n">doSomeThingHandle</span><span class="p">);</span>
-    
-    <span class="c1">// 2. 标记关键代码段落开始，为它起个名字吧
-</span><span class="c1"></span>    <span class="n">MXSignpostIntervalBegin</span><span class="p">(</span><span class="n">doSomeThingHandle</span><span class="p">,</span> <span class="n">doSomeThingHandleID</span><span class="p">,</span> <span class="s">@&#34;DoSomeThingAwesome&#34;</span><span class="p">);</span>
-    
-    <span class="p">[</span><span class="nb">self</span> <span class="n">doSomethingAwesome</span><span class="p">];</span>
-    
-    <span class="c1">// 3. 标记关键代码段落结束
-</span><span class="c1"></span>    <span class="n">MXSignpostIntervalEnd</span><span class="p">(</span><span class="n">doSomeThingHandle</span><span class="p">,</span> <span class="n">doSomeThingHandleID</span><span class="p">,</span> <span class="s">@&#34;DoSomeThingAwesome&#34;</span><span class="p">);</span>
-    
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-ObjectiveC" data-lang="ObjectiveC"><span class="line"><span class="cl"><span class="p">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">viewDidLoad</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="p">[</span><span class="nb">super</span> <span class="n">viewDidLoad</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="c1">// 1. 创建 OSLog Handle，为它起个分类名吧
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">os_log_t</span> <span class="n">doSomeThingHandle</span> <span class="o">=</span> <span class="p">[</span><span class="n">MXMetricManager</span> <span class="nl">makeLogHandleWithCategory</span><span class="p">:</span><span class="s">@&#34;DoSomeThingCategory&#34;</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl">    <span class="n">os_signpost_id_t</span> <span class="n">doSomeThingHandleID</span> <span class="o">=</span> <span class="n">os_signpost_id_generate</span><span class="p">(</span><span class="n">doSomeThingHandle</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="c1">// 2. 标记关键代码段落开始，为它起个名字吧
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">MXSignpostIntervalBegin</span><span class="p">(</span><span class="n">doSomeThingHandle</span><span class="p">,</span> <span class="n">doSomeThingHandleID</span><span class="p">,</span> <span class="s">@&#34;DoSomeThingAwesome&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="p">[</span><span class="nb">self</span> <span class="n">doSomethingAwesome</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="c1">// 3. 标记关键代码段落结束
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">MXSignpostIntervalEnd</span><span class="p">(</span><span class="n">doSomeThingHandle</span><span class="p">,</span> <span class="n">doSomeThingHandleID</span><span class="p">,</span> <span class="s">@&#34;DoSomeThingAwesome&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><h3 id="自测数据回包需要真机">自测数据回包（需要真机）</h3>
 <p>Xcode - Debug - Simulate MetricKit Payloads</p>
@@ -440,13 +614,13 @@
     
         <link 
                 rel="stylesheet" 
-                href="https://cdn.jsdelivr.net/npm/katex@0.13.13/dist/katex.min.css"integrity="sha384-RZU/ijkSsFbcmivfdRBQDtwuwVqK7GMOw6IMvKyeWL2K5UAlyp6WonmB8m7Jd0Hn"crossorigin="anonymous"
+                href="https://cdn.jsdelivr.net/npm/katex@0.15.6/dist/katex.min.css"integrity="sha256-J&#43;iAE0sgH8QSz9hpcDxXIftnj65JEZgNhGcgReTTK9s="crossorigin="anonymous"
             ><script 
-                src="https://cdn.jsdelivr.net/npm/katex@0.13.13/dist/katex.min.js"integrity="sha384-pK1WpvzWVBQiP0/GjnvRxV4mOb0oxFuyRxJlk6vVw146n3egcN5C925NCP7a7BY8"crossorigin="anonymous"
+                src="https://cdn.jsdelivr.net/npm/katex@0.15.6/dist/katex.min.js"integrity="sha256-InsNdER1b2xUewP&#43;pKCUJpkhiqwHgqiPXDlIk7GzBu4="crossorigin="anonymous"
                 defer
                 >
             </script><script 
-                src="https://cdn.jsdelivr.net/npm/katex@0.13.13/dist/contrib/auto-render.min.js"integrity="sha384-vZTG03m&#43;2yp6N6BNi5iM4rW4oIwk5DfcNdFfxkk9ZWpDriOkXX8voJBFrAO7MpVl"crossorigin="anonymous"
+                src="https://cdn.jsdelivr.net/npm/katex@0.15.6/dist/contrib/auto-render.min.js"integrity="sha256-y39Mpg7V3D4lhBX4x6O0bUqTV4pSrfgwEfGKfxkOdgI="crossorigin="anonymous"
                 defer
                 >
             </script><script>
@@ -465,14 +639,14 @@
 
     
 
-    <aside class="related-contents--wrapper">
     
-    
-        <h2 class="section-title">Related contents</h2>
-        <div class="related-contents">
-            <div class="flex article-list--tile">
+
+<aside class="related-content--wrapper">
+    <h2 class="section-title">Related content</h2>
+    <div class="related-content">
+        <div class="flex article-list--tile">
+            
                 
-                    
 <article class="">
     <a href="/p/ios-%E6%80%A7%E8%83%BD%E6%8C%87%E6%A0%87%E5%B7%A5%E5%85%B7%E9%9B%86%E7%AC%94%E8%AE%B0-vol.2-xctest/">
         
@@ -483,10 +657,10 @@
         </div>
     </a>
 </article>
-                
-            </div>
+
+            
         </div>
-    
+    </div>
 </aside>
 
      
@@ -495,7 +669,7 @@
     <div class="disqus-container">
     <div id="disqus_thread"></div>
 <script type="application/javascript">
-    var disqus_config = function () {
+    window.disqus_config = function () {
     
     
     
@@ -526,7 +700,7 @@
 
 <script>
     window.addEventListener('onColorSchemeChange', (e) => {
-        if (DISQUS) {
+        if (typeof DISQUS == 'object') {
             DISQUS.reset({
                 reload: true
             });
@@ -547,7 +721,7 @@
     
     <section class="powerby">
         Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
-        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.8.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
+        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.13.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
     </section>
 </footer>
 
@@ -624,72 +798,18 @@
                 >
             </script><link 
                 rel="stylesheet" 
-                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.css"integrity="sha256-c0uckgykQ9v5k&#43;IqViZOZKc47Jn7KQil4/MP3ySA3F8="crossorigin="anonymous"
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
             ><link 
                 rel="stylesheet" 
-                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.css"integrity="sha256-SBLU4vv6CA6lHsZ1XyTdhyjJxCjPif/TRkjnsyGAGnE="crossorigin="anonymous"
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
             >
 
             </main>
     
-        <aside class="sidebar right-sidebar sticky">
-            <section class="widget archives">
-                <div class="widget-icon">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <path stroke="none" d="M0 0h24v24H0z"/>
-  <line x1="5" y1="9" x2="19" y2="9" />
-  <line x1="5" y1="15" x2="19" y2="15" />
-  <line x1="11" y1="4" x2="7" y2="20" />
-  <line x1="17" y1="4" x2="13" y2="20" />
-</svg>
-
-
-
-                </div>
-                <h2 class="widget-title section-title">Table of contents</h2>
-                
-                <div class="widget--toc">
-                    <nav id="TableOfContents">
-  <ol>
-    <li><a href="#综述">综述</a></li>
-    <li><a href="#metrickit-如何工作">MetricKit 如何工作</a></li>
-    <li><a href="#metrics-10-battery-metrics-电池性能指标简介">Metrics 1.0 Battery Metrics 电池性能指标简介</a>
-      <ol>
-        <li><a href="#processing-metrics-处理器指标">Processing Metrics 处理器指标</a></li>
-        <li><a href="#location-metrics-定位指标">Location Metrics 定位指标</a></li>
-        <li><a href="#display-metrics-显示指标">Display Metrics 显示指标</a></li>
-        <li><a href="#networking-metrics-网络指标">Networking Metrics 网络指标</a></li>
-      </ol>
-    </li>
-    <li><a href="#metrics-10-performance-体验表现指标简介">Metrics 1.0 Performance 体验表现指标简介</a>
-      <ol>
-        <li><a href="#hang-metrics-无响应指标">Hang Metrics 无响应指标</a></li>
-        <li><a href="#disk-metrics-磁盘指标">Disk Metrics 磁盘指标</a></li>
-        <li><a href="#application-launch-metrics-应用指标">Application Launch Metrics 应用指标</a></li>
-        <li><a href="#memory-metrics-内存指标">Memory Metrics 内存指标</a></li>
-      </ol>
-    </li>
-    <li><a href="#使用-metrickit">使用 MetricKit</a>
-      <ol>
-        <li><a href="#接入-metrickit">接入 MetricKit</a></li>
-        <li><a href="#获取-metrickit-指标">获取 MetricKit 指标</a></li>
-        <li><a href="#metrickit-20获取-mxdiagnostic-信息">【MetricKit 2.0】获取 MXDiagnostic 信息</a></li>
-        <li><a href="#分析关键代码段落的性能指标信息-mxsignpost">分析关键代码段落的性能指标信息 mxSignPost</a></li>
-        <li><a href="#自测数据回包需要真机">自测数据回包（需要真机）</a></li>
-      </ol>
-    </li>
-    <li><a href="#下一篇">下一篇</a></li>
-    <li><a href="#参考链接">参考链接</a></li>
-  </ol>
-</nav>
-                </div>
-            </section>
-        </aside>
-    
 
         </div>
         <script 
-                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.5/dist/vibrant.min.js"integrity="sha256-5NovOZc4iwiAWTYIFiIM7DxKUXKWvpVEuMEPLzcm5/g="crossorigin="anonymous"
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
                 
                 >
             </script><script type="text/javascript" src="/ts/main.js" defer></script>

@@ -1,47 +1,45 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
-  <channel>
-    <title>Pages on Lilith Sangreal</title>
-    <link>https://lilithsangreal.com/page/</link>
-    <description>Recent content in Pages on Lilith Sangreal</description>
-    <generator>Hugo -- gohugo.io</generator>
-    <language>en-us</language>
-    <lastBuildDate>Tue, 22 Feb 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://lilithsangreal.com/page/index.xml" rel="self" type="application/rss+xml" />
-    <item>
-      <title>About</title>
-      <link>https://lilithsangreal.com/about/</link>
-      <pubDate>Tue, 22 Feb 2022 00:00:00 +0000</pubDate>
-      
-      <guid>https://lilithsangreal.com/about/</guid>
-      <description>空无一物</description>
-    </item>
-    
-    <item>
-      <title>Archives</title>
-      <link>https://lilithsangreal.com/archives/</link>
-      <pubDate>Tue, 28 May 2019 00:00:00 +0000</pubDate>
-      
-      <guid>https://lilithsangreal.com/archives/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>Links</title>
-      <link>https://lilithsangreal.com/links/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
-      <guid>https://lilithsangreal.com/links/</guid>
-      <description>空无一物</description>
-    </item>
-    
-    <item>
-      <title>Search</title>
-      <link>https://lilithsangreal.com/search/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
-      <guid>https://lilithsangreal.com/search/</guid>
-      <description></description>
-    </item>
-    
-  </channel>
+    <channel>
+        <title>Pages on Lilith Sangreal</title>
+        <link>https://lilithsangreal.com/page/</link>
+        <description>Recent content in Pages on Lilith Sangreal</description>
+        <generator>Hugo -- gohugo.io</generator>
+        <language>en-us</language>
+        <lastBuildDate>Tue, 22 Feb 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://lilithsangreal.com/page/index.xml" rel="self" type="application/rss+xml" /><item>
+        <title>About</title>
+        <link>https://lilithsangreal.com/about/</link>
+        <pubDate>Tue, 22 Feb 2022 00:00:00 +0000</pubDate>
+        
+        <guid>https://lilithsangreal.com/about/</guid>
+        <description>&lt;p&gt;空无一物&lt;/p&gt;
+</description>
+        </item>
+        <item>
+        <title>Archives</title>
+        <link>https://lilithsangreal.com/archives/</link>
+        <pubDate>Tue, 28 May 2019 00:00:00 +0000</pubDate>
+        
+        <guid>https://lilithsangreal.com/archives/</guid>
+        <description></description>
+        </item>
+        <item>
+        <title>Links</title>
+        <link>https://lilithsangreal.com/links/</link>
+        <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+        
+        <guid>https://lilithsangreal.com/links/</guid>
+        <description>&lt;p&gt;空无一物&lt;/p&gt;
+</description>
+        </item>
+        <item>
+        <title>Search</title>
+        <link>https://lilithsangreal.com/search/</link>
+        <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+        
+        <guid>https://lilithsangreal.com/search/</guid>
+        <description></description>
+        </item>
+        
+    </channel>
 </rss>
