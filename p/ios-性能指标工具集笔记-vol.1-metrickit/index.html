@@ -4,11 +4,11 @@
 <meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='iOS 性能指标工具集笔记 Vol.1 MetricKit 综述 优秀的产品对于应用的功耗表现也有所要求。因此 iOS 在开发过程中会使用 Instruments、Energy Gauges 和 Profiling 来分析和改进应用的功耗表现。对于 Beta 测试，也可以利用 Instruments 进行分析。
 不考虑第三方框架，已经发布的 TestFlight / App Store 包，虽然我们仍有机会获取到一些崩溃日志（隐私日志里面的Crash日志等）。但这些很难让开发者量化分析应用的功耗表现，显然，我们需要更多数据。
 为此苹果在 2019 年伴随iOS13和 Xcode11 发布了一系列工具用于收集和分析用于手机功耗表现相关的数据，这些工具大量出现了 Metrics 这个关键词，我认为可以直接翻译为指标，其实苹果是给用户提供了更多可量化的指标数据及其相关工具、框架，这是第一批发布的指标工具：
-XCTest Metrics：可以测量部分功能的性能和电池的寿命指标 MetricKit：一个用于收集诸多用户电池和性能表现相关数据的框架 Xcode Metrics Organizer：一个统计大盘数据概率，可以看所有用户的性能表现 上图为苹果描述的应用场景。
+XCTest Metrics：以一种类似单元测试的方式，测量部分关键代码的性能和电池指标的框架 MetricKit：一个用于收集诸多用户电池和性能表现相关数据的框架 Xcode Metrics Organizer：一个统计大盘数据，可以看AppStore所有用户历史版本的性能表现 上图为苹果描述的应用场景。
 首批提供的指标如下：
 Battery Metrics：提供CPU、位置、显示、网络、蓝牙、多媒体和相册的功耗表现 Performance Metrics：提供挂起、磁盘、应用启动、内存和自定义间隔 在 2020 年，苹果再一次提升了这些指标工具的能力，发布了 Metric Kit2.0，拓展了三个指标集合 5:24
-CPU 指令：能够给出一天内究竟有多少指令执行了，极度精确地给出App究竟做了多少事 滚动故障：用户感受到的动画丢帧/不流畅占正常动画的比例，并进一步介绍如何用XCTest来排查与解决动画故障 APP 退出：给出一天内，APP究竟为什么退出了，退出了多少次。一个应用，除了正常退出，也会有很多情况被苹果干掉 除了指标集合，苹果还推出了可以帮助定位和修复问题的数据工具 MetricKit 2.0 Diagnostics 8:14，包含指标类型如下：
-挂起：采样App对用户长时间无反应（主线程阻塞等）时的堆栈 CPU 异常：采样高CPU占用时的堆栈 磁盘写入异常：采样总写入次数过多，异常过量写入发生时的堆栈（突破每日1GB） Crash：采样崩溃发生时的虚拟内存信息和堆栈 同时，升级了Xcode Metrics Organizer 分析性能指标的能力。
+CPU 指令：能够给出一天内究竟有多少指令执行了，极度精确地给出App究竟做了多少事 滚动故障：用户感受到的动画丢帧/不流畅占正常动画的比例，并进一步介绍如何用XCTest来排查与解决动画故障 APP 退出：给出一天内，APP究竟为什么退出了，退出了多少次。一个应用，除了正常退出，也会有很多情况被苹果干掉 除了指标集合，苹果还推出了可以帮助定位和修复问题的数据工具 MetricKit 2.0 Diagnostics，包含指标类型如下：
+挂起：采样App对用户长时间无反应（主线程阻塞等）时的堆栈 CPU 异常：采样高CPU占用时的堆栈 磁盘写入异常：采样总写入次数过多，异常过量写入发生时的堆栈（突破每日1GB） Crash：采样崩溃发生的原因，发生时的虚拟内存信息和堆栈 同时，升级了Xcode Metrics Organizer 分析性能指标的能力。
 MetricKit 如何工作 一旦为 App 接入了 MetricKit 之后，MetricKit 会在24小时之内收集性能指标，并在生成一份报告。'><title>iOS 性能指标工具集笔记 Vol.1 MetricKit</title>
 
 <link rel='canonical' href='https://lilithsangreal.com/p/ios-%E6%80%A7%E8%83%BD%E6%8C%87%E6%A0%87%E5%B7%A5%E5%85%B7%E9%9B%86%E7%AC%94%E8%AE%B0-vol.1-metrickit/'>
@@ -17,11 +17,11 @@ MetricKit 如何工作 一旦为 App 接入了 MetricKit 之后，MetricKit 会�
 <meta property='og:description' content='iOS 性能指标工具集笔记 Vol.1 MetricKit 综述 优秀的产品对于应用的功耗表现也有所要求。因此 iOS 在开发过程中会使用 Instruments、Energy Gauges 和 Profiling 来分析和改进应用的功耗表现。对于 Beta 测试，也可以利用 Instruments 进行分析。
 不考虑第三方框架，已经发布的 TestFlight / App Store 包，虽然我们仍有机会获取到一些崩溃日志（隐私日志里面的Crash日志等）。但这些很难让开发者量化分析应用的功耗表现，显然，我们需要更多数据。
 为此苹果在 2019 年伴随iOS13和 Xcode11 发布了一系列工具用于收集和分析用于手机功耗表现相关的数据，这些工具大量出现了 Metrics 这个关键词，我认为可以直接翻译为指标，其实苹果是给用户提供了更多可量化的指标数据及其相关工具、框架，这是第一批发布的指标工具：
-XCTest Metrics：可以测量部分功能的性能和电池的寿命指标 MetricKit：一个用于收集诸多用户电池和性能表现相关数据的框架 Xcode Metrics Organizer：一个统计大盘数据概率，可以看所有用户的性能表现 上图为苹果描述的应用场景。
+XCTest Metrics：以一种类似单元测试的方式，测量部分关键代码的性能和电池指标的框架 MetricKit：一个用于收集诸多用户电池和性能表现相关数据的框架 Xcode Metrics Organizer：一个统计大盘数据，可以看AppStore所有用户历史版本的性能表现 上图为苹果描述的应用场景。
 首批提供的指标如下：
 Battery Metrics：提供CPU、位置、显示、网络、蓝牙、多媒体和相册的功耗表现 Performance Metrics：提供挂起、磁盘、应用启动、内存和自定义间隔 在 2020 年，苹果再一次提升了这些指标工具的能力，发布了 Metric Kit2.0，拓展了三个指标集合 5:24
-CPU 指令：能够给出一天内究竟有多少指令执行了，极度精确地给出App究竟做了多少事 滚动故障：用户感受到的动画丢帧/不流畅占正常动画的比例，并进一步介绍如何用XCTest来排查与解决动画故障 APP 退出：给出一天内，APP究竟为什么退出了，退出了多少次。一个应用，除了正常退出，也会有很多情况被苹果干掉 除了指标集合，苹果还推出了可以帮助定位和修复问题的数据工具 MetricKit 2.0 Diagnostics 8:14，包含指标类型如下：
-挂起：采样App对用户长时间无反应（主线程阻塞等）时的堆栈 CPU 异常：采样高CPU占用时的堆栈 磁盘写入异常：采样总写入次数过多，异常过量写入发生时的堆栈（突破每日1GB） Crash：采样崩溃发生时的虚拟内存信息和堆栈 同时，升级了Xcode Metrics Organizer 分析性能指标的能力。
+CPU 指令：能够给出一天内究竟有多少指令执行了，极度精确地给出App究竟做了多少事 滚动故障：用户感受到的动画丢帧/不流畅占正常动画的比例，并进一步介绍如何用XCTest来排查与解决动画故障 APP 退出：给出一天内，APP究竟为什么退出了，退出了多少次。一个应用，除了正常退出，也会有很多情况被苹果干掉 除了指标集合，苹果还推出了可以帮助定位和修复问题的数据工具 MetricKit 2.0 Diagnostics，包含指标类型如下：
+挂起：采样App对用户长时间无反应（主线程阻塞等）时的堆栈 CPU 异常：采样高CPU占用时的堆栈 磁盘写入异常：采样总写入次数过多，异常过量写入发生时的堆栈（突破每日1GB） Crash：采样崩溃发生的原因，发生时的虚拟内存信息和堆栈 同时，升级了Xcode Metrics Organizer 分析性能指标的能力。
 MetricKit 如何工作 一旦为 App 接入了 MetricKit 之后，MetricKit 会在24小时之内收集性能指标，并在生成一份报告。'>
 <meta property='og:url' content='https://lilithsangreal.com/p/ios-%E6%80%A7%E8%83%BD%E6%8C%87%E6%A0%87%E5%B7%A5%E5%85%B7%E9%9B%86%E7%AC%94%E8%AE%B0-vol.1-metrickit/'>
 <meta property='og:site_name' content='Lilith Sangreal'>
@@ -30,11 +30,11 @@ MetricKit 如何工作 一旦为 App 接入了 MetricKit 之后，MetricKit 会�
 <meta name="twitter:description" content="iOS 性能指标工具集笔记 Vol.1 MetricKit 综述 优秀的产品对于应用的功耗表现也有所要求。因此 iOS 在开发过程中会使用 Instruments、Energy Gauges 和 Profiling 来分析和改进应用的功耗表现。对于 Beta 测试，也可以利用 Instruments 进行分析。
 不考虑第三方框架，已经发布的 TestFlight / App Store 包，虽然我们仍有机会获取到一些崩溃日志（隐私日志里面的Crash日志等）。但这些很难让开发者量化分析应用的功耗表现，显然，我们需要更多数据。
 为此苹果在 2019 年伴随iOS13和 Xcode11 发布了一系列工具用于收集和分析用于手机功耗表现相关的数据，这些工具大量出现了 Metrics 这个关键词，我认为可以直接翻译为指标，其实苹果是给用户提供了更多可量化的指标数据及其相关工具、框架，这是第一批发布的指标工具：
-XCTest Metrics：可以测量部分功能的性能和电池的寿命指标 MetricKit：一个用于收集诸多用户电池和性能表现相关数据的框架 Xcode Metrics Organizer：一个统计大盘数据概率，可以看所有用户的性能表现 上图为苹果描述的应用场景。
+XCTest Metrics：以一种类似单元测试的方式，测量部分关键代码的性能和电池指标的框架 MetricKit：一个用于收集诸多用户电池和性能表现相关数据的框架 Xcode Metrics Organizer：一个统计大盘数据，可以看AppStore所有用户历史版本的性能表现 上图为苹果描述的应用场景。
 首批提供的指标如下：
 Battery Metrics：提供CPU、位置、显示、网络、蓝牙、多媒体和相册的功耗表现 Performance Metrics：提供挂起、磁盘、应用启动、内存和自定义间隔 在 2020 年，苹果再一次提升了这些指标工具的能力，发布了 Metric Kit2.0，拓展了三个指标集合 5:24
-CPU 指令：能够给出一天内究竟有多少指令执行了，极度精确地给出App究竟做了多少事 滚动故障：用户感受到的动画丢帧/不流畅占正常动画的比例，并进一步介绍如何用XCTest来排查与解决动画故障 APP 退出：给出一天内，APP究竟为什么退出了，退出了多少次。一个应用，除了正常退出，也会有很多情况被苹果干掉 除了指标集合，苹果还推出了可以帮助定位和修复问题的数据工具 MetricKit 2.0 Diagnostics 8:14，包含指标类型如下：
-挂起：采样App对用户长时间无反应（主线程阻塞等）时的堆栈 CPU 异常：采样高CPU占用时的堆栈 磁盘写入异常：采样总写入次数过多，异常过量写入发生时的堆栈（突破每日1GB） Crash：采样崩溃发生时的虚拟内存信息和堆栈 同时，升级了Xcode Metrics Organizer 分析性能指标的能力。
+CPU 指令：能够给出一天内究竟有多少指令执行了，极度精确地给出App究竟做了多少事 滚动故障：用户感受到的动画丢帧/不流畅占正常动画的比例，并进一步介绍如何用XCTest来排查与解决动画故障 APP 退出：给出一天内，APP究竟为什么退出了，退出了多少次。一个应用，除了正常退出，也会有很多情况被苹果干掉 除了指标集合，苹果还推出了可以帮助定位和修复问题的数据工具 MetricKit 2.0 Diagnostics，包含指标类型如下：
+挂起：采样App对用户长时间无反应（主线程阻塞等）时的堆栈 CPU 异常：采样高CPU占用时的堆栈 磁盘写入异常：采样总写入次数过多，异常过量写入发生时的堆栈（突破每日1GB） Crash：采样崩溃发生的原因，发生时的虚拟内存信息和堆栈 同时，升级了Xcode Metrics Organizer 分析性能指标的能力。
 MetricKit 如何工作 一旦为 App 接入了 MetricKit 之后，MetricKit 会在24小时之内收集性能指标，并在生成一份报告。">
     </head>
     <body class="
@@ -299,7 +299,7 @@ MetricKit 如何工作 一旦为 App 接入了 MetricKit 之后，MetricKit 会�
 
 
                 <time class="article-time--reading">
-                    3 minute read
+                    4 minute read
                 </time>
             </div>
         
@@ -320,9 +320,9 @@ MetricKit 如何工作 一旦为 App 接入了 MetricKit 之后，MetricKit 会�
 <p>为此苹果在 2019 年伴随iOS13和 Xcode11 发布了<a class="link" href="https://developer.apple.com/videos/play/wwdc2019/417"  target="_blank" rel="noopener"
     >一系列工具</a>用于收集和分析用于手机功耗表现相关的数据，这些工具大量出现了 Metrics 这个关键词，我认为可以直接翻译为指标，其实苹果是给用户提供了更多可量化的指标数据及其相关工具、框架，这是第一批发布的指标工具：</p>
 <ul>
-<li>XCTest Metrics：可以测量部分功能的性能和电池的寿命指标</li>
+<li>XCTest Metrics：以一种类似单元测试的方式，测量部分关键代码的性能和电池指标的框架</li>
 <li>MetricKit：一个用于收集诸多用户电池和性能表现相关数据的框架</li>
-<li>Xcode Metrics Organizer：一个统计大盘数据概率，可以看所有用户的性能表现</li>
+<li>Xcode Metrics Organizer：一个统计大盘数据，可以看AppStore所有用户历史版本的性能表现</li>
 </ul>
 <p><img src="/p/ios-%E6%80%A7%E8%83%BD%E6%8C%87%E6%A0%87%E5%B7%A5%E5%85%B7%E9%9B%86%E7%AC%94%E8%AE%B0-vol.1-metrickit/attachments/2022-08-29-20-24-13.png"
 	width="1524"
@@ -355,12 +355,12 @@ MetricKit 如何工作 一旦为 App 接入了 MetricKit 之后，MetricKit 会�
 <li>APP 退出：给出一天内，APP究竟为什么退出了，退出了多少次。一个应用，除了正常退出，也会有很多情况<a class="link" href="https://developer.apple.com/videos/play/wwdc2020/10081"  target="_blank" rel="noopener"
     >被苹果干掉</a></li>
 </ul>
-<p>除了指标集合，苹果还推出了可以帮助定位和修复问题的数据工具 MetricKit 2.0 Diagnostics 8:14，包含指标类型如下：</p>
+<p>除了指标集合，苹果还推出了可以帮助定位和修复问题的数据工具 MetricKit 2.0 Diagnostics，包含指标类型如下：</p>
 <ul>
 <li>挂起：采样App对用户长时间无反应（主线程阻塞等）时的堆栈</li>
 <li>CPU 异常：采样高CPU占用时的堆栈</li>
 <li>磁盘写入异常：采样总写入次数过多，异常过量写入发生时的堆栈（突破每日1GB）</li>
-<li>Crash：采样崩溃发生时的虚拟内存信息和堆栈</li>
+<li>Crash：采样崩溃发生的原因，发生时的虚拟内存信息和堆栈</li>
 </ul>
 <p>同时，升级了<a class="link" href="https://developer.apple.com/videos/play/wwdc2020/10076"  target="_blank" rel="noopener"
     >Xcode Metrics Organizer 分析性能指标的能力</a>。</p>
@@ -392,7 +392,19 @@ MetricKit 如何工作 一旦为 App 接入了 MetricKit 之后，MetricKit 会�
 	
 ></p>
 <h2 id="metrics-10-battery-metrics-电池性能指标简介">Metrics 1.0 Battery Metrics 电池性能指标简介</h2>
-<p>那么 MetricKit 究竟收集了哪些数据和诊断呢？</p>
+<p>那么 MetricKit 究竟收集了哪些数据和诊断呢？下图是一个指标报告的例子：</p>
+<p><img src="/p/ios-%E6%80%A7%E8%83%BD%E6%8C%87%E6%A0%87%E5%B7%A5%E5%85%B7%E9%9B%86%E7%AC%94%E8%AE%B0-vol.1-metrickit/attachments/2022-09-05-15-41-24.png"
+	width="1126"
+	height="1804"
+	srcset="/p/ios-%E6%80%A7%E8%83%BD%E6%8C%87%E6%A0%87%E5%B7%A5%E5%85%B7%E9%9B%86%E7%AC%94%E8%AE%B0-vol.1-metrickit/attachments/2022-09-05-15-41-24_huc810cb3f8d50043464e8c26b3b3a0a2a_1356611_480x0_resize_box_3.png 480w, /p/ios-%E6%80%A7%E8%83%BD%E6%8C%87%E6%A0%87%E5%B7%A5%E5%85%B7%E9%9B%86%E7%AC%94%E8%AE%B0-vol.1-metrickit/attachments/2022-09-05-15-41-24_huc810cb3f8d50043464e8c26b3b3a0a2a_1356611_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="62"
+		data-flex-basis="149px"
+	
+></p>
 <h3 id="processing-metrics-处理器指标">Processing Metrics 处理器指标</h3>
 <p>提供了一下CPU/GPU时间，可以利用这些时间找寻一些不应该有的UI渲染和CPU工作。可以用于量化比较不同的功能算法实现效率。</p>
 <h3 id="location-metrics-定位指标">Location Metrics 定位指标</h3>
@@ -508,7 +520,7 @@ MetricKit 如何工作 一旦为 App 接入了 MetricKit 之后，MetricKit 会�
 </div>
 </div><h3 id="metrickit-20获取-mxdiagnostic-信息">【MetricKit 2.0】获取 MXDiagnostic 信息</h3>
 <p>实现协议方法来获取诊断信息，这个方法 iOS14 以上才可以使用。</p>
-<p>接下来需要实现协议方法来获取指标信息</p>
+<p>接下来需要实现协议方法来获取指标信息，详细的介绍将会在后面的小节</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
 <pre tabindex="0" class="chroma"><code><span class="lnt">1
@@ -568,7 +580,147 @@ MetricKit 如何工作 一旦为 App 接入了 MetricKit 之后，MetricKit 会�
 </div><h3 id="自测数据回包需要真机">自测数据回包（需要真机）</h3>
 <p>Xcode - Debug - Simulate MetricKit Payloads</p>
 <p>会产生一个虚假的数据回包，仅供验证是否正确接入框架。</p>
-<h2 id="下一篇">下一篇</h2>
+<h2 id="mxdiagnostic-使用">MXDiagnostic 使用</h2>
+<p>当我们已经了在 Metrix Payload 里面发现了性能问题存在的可能性，就需要借助 MXDiagnostic 来进一步定位问题。MXDiagnostic 的报告内容一一对应着 MXMetric 中统计的种种数量：</p>
+<p><img src="/p/ios-%E6%80%A7%E8%83%BD%E6%8C%87%E6%A0%87%E5%B7%A5%E5%85%B7%E9%9B%86%E7%AC%94%E8%AE%B0-vol.1-metrickit/attachments/2022-09-05-16-13-58.png"
+	width="2732"
+	height="1378"
+	srcset="/p/ios-%E6%80%A7%E8%83%BD%E6%8C%87%E6%A0%87%E5%B7%A5%E5%85%B7%E9%9B%86%E7%AC%94%E8%AE%B0-vol.1-metrickit/attachments/2022-09-05-16-13-58_hufae83816e766334b810f0afb4a36f8fb_2864482_480x0_resize_box_3.png 480w, /p/ios-%E6%80%A7%E8%83%BD%E6%8C%87%E6%A0%87%E5%B7%A5%E5%85%B7%E9%9B%86%E7%AC%94%E8%AE%B0-vol.1-metrickit/attachments/2022-09-05-16-13-58_hufae83816e766334b810f0afb4a36f8fb_2864482_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="198"
+		data-flex-basis="475px"
+	
+></p>
+<p>报告中包含 MXCallStackTree，这是异常发生时的堆栈情况，可以通过反解符号进行问题定位。其他数据内容简介请参考前文<a class="link" href="#%e7%bb%bc%e8%bf%b0" >综述</a>。</p>
+<h3 id="如何反解析-mxcallstacktree-符号">如何反解析 MXCallStackTree 符号</h3>
+<p>许多 iOS 开发者已经了熟悉如何利用 dSYM 反解 Crash 报告的符号：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-Shell" data-lang="Shell"><span class="line"><span class="cl"><span class="c1"># 解析普通 Crash 文件符号的方法</span>
+</span></span><span class="line"><span class="cl">atos -arch &lt;架构如 arm64 &gt; -o &lt;dSYM 路径&gt;/Contents/Resources/DWARF/&lt;二进制文件名&gt; -l &lt;load address&gt; &lt;address to symbolicate&gt;
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>如果已经已经有了产生 MXCallStackTree 报告对应的 dSYM 文件，和 MXCallStackTree 报告堆栈内容（如以 Json 格式打印）：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-Json" data-lang="Json"><span class="line"><span class="cl"><span class="err">...</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&#34;binaryUUID&#34;</span> <span class="p">:</span> <span class="s2">&#34;4746A9D9-...-71B86DEF7AE9&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&#34;offsetIntoBinaryTextSegment&#34;</span> <span class="p">:</span> <span class="mi">4377182208</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&#34;sampleCount&#34;</span> <span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&#34;subFrames&#34;</span> <span class="p">:</span> <span class="p">[</span>
+</span></span><span class="line"><span class="cl">    <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&#34;binaryUUID&#34;</span> <span class="p">:</span> <span class="s2">&#34;4746A9D9-...-71B86DEF7AE9&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&#34;offsetIntoBinaryTextSegment&#34;</span> <span class="p">:</span> <span class="mi">4377182208</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&#34;sampleCount&#34;</span> <span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&#34;subFrames&#34;</span> <span class="p">:</span> <span class="p">[</span>
+</span></span><span class="line"><span class="cl">        <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="nt">&#34;binaryUUID&#34;</span> <span class="p">:</span> <span class="s2">&#34;7C9C7851-...-9CD2DEB4B746&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">        <span class="nt">&#34;offsetIntoBinaryTextSegment&#34;</span> <span class="p">:</span> <span class="mi">4665638912</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">        <span class="nt">&#34;sampleCount&#34;</span> <span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">        <span class="nt">&#34;binaryName&#34;</span> <span class="p">:</span> <span class="s2">&#34;dyld&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">        <span class="nt">&#34;address&#34;</span> <span class="p">:</span> <span class="mi">4665744612</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="p">],</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&#34;binaryName&#34;</span> <span class="p">:</span> <span class="s2">&#34;my_app&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&#34;address&#34;</span> <span class="p">:</span> <span class="mi">4530347636</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="err">...</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>对于其中一个 <code>subFrames</code> 我们需要取出其中 <code>offsetIntoBinaryTextSegment</code> 字段和 <code>address</code> 字段进行符号反解。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-Shell" data-lang="Shell"><span class="line"><span class="cl">atos -arch arm64e -i -l &lt;16进制的 offsetIntoBinaryTextSegment&gt; -o &lt;dSYM 路径&gt;/Contents/Resources/DWARF/&lt;二进制文件名&gt; &lt;16进制的 address&gt;
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>由于Json是一个嵌套结构，因此可以使用一个递归的Python脚本进行解析，以下是我的实现：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-Python" data-lang="Python"><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 把涉及到的所有 dSYM 放入一个 dict管理 dsym_dict</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">exec_cmd</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">object</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">get_symbol</span><span class="p">(</span><span class="n">d</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="n">d</span><span class="p">[</span><span class="s1">&#39;binaryName&#39;</span><span class="p">]</span> <span class="ow">in</span> <span class="n">dsym_dict</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">        <span class="n">exec_cmd</span><span class="p">(</span><span class="s2">&#34;atos -arch arm64e -i -l &#34;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">hex</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="s2">&#34;offsetIntoBinaryTextSegment&#34;</span><span class="p">]))</span> <span class="o">+</span> <span class="s2">&#34; -o &#34;</span> <span class="o">+</span> <span class="n">dsym_dict</span><span class="p">[</span><span class="n">d</span><span class="p">[</span><span class="s1">&#39;binaryName&#39;</span><span class="p">]]</span> <span class="o">+</span> <span class="s2">&#34; &#34;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">hex</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="s2">&#34;address&#34;</span><span class="p">])))</span>
+</span></span><span class="line"><span class="cl">    <span class="k">else</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">        <span class="nb">print</span><span class="p">(</span><span class="s2">&#34;[addr] &#34;</span> <span class="o">+</span> <span class="n">d</span><span class="p">[</span><span class="s1">&#39;binaryName&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&#34;:&#34;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">hex</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="s2">&#34;offsetIntoBinaryTextSegment&#34;</span><span class="p">])))</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="s2">&#34;subFrames&#34;</span> <span class="ow">in</span> <span class="n">d</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">        <span class="n">get_symbol</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="s2">&#34;subFrames&#34;</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">    <span class="n">dic</span> <span class="o">=</span> <span class="n">read_json</span><span class="p">(</span><span class="n">bt_file</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">thread</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">dic</span><span class="p">[</span><span class="s2">&#34;callStackTree&#34;</span><span class="p">][</span><span class="s1">&#39;callStacks&#39;</span><span class="p">]):</span>
+</span></span><span class="line"><span class="cl">        <span class="nb">print</span><span class="p">(</span><span class="s2">&#34;=====  thread: &#34;</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="s2">&#34; ======&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="n">get_symbol</span><span class="p">(</span><span class="n">thread</span><span class="p">[</span><span class="s1">&#39;callStackRootFrames&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="下一篇">下一篇</h2>
 <p><a class="link" href="" >iOS 性能指标工具集笔记 Vol.2 XCTest</a></p>
 <h2 id="参考链接">参考链接</h2>
 <p><a class="link" href="https://developer.apple.com/videos/play/wwdc2019/417"  target="_blank" rel="noopener"
