@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="en-us">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='面向 C&#43;&#43; protoc'><title>C&#43;&#43; 模板编程无痛入门</title>
+
+<link rel='canonical' href='https://lilithsangreal.com/p/cpp-metaprogramming-tutorails/'>
+
+<link rel="stylesheet" href="/scss/style.min.b949db8bead9abdc40291b93383b8da6abc3aa62e74f5580356c06ddbb792dab.css"><meta property='og:title' content='C&#43;&#43; 模板编程无痛入门'>
+<meta property='og:description' content='面向 C&#43;&#43; protoc'>
+<meta property='og:url' content='https://lilithsangreal.com/p/cpp-metaprogramming-tutorails/'>
+<meta property='og:site_name' content='Lilith Sangreal'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2023-02-05T19:55:58&#43;08:00'/><meta property='article:modified_time' content='2023-02-05T19:55:58&#43;08:00'/>
+<meta name="twitter:title" content="C&#43;&#43; 模板编程无痛入门">
+<meta name="twitter:description" content="面向 C&#43;&#43; protoc">
+    </head>
+    <body class="
+    article-page has-toc
+">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex 
+    
+        extended
+    
+">
+    
+        <div id="article-toolbar">
+            <a href="/" class="back-home">
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-chevron-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="15 6 9 12 15 18" />
+</svg>
+
+
+
+                <span>Back</span>
+            </a>
+        </div>
+    
+<main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/c&#43;&#43;/" >
+                C&#43;&#43;
+            </a>
+        
+            <a href="/categories/metaprogramming/" >
+                Metaprogramming
+            </a>
+        
+    </header>
+    
+
+    <h2 class="article-title">
+        <a href="/p/cpp-metaprogramming-tutorails/">C&#43;&#43; 模板编程无痛入门</a>
+    </h2>
+
+    
+    <h3 class="article-subtitle">
+        面向 C&#43;&#43; protoc
+    </h3>
+    
+
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">Feb 05, 2023</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    2 minute read
+                </time>
+            </div>
+        
+    </footer>
+    
+</div>
+</header>
+
+    <section class="article-content">
+    
+    
+    <blockquote>
+<p>程序如果不能在运行时完成工作，那就只能在编译时完成工作 —— 维基百科</p>
+</blockquote>
+<p>本文是一个非常适合新手阅读的模板元编程的入门教程。但仍然需要你有一些基础的 C++ 能力，但不需要很多。</p>
+<p>如果你像我一样是个C++菜鸡，但大概能够理解 C++ 的面对对象编程和范型的概念。那么阅读并理解本文内容仍然不成问题。</p>
+<h2 id="模板元编程是什么">模板元编程是什么？</h2>
+<p>这里有一个来自维基百科的定义：</p>
+<blockquote>
+<p>模板元编程（英语：Template metaprogramming，缩写：TMP）是一种元编程技术，编译器使用模板产生暂时性的源码，然后再和剩下的源码混合并编译。这些模板的输出包括编译时期常量、数据结构以及完整的函数。</p>
+</blockquote>
+<p>如果这个描述仍然让你感到费解，那么这里有另外一个定义：</p>
+<ul>
+<li>元编程是程序作者像正常程序操作数据一样操作程序本身的手段。</li>
+</ul>
+<p>如果这句话仍然让你感到抽象。那你可以从性能的角度来理解：</p>
+<ul>
+<li>使用元编程能力，我可以把运行时需要做的事情，移动到编译期来做，提升我的程序性能——当然这反之会提升你的编译时间，正如我在文章最开头提到的那样。</li>
+</ul>
+<p>或者，可以从你将要做的工作来理解：</p>
+<ul>
+<li>我想要编写一些给同事、同学或是社区使用的框架代码。这些代码我想尽可能简洁且灵活（最基础的范型提供了一些这样的能力，但深入使用模板元编程可以做得更多）。或者想给 C++ 本身添加一些能力，制作一些语法糖。</li>
+</ul>
+<p>那也许，你将不得不了解一些元编程的技术。</p>
+<h2 id="使用元编程一点理由">使用元编程，一点理由……</h2>
+<p>这里有一张来自 Walter E. Brown 的实验结果（Cppcon 2014）。</p>
+<p><img src="/p/cpp-metaprogramming-tutorails/attachments/2023-02-05-20-16-44.png"
+	width="944"
+	height="456"
+	srcset="/p/cpp-metaprogramming-tutorails/attachments/2023-02-05-20-16-44_hu0206fdee9b9f34d5ebe4571b1eb9138d_348864_480x0_resize_box_3.png 480w, /p/cpp-metaprogramming-tutorails/attachments/2023-02-05-20-16-44_hu0206fdee9b9f34d5ebe4571b1eb9138d_348864_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="207"
+		data-flex-basis="496px"
+	
+></p>
+<p>使用模版元编程技术实现的 <code>pow</code> “函数”比 <code>std::pow()</code> 性能高出很多倍。</p>
+<h2 id="模版特化与-type-traits">模版特化与 Type Traits</h2>
+<p>简单了解过范型的就能知道，普通的函数只能提供给函数声明时指定的类型使用，而模板函数传入多种数据类型。</p>
+<p>比如定义一个函数叫：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="c1">/// 以下代码示例来自 https://blog.aaronballman.com/2011/11/a-simple-introduction-to-type-traits/
+</span><span class="c1"></span>
+<span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">T</span><span class="o">&gt;</span>
+<span class="n">T</span> <span class="n">byte_swap</span><span class="p">(</span> <span class="n">T</span> <span class="n">value</span> <span class="p">)</span> <span class="p">{</span>
+  <span class="kt">unsigned</span> <span class="kt">char</span> <span class="o">*</span><span class="n">bytes</span> <span class="o">=</span> <span class="k">reinterpret_cast</span><span class="o">&lt;</span> <span class="kt">unsigned</span> <span class="kt">char</span> <span class="o">*</span> <span class="o">&gt;</span><span class="p">(</span> <span class="o">&amp;</span><span class="n">value</span> <span class="p">);</span>
+  <span class="k">for</span> <span class="p">(</span><span class="n">size_t</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="k">sizeof</span><span class="p">(</span> <span class="n">T</span> <span class="p">);</span> <span class="n">i</span> <span class="o">+=</span> <span class="mi">2</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kt">unsigned</span> <span class="kt">char</span> <span class="n">v</span> <span class="o">=</span> <span class="n">bytes</span><span class="p">[</span> <span class="n">i</span> <span class="p">];</span>
+    <span class="n">bytes</span><span class="p">[</span> <span class="n">i</span> <span class="p">]</span> <span class="o">=</span> <span class="n">bytes</span><span class="p">[</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span> <span class="p">];</span>
+    <span class="n">bytes</span><span class="p">[</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span> <span class="p">]</span> <span class="o">=</span> <span class="n">v</span><span class="p">;</span>
+  <span class="p">}</span>
+  <span class="k">return</span> <span class="n">value</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>不用仔细阅读这个函数的实现。简单来说，这个函数传入一个 32 位的数字 <code>0x11223344</code> 会得到返回值 <code>0x22114433</code>。也可以传入一个 16 位的数字 <code>0x1122</code> 得到 <code>0x2211</code>。</p>
+<p>但因为这是一个范型函数。自然可以传入一个 <code>char</code>。但这样就会访问到不属于自己的内存导致崩溃。</p>
+<p>为了解决这个问题，我们自然可以引入模板特化。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-C++" data-lang="C++"><span class="k">template</span> <span class="o">&lt;&gt;</span>
+<span class="kt">char</span> <span class="n">byte_swap</span><span class="p">(</span> <span class="kt">char</span> <span class="n">value</span> <span class="p">)</span> <span class="p">{</span>
+  <span class="n">assert</span><span class="p">(</span> <span class="nb">false</span> <span class="o">&amp;&amp;</span> <span class="s">&#34;Illegal to swap chars&#34;</span> <span class="p">);</span>
+  <span class="k">return</span> <span class="n">value</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>当 <code>byte_swap</code> 传入一个 <code>char</code> 类型的数据时，编译器将会为这次调用适配到这个特化的模板，此次调用将会触发断言。</p>
+<p>注意看，这里的template后面的尖括号中，没有填写任何内容。这代表这是一个 <strong>模板全特化</strong>。全特化过的函数模板，由于在函数签名已经显著声明了类型 <code>char value</code>，因此不需要在尖括号里面写东西了。但如果没有形式参数，仍然需要额外添加内容，如以下代码中的 <code>&lt;int&gt;</code>：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-C++" data-lang="C++"><span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">T</span><span class="o">&gt;</span>
+<span class="kt">void</span> <span class="n">byte_not_swap</span><span class="p">(){</span> <span class="n">T</span> <span class="n">foo</span><span class="p">;</span> <span class="p">}</span> <span class="c1">// byte_not_swap 没有入参
+</span><span class="c1"></span>
+<span class="k">template</span> <span class="o">&lt;&gt;</span>
+<span class="kt">void</span> <span class="n">byte_not_swap</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="p">(){</span> <span class="kt">int</span> <span class="n">bar</span><span class="p">;</span> <span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>除了全特化，我们还有一种特化方式叫 <strong>偏特化</strong>。这种特化方式不能用于函数模板。偏特化除了入参的类型，还需要其他的模板参数描述更多信息：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++">
+<span class="c1">// A&lt;char&gt; 将会匹配到如下模板
+</span><span class="c1"></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">T1</span><span class="p">,</span> <span class="k">class</span> <span class="nc">T2</span><span class="o">&gt;</span>
+<span class="k">class</span> <span class="nc">A</span> <span class="p">{</span>
+    <span class="p">...</span>
+    <span class="k">private</span><span class="o">:</span>
+        <span class="n">T1</span> <span class="n">val</span><span class="p">;</span>
+        <span class="n">T2</span> <span class="n">val</span><span class="p">;</span>
+<span class="p">};</span>
+
+<span class="c1">// A&lt;int, char&gt; 将会匹配到下面的偏特化模板
+</span><span class="c1"></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">T</span><span class="o">&gt;</span>
+<span class="k">class</span> <span class="nc">A</span><span class="o">&lt;</span><span class="kt">int</span><span class="p">,</span> <span class="k">class</span> <span class="nc">T2</span><span class="o">&gt;</span> <span class="p">{</span>
+    <span class="p">...</span>
+    <span class="k">private</span><span class="o">:</span>
+        <span class="kt">int</span> <span class="n">val</span><span class="p">;</span>
+        <span class="n">T2</span> <span class="n">val</span><span class="p">;</span>
+<span class="p">};</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>让我们回到之前的 byte_swap 存在的问题，有了特化模板也许一定程度上解决了这个函数模板不能传入特定类型数据的问题。但显然我们需要为所有的非法数据类型都定义一份特化模板。这会产出多少屎代码？</p>
+<p>能不能有一种方法，让我们的代码不需要写大量的特化模板就可以识别哪些是可以传入的参数，哪些是不能传入的参数呢？</p>
+<p>有的，但显然只靠传进来的参数本身是不够的，我们需要能够识别传入数据的“类型本身的更多特征”来加强我们的模板，而这就是这就是 Type Traits 存在的意义。Type Traits就是”类型的特征”的意思。在C++元编程中，程序员不少时候都需要了解一些类型的特征信息，并根据这些类型信息选择应有的操作。Type Traits有助于编写通用、可复用的代码。</p>
+<p>那么接下来，我们开始旅程。</p>
+<h2 id="元函数和普通函数的区别">元函数和普通函数的区别</h2>
+<p>普通函数可以传入零个或多个值，并返回零个或一个值。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-C++" data-lang="C++"><span class="kt">void</span> <span class="nf">do_something</span><span class="p">();</span>
+<span class="kt">int</span> <span class="nf">do_something_else</span><span class="p">(</span><span class="kt">int</span><span class="p">,</span> <span class="kt">char</span> <span class="k">const</span><span class="o">*</span><span class="p">);</span>
+</code></pre></td></tr></table>
+</div>
+</div>
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+
+    
+        <link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/katex@0.13.13/dist/katex.min.css"integrity="sha384-RZU/ijkSsFbcmivfdRBQDtwuwVqK7GMOw6IMvKyeWL2K5UAlyp6WonmB8m7Jd0Hn"crossorigin="anonymous"
+            ><script 
+                src="https://cdn.jsdelivr.net/npm/katex@0.13.13/dist/katex.min.js"integrity="sha384-pK1WpvzWVBQiP0/GjnvRxV4mOb0oxFuyRxJlk6vVw146n3egcN5C925NCP7a7BY8"crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/katex@0.13.13/dist/contrib/auto-render.min.js"integrity="sha384-vZTG03m&#43;2yp6N6BNi5iM4rW4oIwk5DfcNdFfxkk9ZWpDriOkXX8voJBFrAO7MpVl"crossorigin="anonymous"
+                defer
+                >
+            </script><script>
+    window.addEventListener("DOMContentLoaded", () => {
+        renderMathInElement(document.querySelector(`.article-content`), {
+            delimiters: [
+                { left: "$$", right: "$$", display: true },
+                { left: "$", right: "$", display: false },
+                { left: "\\(", right: "\\)", display: false },
+                { left: "\\[", right: "\\]", display: true }
+            ]
+        });})
+</script>
+    
+</article>
+
+    
+
+    <aside class="related-contents--wrapper">
+    
+    
+        <h2 class="section-title">Related contents</h2>
+        <div class="related-contents">
+            <div class="flex article-list--tile">
+                
+                    
+<article class="has-image">
+    <a href="/p/google-protocol-buffers-notes/">
+        
+        
+            <div class="article-image">
+                <img src="/p/google-protocol-buffers-notes/attachments/2022-04-29-16-27-11.eb070506e26696a17aac97af680bad82_hu027c5933656146fc15554de25a0d1438_144723_250x150_fill_box_smart1_3.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy"
+                        alt="Featured image of post Protocol Buffers 编译器源码阅读"
+                        data-key="google-protocol-buffers-notes" 
+                        data-hash="md5-6wcFBuJmlqF6rJevaAutgg==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Protocol Buffers 编译器源码阅读</h2>
+        </div>
+    </a>
+</article>
+                
+            </div>
+        </div>
+    
+</aside>
+
+     
+    
+        
+    <div class="disqus-container">
+    <div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "hugo-theme-stack" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+<style>
+    .disqus-container {
+        background-color: var(--card-background);
+        border-radius: var(--card-border-radius);
+        box-shadow: var(--shadow-l1);
+        padding: var(--card-padding);
+    }
+</style>
+
+<script>
+    window.addEventListener('onColorSchemeChange', (e) => {
+        if (DISQUS) {
+            DISQUS.reset({
+                reload: true
+            });
+        }
+    })
+</script>
+
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2019 - 
+        
+        2023 Lilith Sangreal
+    </section>
+    
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.8.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.css"integrity="sha256-c0uckgykQ9v5k&#43;IqViZOZKc47Jn7KQil4/MP3ySA3F8="crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.css"integrity="sha256-SBLU4vv6CA6lHsZ1XyTdhyjJxCjPif/TRkjnsyGAGnE="crossorigin="anonymous"
+            >
+
+            </main>
+    
+        <aside class="sidebar right-sidebar sticky">
+            <section class="widget archives">
+                <div class="widget-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+                </div>
+                <h2 class="widget-title section-title">Table of contents</h2>
+                
+                <div class="widget--toc">
+                    <nav id="TableOfContents">
+  <ol>
+    <li><a href="#模板元编程是什么">模板元编程是什么？</a></li>
+    <li><a href="#使用元编程一点理由">使用元编程，一点理由……</a></li>
+    <li><a href="#模版特化与-type-traits">模版特化与 Type Traits</a></li>
+    <li><a href="#元函数和普通函数的区别">元函数和普通函数的区别</a></li>
+  </ol>
+</nav>
+                </div>
+            </section>
+        </aside>
+    
+
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.5/dist/vibrant.min.js"integrity="sha256-5NovOZc4iwiAWTYIFiIM7DxKUXKWvpVEuMEPLzcm5/g="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>

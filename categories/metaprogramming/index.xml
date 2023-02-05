@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Metaprogramming on Lilith Sangreal</title>
+    <link>https://lilithsangreal.com/categories/metaprogramming/</link>
+    <description>Recent content in Metaprogramming on Lilith Sangreal</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Sun, 05 Feb 2023 19:55:58 +0800</lastBuildDate><atom:link href="https://lilithsangreal.com/categories/metaprogramming/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>C&#43;&#43; 模板编程无痛入门</title>
+      <link>https://lilithsangreal.com/p/cpp-metaprogramming-tutorails/</link>
+      <pubDate>Sun, 05 Feb 2023 19:55:58 +0800</pubDate>
+      
+      <guid>https://lilithsangreal.com/p/cpp-metaprogramming-tutorails/</guid>
+      <description>程序如果不能在运行时完成工作，那就只能在编译时完成工作 —— 维基百科
+ 本文是一个非常适合新手阅读的模板元编程的入门教程。但仍然需要你有一些基础的 C++ 能力，但不需要很多。
+如果你像我一样是个C++菜鸡，但大概能够理解 C++ 的面对对象编程和范型的概念。那么阅读并理解本文内容仍然不成问题。
+模板元编程是什么？ 这里有一个来自维基百科的定义：
+ 模板元编程（英语：Template metaprogramming，缩写：TMP）是一种元编程技术，编译器使用模板产生暂时性的源码，然后再和剩下的源码混合并编译。这些模板的输出包括编译时期常量、数据结构以及完整的函数。
+ 如果这个描述仍然让你感到费解，那么这里有另外一个定义：
+ 元编程是程序作者像正常程序操作数据一样操作程序本身的手段。  如果这句话仍然让你感到抽象。那你可以从性能的角度来理解：
+ 使用元编程能力，我可以把运行时需要做的事情，移动到编译期来做，提升我的程序性能——当然这反之会提升你的编译时间，正如我在文章最开头提到的那样。  或者，可以从你将要做的工作来理解：
+ 我想要编写一些给同事、同学或是社区使用的框架代码。这些代码我想尽可能简洁且灵活（最基础的范型提供了一些这样的能力，但深入使用模板元编程可以做得更多）。或者想给 C++ 本身添加一些能力，制作一些语法糖。  那也许，你将不得不了解一些元编程的技术。
+使用元编程，一点理由…… 这里有一张来自 Walter E. Brown 的实验结果（Cppcon 2014）。
+使用模版元编程技术实现的 pow “函数”比 std::pow() 性能高出很多倍。
+模版特化与 Type Traits 简单了解过范型的就能知道，普通的函数只能提供给函数声明时指定的类型使用，而模板函数传入多种数据类型。
+比如定义一个函数叫：
+1 2 3 4 5 6 7 8 9 10 11 12  /// 以下代码示例来自 https://blog.aaronballman.com/2011/11/a-simple-introduction-to-type-traits/  template &amp;lt;typename T&amp;gt; T byte_swap( T value ) { unsigned char *bytes = reinterpret_cast&amp;lt; unsigned char * &amp;gt;( &amp;amp;value ); for (size_t i = 0; i &amp;lt; sizeof( T ); i += 2) { unsigned char v = bytes[ i ]; bytes[ i ] = bytes[ i + 1 ]; bytes[ i + 1 ] = v; } return value; }   不用仔细阅读这个函数的实现。简单来说，这个函数传入一个 32 位的数字 0x11223344 会得到返回值 0x22114433。也可以传入一个 16 位的数字 0x1122 得到 0x2211。</description>
+    </item>
+    
+  </channel>
+</rss>

@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html lang="en-us" dir="ltr">
+<html lang="en-us">
     <head><meta charset='utf-8'>
 <meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='从 0 开始学习 Transformer 番外：Transformer 如何穿梭时空？'><title>从 0 开始学习 Transformer 番外：Transformer 如何穿梭时空？</title>
 
 <link rel='canonical' href='https://lilithsangreal.com/p/transformer-from-zero-3/'>
 
-<link rel="stylesheet" href="/scss/style.min.ac77dcf8b111b51da39a92990f431923f210f3876d85798a2125667f96dc33a4.css"><meta property='og:title' content='从 0 开始学习 Transformer 番外：Transformer 如何穿梭时空？'>
+<link rel="stylesheet" href="/scss/style.min.b949db8bead9abdc40291b93383b8da6abc3aa62e74f5580356c06ddbb792dab.css"><meta property='og:title' content='从 0 开始学习 Transformer 番外：Transformer 如何穿梭时空？'>
 <meta property='og:description' content='从 0 开始学习 Transformer 番外：Transformer 如何穿梭时空？'>
 <meta property='og:url' content='https://lilithsangreal.com/p/transformer-from-zero-3/'>
 <meta property='og:site_name' content='Lilith Sangreal'>
@@ -15,8 +15,8 @@
     <meta name="twitter:image" content='https://lilithsangreal.com/p/transformer-from-zero-3/the_transformer.png' />
     </head>
     <body class="
-    article-page
-    ">
+    article-page has-toc
+">
     <script>
         (function() {
             const colorSchemeKey = 'StackColorScheme';
@@ -39,192 +39,25 @@
         }
     })();
 </script>
-<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
-    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="Toggle Menu">
-        <span class="hamburger-box">
-            <span class="hamburger-inner"></span>
-        </span>
-    </button>
+<div class="container main-container flex 
+    
+        extended
+    
+">
+    
+        <div id="article-toolbar">
+            <a href="/" class="back-home">
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-chevron-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="15 6 9 12 15 18" />
+</svg>
 
-    <header>
-        
-            
-            <figure class="site-avatar">
-                <a href="/">
-                
-                    
-                    
-                    
-                        
-                        <img src="/images/avatar_hub2e5e0ee896a35ef30e87da7e9f71a6e_16593_300x0_resize_q75_box.jpeg" width="300"
-                            height="300" class="site-logo" loading="lazy" alt="Avatar">
-                    
-                
-                </a>
-                
-                    <span class="emoji">🌞</span>
-                
-            </figure>
-            
-        
-        
-        <div class="site-meta">
-            <h1 class="site-name"><a href="/">Lilith Sangreal</a></h1>
-            <h2 class="site-description">暴风雨来临，电闪又雷鸣。</h2>
+
+
+                <span>Back</span>
+            </a>
         </div>
-    </header><ol class="social-menu">
-            
-                <li>
-                    <a 
-                        href='https://github.com/L1l1thLY'
-                        target="_blank"
-                        title="GitHub"
-                    >
-                        
-                        
-                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
-</svg>
-
-
-
-                        
-                    </a>
-                </li>
-            
-        </ol><ol class="menu" id="main-menu">
-        
-        
-        
-
-        <li >
-            <a href='/' target="_blank">
-                
-                
-                
-                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <path stroke="none" d="M0 0h24v24H0z"/>
-  <polyline points="5 12 3 12 12 3 21 12 19 12" />
-  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
-  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
-</svg>
-
-
-
-                
-                <span>Home</span>
-            </a>
-        </li>
-        
-        
-
-        <li >
-            <a href='/about/' >
-                
-                
-                
-                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <path stroke="none" d="M0 0h24v24H0z"/>
-  <circle cx="12" cy="7" r="4" />
-  <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
-</svg>
-
-
-
-                
-                <span>About</span>
-            </a>
-        </li>
-        
-        
-
-        <li >
-            <a href='/archives/' >
-                
-                
-                
-                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <path stroke="none" d="M0 0h24v24H0z"/>
-  <rect x="3" y="4" width="18" height="4" rx="2" />
-  <path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-10" />
-  <line x1="10" y1="12" x2="14" y2="12" />
-</svg>
-
-
-
-                
-                <span>Archives</span>
-            </a>
-        </li>
-        
-        
-
-        <li >
-            <a href='/search/' >
-                
-                
-                
-                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <path stroke="none" d="M0 0h24v24H0z"/>
-  <circle cx="10" cy="10" r="7" />
-  <line x1="21" y1="21" x2="15" y2="15" />
-</svg>
-
-
-
-                
-                <span>Search</span>
-            </a>
-        </li>
-        
-        
-
-        <li >
-            <a href='/links/' >
-                
-                
-                
-                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-link" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <path stroke="none" d="M0 0h24v24H0z"/>
-  <path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5" />
-  <path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5" />
-</svg>
-
-
-
-                
-                <span>Links</span>
-            </a>
-        </li>
-        
-
-        <div class="menu-bottom-section">
-            
-            
-                <li id="dark-mode-toggle">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <path stroke="none" d="M0 0h24v24H0z"/>
-  <circle cx="8" cy="12" r="2" />
-  <rect x="2" y="6" width="20" height="12" rx="6" />
-</svg>
-
-
-
-                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <path stroke="none" d="M0 0h24v24H0z"/>
-  <circle cx="16" cy="12" r="2" />
-  <rect x="2" y="6" width="20" height="12" rx="6" />
-</svg>
-
-
-
-                    <span>Dark Mode</span>
-                </li>
-            
-        </div>
-    </ol>
-</aside>
+    
 <main class="main full-width">
     <article class="has-image main-article">
     <header class="article-header">
@@ -260,17 +93,15 @@
     </header>
     
 
-    <div class="article-title-wrapper">
-        <h2 class="article-title">
-            <a href="/p/transformer-from-zero-3/">从 0 开始学习 Transformer 番外：Transformer 如何穿梭时空？</a>
-        </h2>
+    <h2 class="article-title">
+        <a href="/p/transformer-from-zero-3/">从 0 开始学习 Transformer 番外：Transformer 如何穿梭时空？</a>
+    </h2>
+
     
-        
-        <h3 class="article-subtitle">
-            从 0 开始学习 Transformer 番外：Transformer 如何穿梭时空？
-        </h3>
-        
-    </div>
+    <h3 class="article-subtitle">
+        从 0 开始学习 Transformer 番外：Transformer 如何穿梭时空？
+    </h3>
+    
 
     
     <footer class="article-time">
@@ -305,8 +136,6 @@
             </div>
         
     </footer>
-    
-
     
 </div>
 </header>
@@ -375,32 +204,32 @@
 </span><span class="lnt">25
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-Python" data-lang="Python"><span class="line"><span class="cl"><span class="o">...</span>
-</span></span><span class="line"><span class="cl">  <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">MAX_LENGTH</span><span class="p">):</span>
-</span></span><span class="line"><span class="cl">    <span class="n">enc_padding_mask</span><span class="p">,</span> <span class="n">combined_mask</span><span class="p">,</span> <span class="n">dec_padding_mask</span> <span class="o">=</span> <span class="n">create_masks</span><span class="p">(</span>
-</span></span><span class="line"><span class="cl">        <span class="n">encoder_input</span><span class="p">,</span> <span class="n">output</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl">  
-</span></span><span class="line"><span class="cl">    <span class="c1"># predictions.shape == (batch_size, seq_len, vocab_size)</span>
-</span></span><span class="line"><span class="cl">    <span class="n">predictions</span><span class="p">,</span> <span class="n">attention_weights</span> <span class="o">=</span> <span class="n">transformer</span><span class="p">(</span><span class="n">encoder_input</span><span class="p">,</span> 
-</span></span><span class="line"><span class="cl">                                                 <span class="n">output</span><span class="p">,</span>
-</span></span><span class="line"><span class="cl">                                                 <span class="kc">False</span><span class="p">,</span>
-</span></span><span class="line"><span class="cl">                                                 <span class="n">enc_padding_mask</span><span class="p">,</span>
-</span></span><span class="line"><span class="cl">                                                 <span class="n">combined_mask</span><span class="p">,</span>
-</span></span><span class="line"><span class="cl">                                                 <span class="n">dec_padding_mask</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl">    
-</span></span><span class="line"><span class="cl">    <span class="c1"># 从 seq_len 维度选择最后一个词</span>
-</span></span><span class="line"><span class="cl">    <span class="n">predictions</span> <span class="o">=</span> <span class="n">predictions</span><span class="p">[:</span> <span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">:,</span> <span class="p">:]</span>  <span class="c1"># (batch_size, 1, vocab_size)</span>
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">    <span class="n">predicted_id</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">cast</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">predictions</span><span class="p">,</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">),</span> <span class="n">tf</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl">    
-</span></span><span class="line"><span class="cl">    <span class="c1"># 如果 predicted_id 等于结束标记，就返回结果</span>
-</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="n">predicted_id</span> <span class="o">==</span> <span class="n">tokenizer_en</span><span class="o">.</span><span class="n">vocab_size</span><span class="o">+</span><span class="mi">1</span><span class="p">:</span>
-</span></span><span class="line"><span class="cl">      <span class="k">return</span> <span class="n">tf</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span> <span class="n">attention_weights</span>
-</span></span><span class="line"><span class="cl">    
-</span></span><span class="line"><span class="cl">    <span class="c1"># 连接 predicted_id 与输出，作为解码器的输入传递到解码器。</span>
-</span></span><span class="line"><span class="cl">    <span class="n">output</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">output</span><span class="p">,</span> <span class="n">predicted_id</span><span class="p">],</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl"><span class="o">...</span>
-</span></span></code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-Python" data-lang="Python"><span class="o">...</span>
+  <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">MAX_LENGTH</span><span class="p">):</span>
+    <span class="n">enc_padding_mask</span><span class="p">,</span> <span class="n">combined_mask</span><span class="p">,</span> <span class="n">dec_padding_mask</span> <span class="o">=</span> <span class="n">create_masks</span><span class="p">(</span>
+        <span class="n">encoder_input</span><span class="p">,</span> <span class="n">output</span><span class="p">)</span>
+  
+    <span class="c1"># predictions.shape == (batch_size, seq_len, vocab_size)</span>
+    <span class="n">predictions</span><span class="p">,</span> <span class="n">attention_weights</span> <span class="o">=</span> <span class="n">transformer</span><span class="p">(</span><span class="n">encoder_input</span><span class="p">,</span> 
+                                                 <span class="n">output</span><span class="p">,</span>
+                                                 <span class="kc">False</span><span class="p">,</span>
+                                                 <span class="n">enc_padding_mask</span><span class="p">,</span>
+                                                 <span class="n">combined_mask</span><span class="p">,</span>
+                                                 <span class="n">dec_padding_mask</span><span class="p">)</span>
+    
+    <span class="c1"># 从 seq_len 维度选择最后一个词</span>
+    <span class="n">predictions</span> <span class="o">=</span> <span class="n">predictions</span><span class="p">[:</span> <span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">:,</span> <span class="p">:]</span>  <span class="c1"># (batch_size, 1, vocab_size)</span>
+
+    <span class="n">predicted_id</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">cast</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">predictions</span><span class="p">,</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">),</span> <span class="n">tf</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span>
+    
+    <span class="c1"># 如果 predicted_id 等于结束标记，就返回结果</span>
+    <span class="k">if</span> <span class="n">predicted_id</span> <span class="o">==</span> <span class="n">tokenizer_en</span><span class="o">.</span><span class="n">vocab_size</span><span class="o">+</span><span class="mi">1</span><span class="p">:</span>
+      <span class="k">return</span> <span class="n">tf</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span> <span class="n">attention_weights</span>
+    
+    <span class="c1"># 连接 predicted_id 与输出，作为解码器的输入传递到解码器。</span>
+    <span class="n">output</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">output</span><span class="p">,</span> <span class="n">predicted_id</span><span class="p">],</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+<span class="o">...</span>
+</code></pre></td></tr></table>
 </div>
 </div><p>代码和动图过程一致。想要预测<code>I am a student</code>。首先我们将其处理成：<code>&lt;SOS&gt; I am a student</code> 作为解码器端的输入。而我们预期需要的得到的输出是 <code>I am a student &lt;EOS&gt;</code>。</p>
 <p>显然，第一次传输给解码器端的输入，只是一个开始符号：</p>
@@ -445,29 +274,29 @@
 </span><span class="lnt">22
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-Python" data-lang="Python"><span class="line"><span class="cl"><span class="o">...</span>
-</span></span><span class="line"><span class="cl"><span class="c1"># 一个训练步骤</span>
-</span></span><span class="line"><span class="cl"><span class="nd">@tf</span><span class="o">.</span><span class="n">function</span><span class="p">(</span><span class="n">input_signature</span><span class="o">=</span><span class="n">train_step_signature</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">train_step</span><span class="p">(</span><span class="n">inp</span><span class="p">,</span> <span class="n">tar</span><span class="p">):</span>
-</span></span><span class="line"><span class="cl">  <span class="n">tar_inp</span> <span class="o">=</span> <span class="n">tar</span><span class="p">[:,</span> <span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
-</span></span><span class="line"><span class="cl">  <span class="n">tar_real</span> <span class="o">=</span> <span class="n">tar</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">:]</span>
-</span></span><span class="line"><span class="cl">  
-</span></span><span class="line"><span class="cl">  <span class="n">enc_padding_mask</span><span class="p">,</span> <span class="n">combined_mask</span><span class="p">,</span> <span class="n">dec_padding_mask</span> <span class="o">=</span> <span class="n">create_masks</span><span class="p">(</span><span class="n">inp</span><span class="p">,</span> <span class="n">tar_inp</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl">  
-</span></span><span class="line"><span class="cl">  <span class="k">with</span> <span class="n">tf</span><span class="o">.</span><span class="n">GradientTape</span><span class="p">()</span> <span class="k">as</span> <span class="n">tape</span><span class="p">:</span>
-</span></span><span class="line"><span class="cl">    <span class="n">predictions</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">transformer</span><span class="p">(</span><span class="n">inp</span><span class="p">,</span> <span class="n">tar_inp</span><span class="p">,</span> 
-</span></span><span class="line"><span class="cl">                                 <span class="kc">True</span><span class="p">,</span> 
-</span></span><span class="line"><span class="cl">                                 <span class="n">enc_padding_mask</span><span class="p">,</span> 
-</span></span><span class="line"><span class="cl">                                 <span class="n">combined_mask</span><span class="p">,</span> 
-</span></span><span class="line"><span class="cl">                                 <span class="n">dec_padding_mask</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl">    <span class="n">loss</span> <span class="o">=</span> <span class="n">loss_function</span><span class="p">(</span><span class="n">tar_real</span><span class="p">,</span> <span class="n">predictions</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl"><span class="o">...</span>
-</span></span><span class="line"><span class="cl"><span class="c1"># 训练多个步骤</span>
-</span></span><span class="line"><span class="cl"><span class="c1"># inp -&gt; portuguese, tar -&gt; english</span>
-</span></span><span class="line"><span class="cl">  <span class="k">for</span> <span class="p">(</span><span class="n">batch</span><span class="p">,</span> <span class="p">(</span><span class="n">inp</span><span class="p">,</span> <span class="n">tar</span><span class="p">))</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">train_dataset</span><span class="p">):</span>
-</span></span><span class="line"><span class="cl">    <span class="n">train_step</span><span class="p">(</span><span class="n">inp</span><span class="p">,</span> <span class="n">tar</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl"><span class="o">...</span>
-</span></span></code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-Python" data-lang="Python"><span class="o">...</span>
+<span class="c1"># 一个训练步骤</span>
+<span class="nd">@tf</span><span class="o">.</span><span class="n">function</span><span class="p">(</span><span class="n">input_signature</span><span class="o">=</span><span class="n">train_step_signature</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">train_step</span><span class="p">(</span><span class="n">inp</span><span class="p">,</span> <span class="n">tar</span><span class="p">):</span>
+  <span class="n">tar_inp</span> <span class="o">=</span> <span class="n">tar</span><span class="p">[:,</span> <span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+  <span class="n">tar_real</span> <span class="o">=</span> <span class="n">tar</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">:]</span>
+  
+  <span class="n">enc_padding_mask</span><span class="p">,</span> <span class="n">combined_mask</span><span class="p">,</span> <span class="n">dec_padding_mask</span> <span class="o">=</span> <span class="n">create_masks</span><span class="p">(</span><span class="n">inp</span><span class="p">,</span> <span class="n">tar_inp</span><span class="p">)</span>
+  
+  <span class="k">with</span> <span class="n">tf</span><span class="o">.</span><span class="n">GradientTape</span><span class="p">()</span> <span class="k">as</span> <span class="n">tape</span><span class="p">:</span>
+    <span class="n">predictions</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">transformer</span><span class="p">(</span><span class="n">inp</span><span class="p">,</span> <span class="n">tar_inp</span><span class="p">,</span> 
+                                 <span class="kc">True</span><span class="p">,</span> 
+                                 <span class="n">enc_padding_mask</span><span class="p">,</span> 
+                                 <span class="n">combined_mask</span><span class="p">,</span> 
+                                 <span class="n">dec_padding_mask</span><span class="p">)</span>
+    <span class="n">loss</span> <span class="o">=</span> <span class="n">loss_function</span><span class="p">(</span><span class="n">tar_real</span><span class="p">,</span> <span class="n">predictions</span><span class="p">)</span>
+<span class="o">...</span>
+<span class="c1"># 训练多个步骤</span>
+<span class="c1"># inp -&gt; portuguese, tar -&gt; english</span>
+  <span class="k">for</span> <span class="p">(</span><span class="n">batch</span><span class="p">,</span> <span class="p">(</span><span class="n">inp</span><span class="p">,</span> <span class="n">tar</span><span class="p">))</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">train_dataset</span><span class="p">):</span>
+    <span class="n">train_step</span><span class="p">(</span><span class="n">inp</span><span class="p">,</span> <span class="n">tar</span><span class="p">)</span>
+<span class="o">...</span>
+</code></pre></td></tr></table>
 </div>
 </div><p>Transformer 是如何在训练阶段通过一次预测过程就完成了本应循环一个句子长度那么多次的预测过程呢？莫非 Transformer 穿越时空了吗？</p>
 <h2 id="3-使用真值模拟输出配合前瞻遮挡">3. 使用真值模拟输出配合前瞻遮挡</h2>
@@ -563,13 +392,13 @@
     
         <link 
                 rel="stylesheet" 
-                href="https://cdn.jsdelivr.net/npm/katex@0.15.6/dist/katex.min.css"integrity="sha256-J&#43;iAE0sgH8QSz9hpcDxXIftnj65JEZgNhGcgReTTK9s="crossorigin="anonymous"
+                href="https://cdn.jsdelivr.net/npm/katex@0.13.13/dist/katex.min.css"integrity="sha384-RZU/ijkSsFbcmivfdRBQDtwuwVqK7GMOw6IMvKyeWL2K5UAlyp6WonmB8m7Jd0Hn"crossorigin="anonymous"
             ><script 
-                src="https://cdn.jsdelivr.net/npm/katex@0.15.6/dist/katex.min.js"integrity="sha256-InsNdER1b2xUewP&#43;pKCUJpkhiqwHgqiPXDlIk7GzBu4="crossorigin="anonymous"
+                src="https://cdn.jsdelivr.net/npm/katex@0.13.13/dist/katex.min.js"integrity="sha384-pK1WpvzWVBQiP0/GjnvRxV4mOb0oxFuyRxJlk6vVw146n3egcN5C925NCP7a7BY8"crossorigin="anonymous"
                 defer
                 >
             </script><script 
-                src="https://cdn.jsdelivr.net/npm/katex@0.15.6/dist/contrib/auto-render.min.js"integrity="sha256-y39Mpg7V3D4lhBX4x6O0bUqTV4pSrfgwEfGKfxkOdgI="crossorigin="anonymous"
+                src="https://cdn.jsdelivr.net/npm/katex@0.13.13/dist/contrib/auto-render.min.js"integrity="sha384-vZTG03m&#43;2yp6N6BNi5iM4rW4oIwk5DfcNdFfxkk9ZWpDriOkXX8voJBFrAO7MpVl"crossorigin="anonymous"
                 defer
                 >
             </script><script>
@@ -588,14 +417,14 @@
 
     
 
+    <aside class="related-contents--wrapper">
     
-
-<aside class="related-content--wrapper">
-    <h2 class="section-title">Related content</h2>
-    <div class="related-content">
-        <div class="flex article-list--tile">
-            
+    
+        <h2 class="section-title">Related contents</h2>
+        <div class="related-contents">
+            <div class="flex article-list--tile">
                 
+                    
 <article class="has-image">
     <a href="/p/transformer-from-zero-4/">
         
@@ -617,9 +446,8 @@
         </div>
     </a>
 </article>
-
-            
                 
+                    
 <article class="has-image">
     <a href="/p/transformer-from-zero-2/">
         
@@ -641,9 +469,8 @@
         </div>
     </a>
 </article>
-
-            
                 
+                    
 <article class="has-image">
     <a href="/p/transformer-from-zero-1/">
         
@@ -665,10 +492,10 @@
         </div>
     </a>
 </article>
-
-            
+                
+            </div>
         </div>
-    </div>
+    
 </aside>
 
      
@@ -677,7 +504,7 @@
     <div class="disqus-container">
     <div id="disqus_thread"></div>
 <script type="application/javascript">
-    window.disqus_config = function () {
+    var disqus_config = function () {
     
     
     
@@ -708,7 +535,7 @@
 
 <script>
     window.addEventListener('onColorSchemeChange', (e) => {
-        if (typeof DISQUS == 'object') {
+        if (DISQUS) {
             DISQUS.reset({
                 reload: true
             });
@@ -724,12 +551,12 @@
         
             2019 - 
         
-        2022 Lilith Sangreal
+        2023 Lilith Sangreal
     </section>
     
     <section class="powerby">
         Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
-        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.13.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
+        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.8.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
     </section>
 </footer>
 
@@ -806,18 +633,46 @@
                 >
             </script><link 
                 rel="stylesheet" 
-                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.css"integrity="sha256-c0uckgykQ9v5k&#43;IqViZOZKc47Jn7KQil4/MP3ySA3F8="crossorigin="anonymous"
             ><link 
                 rel="stylesheet" 
-                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.css"integrity="sha256-SBLU4vv6CA6lHsZ1XyTdhyjJxCjPif/TRkjnsyGAGnE="crossorigin="anonymous"
             >
 
             </main>
     
+        <aside class="sidebar right-sidebar sticky">
+            <section class="widget archives">
+                <div class="widget-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+                </div>
+                <h2 class="widget-title section-title">Table of contents</h2>
+                
+                <div class="widget--toc">
+                    <nav id="TableOfContents">
+  <ol>
+    <li><a href="#1-前言">1. 前言</a></li>
+    <li><a href="#2-transformer-穿越时空了">2. Transformer 穿越时空了？</a></li>
+    <li><a href="#3-使用真值模拟输出配合前瞻遮挡">3. 使用真值模拟输出配合前瞻遮挡</a></li>
+  </ol>
+</nav>
+                </div>
+            </section>
+        </aside>
+    
 
         </div>
         <script 
-                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.5/dist/vibrant.min.js"integrity="sha256-5NovOZc4iwiAWTYIFiIM7DxKUXKWvpVEuMEPLzcm5/g="crossorigin="anonymous"
                 
                 >
             </script><script type="text/javascript" src="/ts/main.js" defer></script>
