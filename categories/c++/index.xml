@@ -8,7 +8,7 @@
     <language>en-us</language>
     <lastBuildDate>Sun, 05 Feb 2023 19:55:58 +0800</lastBuildDate><atom:link href="https://lilithsangreal.com/categories/c++/index.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title>C&#43;&#43; 模板编程无痛入门</title>
+      <title>C&#43;&#43; 模板编程无痛入门（一）前言、两种元函数</title>
       <link>https://lilithsangreal.com/p/cpp-metaprogramming-tutorails/</link>
       <pubDate>Sun, 05 Feb 2023 19:55:58 +0800</pubDate>
       
@@ -16,6 +16,7 @@
       <description>程序如果不能在运行时完成工作，那就只能在编译时完成工作 —— 维基百科
  本文是一个非常适合新手阅读的模板元编程的入门教程。但仍然需要你有一些基础的 C++ 能力，但不需要很多。
 如果你像我一样是个C++菜鸡，但大概能够理解 C++ 的面对对象编程和范型的概念。那么阅读并理解本文内容仍然不成问题。
+本文内容和代码例都来自cppcon的内容整理和个人理解总结，如有错误请一定拍砖，十分感谢。
 模板元编程是什么？ 这里有一个来自维基百科的定义：
  模板元编程（英语：Template metaprogramming，缩写：TMP）是一种元编程技术，编译器使用模板产生暂时性的源码，然后再和剩下的源码混合并编译。这些模板的输出包括编译时期常量、数据结构以及完整的函数。
  如果这个描述仍然让你感到费解，那么这里有另外一个定义：

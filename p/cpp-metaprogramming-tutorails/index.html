@@ -1,16 +1,16 @@
 <!DOCTYPE html>
 <html lang="en-us">
     <head><meta charset='utf-8'>
-<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='面向 C&#43;&#43; protoc'><title>C&#43;&#43; 模板编程无痛入门</title>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='面向 C&#43;&#43; protoc'><title>C&#43;&#43; 模板编程无痛入门（一）前言、两种元函数</title>
 
 <link rel='canonical' href='https://lilithsangreal.com/p/cpp-metaprogramming-tutorails/'>
 
-<link rel="stylesheet" href="/scss/style.min.b949db8bead9abdc40291b93383b8da6abc3aa62e74f5580356c06ddbb792dab.css"><meta property='og:title' content='C&#43;&#43; 模板编程无痛入门'>
+<link rel="stylesheet" href="/scss/style.min.b949db8bead9abdc40291b93383b8da6abc3aa62e74f5580356c06ddbb792dab.css"><meta property='og:title' content='C&#43;&#43; 模板编程无痛入门（一）前言、两种元函数'>
 <meta property='og:description' content='面向 C&#43;&#43; protoc'>
 <meta property='og:url' content='https://lilithsangreal.com/p/cpp-metaprogramming-tutorails/'>
 <meta property='og:site_name' content='Lilith Sangreal'>
 <meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2023-02-05T19:55:58&#43;08:00'/><meta property='article:modified_time' content='2023-02-05T19:55:58&#43;08:00'/>
-<meta name="twitter:title" content="C&#43;&#43; 模板编程无痛入门">
+<meta name="twitter:title" content="C&#43;&#43; 模板编程无痛入门（一）前言、两种元函数">
 <meta name="twitter:description" content="面向 C&#43;&#43; protoc">
     </head>
     <body class="
@@ -77,7 +77,7 @@
     
 
     <h2 class="article-title">
-        <a href="/p/cpp-metaprogramming-tutorails/">C&#43;&#43; 模板编程无痛入门</a>
+        <a href="/p/cpp-metaprogramming-tutorails/">C&#43;&#43; 模板编程无痛入门（一）前言、两种元函数</a>
     </h2>
 
     
@@ -114,7 +114,7 @@
 
 
                 <time class="article-time--reading">
-                    2 minute read
+                    4 minute read
                 </time>
             </div>
         
@@ -131,6 +131,7 @@
 </blockquote>
 <p>本文是一个非常适合新手阅读的模板元编程的入门教程。但仍然需要你有一些基础的 C++ 能力，但不需要很多。</p>
 <p>如果你像我一样是个C++菜鸡，但大概能够理解 C++ 的面对对象编程和范型的概念。那么阅读并理解本文内容仍然不成问题。</p>
+<p><strong>本文内容和代码例都来自cppcon的内容整理和个人理解总结，如有错误请一定拍砖，十分感谢</strong>。</p>
 <h2 id="模板元编程是什么">模板元编程是什么？</h2>
 <p>这里有一个来自维基百科的定义：</p>
 <blockquote>
@@ -277,21 +278,292 @@
 <span class="p">};</span>
 </code></pre></td></tr></table>
 </div>
-</div><p>让我们回到之前的 byte_swap 存在的问题，有了特化模板也许一定程度上解决了这个函数模板不能传入特定类型数据的问题。但显然我们需要为所有的非法数据类型都定义一份特化模板。这会产出多少屎代码？</p>
+</div><p>让我们回到之前的 byte_swap 存在的问题，有了特化模板也许一定程度上解决了这个函数模板不能传入特定类型数据的问题。但显然我们需要为所有的非法数据类型都定义一份特化模板。这会产出多少重复代码？</p>
 <p>能不能有一种方法，让我们的代码不需要写大量的特化模板就可以识别哪些是可以传入的参数，哪些是不能传入的参数呢？</p>
-<p>有的，但显然只靠传进来的参数本身是不够的，我们需要能够识别传入数据的“类型本身的更多特征”来加强我们的模板，而这就是这就是 Type Traits 存在的意义。Type Traits就是”类型的特征”的意思。在C++元编程中，程序员不少时候都需要了解一些类型的特征信息，并根据这些类型信息选择应有的操作。Type Traits有助于编写通用、可复用的代码。</p>
+<p>有的，但显然只靠传进来的参数本身是不够的，我们需要能够识别传入数据的“类型本身的更多特征”来加强我们的模板，而这就是这就是 Type Traits 存在的意义。</p>
+<blockquote>
+<p>Type Traits就是”类型的特征”的意思。在C++元编程中，程序员不少时候都需要了解一些类型的特征信息，并根据这些类型信息选择应有的操作。Type Traits有助于编写通用、可复用的代码。</p>
+</blockquote>
 <p>那么接下来，我们开始旅程。</p>
-<h2 id="元函数和普通函数的区别">元函数和普通函数的区别</h2>
-<p>普通函数可以传入零个或多个值，并返回零个或一个值。</p>
+<h2 id="是惯例决定了元函数的定义从和函数的对比来理解">是惯例决定了元函数的定义——从和函数的对比来理解</h2>
+<blockquote>
+<p>元函数定义遵循以下标准</p>
+<ul>
+<li>mf.1 元函数不是一个函数，是一个类或者结构体</li>
+<li>mf.2 元函数并不是语言的一部分，也没有得到正式的语言支持</li>
+<li>mf.3 元函数（相关编程方法）只是作为一种对现有语言特性的习惯用法存在的</li>
+<li>mf.4 使用不受语言的约束</li>
+<li>mf.5 由社区<strong>惯例</strong>约定（convention）约束用法</li>
+</ul>
+</blockquote>
+<p>我们先把上面的定义记忆下来。</p>
+<p>想要理解上面这些定义，和普通函数对比会更容易。然后我会把这些标准的体现用序号标注出来。</p>
+<p>首先回顾一下什么是函数。</p>
+<p>对于普通函数：</p>
+<ul>
+<li>可以传入零个或多个值。</li>
+<li>返回零个或一个值。</li>
+</ul>
+<p>如下方所示：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
 <pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-C++" data-lang="C++"><span class="kt">void</span> <span class="nf">do_something</span><span class="p">();</span>
+<pre tabindex="0" class="chroma"><code class="language-C++" data-lang="C++"><span class="c1">// 声明
+</span><span class="c1"></span><span class="kt">void</span> <span class="nf">do_something</span><span class="p">();</span>
 <span class="kt">int</span> <span class="nf">do_something_else</span><span class="p">(</span><span class="kt">int</span><span class="p">,</span> <span class="kt">char</span> <span class="k">const</span><span class="o">*</span><span class="p">);</span>
+<span class="c1">// 实现
+</span><span class="c1"></span><span class="kt">int</span> <span class="nf">do_something_else</span><span class="p">(</span><span class="kt">int</span><span class="p">,</span> <span class="kt">char</span> <span class="k">const</span> <span class="o">*</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="mi">42</span><span class="p">;</span>
+<span class="p">}</span>
 </code></pre></td></tr></table>
+</div>
+</div><p>对于元函数，我们用粗体来标记差异：</p>
+<ul>
+<li>由于元函数只能是一个类或者结构体。所以元函数是一个拥有零个或多个模版参数的<strong>类/结构体</strong>。</li>
+<li>元函数可以返回<strong>零个或者多个返回值</strong>。</li>
+<li>但由于惯例，我们需要让元函数<strong>像普通函数一样只返回一个值</strong>。（但也有许多现存代码未遵守这一约定）</li>
+</ul>
+<p>这确实让人不太容易想象类是怎么像函数一样工作的。这一切依然依赖惯例。</p>
+<p>用一个最简单的元函数。来看看如何定义“类的返回值”：</p>
+<p>通常有两类元函数，<strong>值元函数</strong>和<strong>类型元函数</strong>。</p>
+<p>前者工作起来更像是一个普通函数，我们先只看这种：</p>
+<h2 id="依照惯例值元函数返回值如何定义">依照惯例，值元函数返回值如何定义？</h2>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-C++" data-lang="C++"><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">T</span><span class="o">&gt;</span>
+<span class="k">struct</span> <span class="nc">TheAnswer</span> <span class="p">{</span>
+    <span class="k">static</span> <span class="k">constexpr</span> <span class="kt">int</span> <span class="n">value</span> <span class="o">=</span> <span class="mi">42</span><span class="p">;</span>  <span class="c1">// 暴露一个public值，名字叫做 value
+</span><span class="c1"></span><span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>首先我们定义了一个结构体/类模板。自然，这种模板产生的只会是结构体或类（mf.1）。并不会真的出现一个什么“元函数”（mf.2）。而这个元函数的返回值，我们通过暴露一个名字叫做 value 的 public 值来实现一个“返回”值的效果（mf.3），马上就有例子来说明我们如何使用这个“返回值”。显然，这一切都是惯例决定的（mf.5）。即使你不使用value这个名字，编译器依然会让你编译通过（mf.4），但请不要这么做。</p>
+<h2 id="如何实现和调用值元函数">如何实现和调用值元函数</h2>
+<p>来一些更多的对比：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-C++" data-lang="C++"><span class="c1">// 另一个普通函数
+</span><span class="c1"></span><span class="kt">int</span> <span class="nf">int_identity</span><span class="p">(</span><span class="kt">int</span> <span class="n">x</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="n">x</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="n">assert</span><span class="p">(</span><span class="mi">42</span> <span class="o">==</span> <span class="n">int_indentity</span><span class="p">(</span><span class="mi">42</span><span class="p">));</span> <span class="c1">// 显然，这个函数传给它什么，就返回什么
+</span><span class="c1"></span>
+<span class="c1">// 与上面功能对应的范型函数
+</span><span class="c1"></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">T</span><span class="o">&gt;</span>
+<span class="n">T</span> <span class="n">identity</span><span class="p">(</span><span class="n">T</span> <span class="n">x</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="n">x</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="n">assert</span><span class="p">(</span><span class="mi">42ull</span> <span class="o">==</span> <span class="n">int_indentity</span><span class="p">(</span><span class="mi">42ull</span><span class="p">));</span> <span class="c1">// 显然，这个函数传给它什么类型的值，就返回什么类型的值
+</span></code></pre></td></tr></table>
+</div>
+</div><p>上面这个能力，用元函数怎么实现呢：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-C++" data-lang="C++"><span class="c1">// 对应功能的元函数
+</span><span class="c1"></span><span class="k">template</span> <span class="o">&lt;</span><span class="kt">int</span> <span class="n">X</span><span class="o">&gt;</span>         <span class="c1">// 这是一个非类型模版参数，用模板的时候尖括号里面传具体值即可
+</span><span class="c1"></span><span class="k">struct</span> <span class="nc">IntIdentity</span> <span class="p">{</span>
+    <span class="k">static</span> <span class="k">constexpr</span> <span class="n">value</span> <span class="o">=</span> <span class="n">X</span><span class="p">;</span>  <span class="c1">// 而这个具体值，在编译期就已经“存在” value 里面了
+</span><span class="c1"></span><span class="p">}</span>
+
+<span class="k">static_assert</span><span class="p">(</span><span class="mi">42</span> <span class="o">==</span> <span class="n">IntIdentity</span><span class="o">&lt;</span><span class="mi">42</span><span class="o">&gt;::</span><span class="n">value</span><span class="p">);</span> 
+
+<span class="c1">// 对应功能的范型元函数
+</span><span class="c1"></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">T</span><span class="p">,</span> <span class="n">T</span> <span class="n">X</span><span class="o">&gt;</span> 
+<span class="k">struct</span> <span class="nc">ValueIdentity</span><span class="p">{</span>
+    <span class="k">static</span> <span class="k">constexpr</span> <span class="n">T</span> <span class="n">value</span> <span class="o">=</span> <span class="n">X</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="k">static_assert</span><span class="p">(</span><span class="mi">42ull</span> <span class="o">==</span> <span class="n">ValueIdentity</span><span class="o">&lt;</span><span class="kt">unsigned</span> <span class="kt">long</span> <span class="kt">long</span><span class="p">,</span> <span class="mi">42ull</span><span class="o">&gt;::</span><span class="n">value</span><span class="p">);</span>  <span class="c1">// 这里需要额外传一个类型
+</span><span class="c1"></span>
+<span class="c1">// 如果使用C++ 17 改写上面的代码...
+</span><span class="c1"></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">auto</span> <span class="n">X</span><span class="o">&gt;</span> 
+<span class="k">struct</span> <span class="nc">ValueIdentity</span><span class="p">{</span>
+    <span class="k">static</span> <span class="k">constexpr</span> <span class="k">auto</span> <span class="n">value</span> <span class="o">=</span> <span class="n">X</span><span class="p">;</span>
+<span class="p">}</span>
+ 
+<span class="k">static_assert</span><span class="p">(</span><span class="mi">42ull</span> <span class="o">==</span> <span class="n">ValueIdentity</span><span class="o">&lt;</span><span class="mi">42ull</span><span class="o">&gt;::</span><span class="n">value</span><span class="p">);</span>                       <span class="c1">// 类型可以省略掉了
+</span></code></pre></td></tr></table>
+</div>
+</div><p>可以看见，通过双冒号来访问这个public变量，我们得到了元函数的“返回值”。而为了实现范型，除了一个 <code>X</code> 值需要传给模板，还需要一个类型 <code>T</code>。</p>
+<p>如果使用 C++ 17，则可以省略掉这个类型。如上方第三段代码所示。</p>
+<p>我们使用了静态断言 <code>static_assert</code> 来表示结果的正确性。这是因为这些所谓的返回值，其实在编译期已经计算完成了。通过元编程，我们确实“把运行时的工作移动到了编译期”。而编译期的断言需要使用 <code>static_assert</code>，与运行期断言不同的是，如果你的结果计算错了导致断言为false，那么编译期就会报错。</p>
+<p>再来一个另外一个例子，求两个数的和：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-C++" data-lang="C++"><span class="c1">// 元函数
+</span><span class="c1"></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">auto</span> <span class="n">X</span><span class="p">,</span> <span class="k">auto</span> <span class="n">Y</span><span class="o">&gt;</span>
+<span class="k">struct</span> <span class="nc">Sum</span> <span class="p">{</span>
+    <span class="k">static</span> <span class="k">constexpr</span> <span class="k">auto</span> <span class="n">value</span> <span class="o">=</span> <span class="n">X</span> <span class="o">+</span> <span class="n">Y</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="k">static_assert</span><span class="p">(</span><span class="mi">42ull</span> <span class="o">==</span> <span class="n">sum</span><span class="p">(</span><span class="mi">30</span><span class="p">,</span> <span class="mi">12ull</span><span class="p">));</span>  <span class="c1">// 传入了一个 int 值和一个 unsigned long long 值
+</span><span class="c1"></span>                                         <span class="c1">// 这个运算仍然在编译期就计算好了
+</span></code></pre></td></tr></table>
+</div>
+</div><p>P.S.：如果只是想把对两个编译期常量的求和交给编译器来做。也可以使用 <code>constexpr</code> 关键词来改造一个普通范型函数，虽然做的事情非常近似，但<strong>这不是一个元函数</strong>：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-C++" data-lang="C++"><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">X</span><span class="p">,</span> <span class="k">typename</span> <span class="n">Y</span><span class="o">&gt;</span>
+<span class="k">constexpr</span> <span class="k">auto</span> <span class="n">sum</span><span class="p">(</span><span class="n">X</span> <span class="n">x</span><span class="p">,</span> <span class="n">Y</span> <span class="n">y</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="n">X</span> <span class="o">+</span> <span class="n">Y</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="k">static_assert</span><span class="p">(</span><span class="mi">42ull</span> <span class="o">==</span> <span class="n">sum</span><span class="p">(</span><span class="mi">30</span><span class="p">,</span> <span class="mi">12ull</span><span class="p">));</span> <span class="c1">// 使用了 constexpr，函数变成了一个编译期求值函数，因此需要使用，static_assert
+</span><span class="c1"></span>                                        <span class="c1">// 传入的值，也必须是一个编译期常量或常量表达式
+</span></code></pre></td></tr></table>
+</div>
+</div><p>但不得不说，constexpr 函数的存在确实让大多数情况下无需使用<strong>值元函数</strong>，但<strong>值元函数</strong>仍然有它的位置。</p>
+<h2 id="类型元函数返回值如何定义">类型元函数返回值如何定义</h2>
+<p>接下来我们聊第二类元函数：类型元函数。这是模板元编程的主力。</p>
+<p>类型元函数只能返回类型：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-C++" data-lang="C++"><span class="c1">// PS：下面的实现与 C++ 20 引入的 std::type_identity 功能一致
+</span><span class="c1"></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">T</span><span class="o">&gt;</span>
+<span class="k">struct</span> <span class="nc">Echo</span> <span class="p">{</span>
+    <span class="k">using</span> <span class="n">type</span> <span class="o">=</span> <span class="n">T</span><span class="p">;</span>                  <span class="c1">// 暴露一个类型，名字叫做 type （必须！这是惯例）
+</span><span class="c1"></span><span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>和值元函数类似，我们暴露了一个名字叫做 type 的 T 类型。</p>
+<h2 id="类型元函数如何调用">类型元函数如何调用</h2>
+<p>如果编译器不知道一个东西是什么的时候，会优先认为那是一个值。因此我们不得不在调用类型元函数的前面，加上 <code>typename</code> 关键字来告诉编译器，这是一个类型：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-C++" data-lang="C++"><span class="c1">// 调用值元函数
+</span><span class="c1"></span><span class="n">IntIdentity</span><span class="o">&lt;</span><span class="mi">42</span><span class="o">&gt;::</span><span class="n">value</span>
+
+<span class="c1">// 调用类型元函数
+</span><span class="c1">// 错误！编译器会认为type是一个值
+</span><span class="c1"></span><span class="n">TypeIdentity</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;::</span><span class="n">type</span>
+
+<span class="c1">// 正确的写法
+</span><span class="c1"></span><span class="k">typename</span> <span class="n">TypeIdentity</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;::</span><span class="n">type</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>但这种写法又很繁琐，因此<strong>惯例</strong>又规定了一种简化语法的方式：</p>
+<h2 id="使用变量模板--模板别名来简化元函数调用语法">使用变量模板 / 模板别名来简化元函数调用语法</h2>
+<p>如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-C++" data-lang="C++"><span class="c1">// 使用变量模板，简化值元函数调用
+</span><span class="c1"></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">auto</span> <span class="n">X</span><span class="o">&gt;</span>
+<span class="kr">inline</span> <span class="k">constexpr</span> <span class="k">auto</span> <span class="n">ValueIdentity_v</span> <span class="o">=</span> <span class="n">ValueIdentity</span><span class="o">&lt;</span><span class="n">X</span><span class="o">&gt;::</span><span class="n">value</span> <span class="c1">// 必须以 _v 结尾
+</span><span class="c1"></span>
+<span class="k">static_assert</span><span class="p">(</span><span class="mi">42ull</span> <span class="o">==</span> <span class="n">ValueIdentity_v</span><span class="o">&lt;</span><span class="mi">42ull</span><span class="o">&gt;</span><span class="p">);</span> 
+
+<span class="c1">// 使用模板别名，简化类型元函数调用 
+</span><span class="c1"></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">T</span><span class="o">&gt;</span>
+<span class="k">using</span> <span class="n">TypeIdentity_t</span> <span class="o">=</span> <span class="k">typename</span> <span class="n">TypeIdentity</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;::</span><span class="n">type</span><span class="p">;</span>  <span class="c1">// 必须以 _t 结尾
+</span><span class="c1"></span>
+<span class="k">static_assert</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">is_same_v</span><span class="o">&lt;</span><span class="kt">int</span><span class="p">,</span> <span class="n">TypeIdentity_t</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;&gt;</span><span class="p">);</span>  <span class="c1">// 省了 typename！
+</span></code></pre></td></tr></table>
 </div>
 </div>
 </section>
@@ -543,7 +815,12 @@
     <li><a href="#模板元编程是什么">模板元编程是什么？</a></li>
     <li><a href="#使用元编程一点理由">使用元编程，一点理由……</a></li>
     <li><a href="#模版特化与-type-traits">模版特化与 Type Traits</a></li>
-    <li><a href="#元函数和普通函数的区别">元函数和普通函数的区别</a></li>
+    <li><a href="#是惯例决定了元函数的定义从和函数的对比来理解">是惯例决定了元函数的定义——从和函数的对比来理解</a></li>
+    <li><a href="#依照惯例值元函数返回值如何定义">依照惯例，值元函数返回值如何定义？</a></li>
+    <li><a href="#如何实现和调用值元函数">如何实现和调用值元函数</a></li>
+    <li><a href="#类型元函数返回值如何定义">类型元函数返回值如何定义</a></li>
+    <li><a href="#类型元函数如何调用">类型元函数如何调用</a></li>
+    <li><a href="#使用变量模板--模板别名来简化元函数调用语法">使用变量模板 / 模板别名来简化元函数调用语法</a></li>
   </ol>
 </nav>
                 </div>
