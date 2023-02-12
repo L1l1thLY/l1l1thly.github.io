@@ -6,7 +6,20 @@
     <description>Recent content in C&#43;&#43; on Lilith Sangreal</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sun, 05 Feb 2023 19:55:58 +0800</lastBuildDate><atom:link href="https://lilithsangreal.com/categories/c++/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sun, 12 Feb 2023 15:13:10 +0800</lastBuildDate><atom:link href="https://lilithsangreal.com/categories/c++/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>C&#43;&#43; 模板编程无痛入门（二） Type Traits：类型特征核心实现与约定</title>
+      <link>https://lilithsangreal.com/p/cpp-metaprogramming-tutorails-2/</link>
+      <pubDate>Sun, 12 Feb 2023 15:13:10 +0800</pubDate>
+      
+      <guid>https://lilithsangreal.com/p/cpp-metaprogramming-tutorails-2/</guid>
+      <description>在前一篇 C++ 模板编程无痛入门（一）前言、两种元函数 中，我们举了一个使用模板偏特化来优化 byte_swap 函数的代码困境。当时提到了我们需要能够识别传入数据的“类型本身的更多特征”来加强我们的模板。
+这就是 Type Traits 。
+在拥有了前文对于元函数的理解之后。本文将介绍一些特殊且重要的元函数，Type Traits 系统将建立在这些元函数之上。
+一切的核心：std::integral_constant 这是 Type Traits 的核心元函数，因此需要特别记忆，有一丢丢复杂和抽象：
+1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17  template &amp;lt;class T, T v&amp;gt; // 上篇文章已经提到过，这里可以优化为 auto struct integral_constant { static constexpr T value = v; // 一个值元函数的返回值  using value_type = T; using type = integral_constant&amp;lt;T, v&amp;gt;; // 一个类型元函数的返回值  /// 这里定义了一个转换到T类型值隐式转换  constexpr operator value_type() const noexcept { return value; } // 如果这个模板实例化了，可以使用括号操作符直接访问 value  constexpr value_type operator()() const noexcept { return value; } }   显然这既是一个值元函数，又是一个类型元函数。但目前看不出来这种设计有什么用，也不知道为何要定义隐式转换。让我们继续。</description>
+    </item>
+    
     <item>
       <title>C&#43;&#43; 模板编程无痛入门（一）前言、两种元函数</title>
       <link>https://lilithsangreal.com/p/cpp-metaprogramming-tutorails/</link>

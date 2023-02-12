@@ -1,0 +1,740 @@
+<!DOCTYPE html>
+<html lang="en-us">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='在前一篇 C&#43;&#43; 模板编程无痛入门（一）前言、两种元函数 中，我们举了一个使用模板偏特化来优化 byte_swap 函数的代码困境。当时提到了我们需要能够识别传入数据的“类型本身的更多特征”来加强我们的模板。
+这就是 Type Traits 。
+在拥有了前文对于元函数的理解之后。本文将介绍一些特殊且重要的元函数，Type Traits 系统将建立在这些元函数之上。
+一切的核心：std::integral_constant 这是 Type Traits 的核心元函数，因此需要特别记忆，有一丢丢复杂和抽象：
+1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17  template &amp;lt;class T, T v&amp;gt; // 上篇文章已经提到过，这里可以优化为 auto struct integral_constant { static constexpr T value = v; // 一个值元函数的返回值  using value_type = T; using type = integral_constant&amp;lt;T, v&amp;gt;; // 一个类型元函数的返回值  /// 这里定义了一个转换到T类型值隐式转换  constexpr operator value_type() const noexcept { return value; } // 如果这个模板实例化了，可以使用括号操作符直接访问 value  constexpr value_type operator()() const noexcept { return value; } }   显然这既是一个值元函数，又是一个类型元函数。但目前看不出来这种设计有什么用，也不知道为何要定义隐式转换。让我们继续。'><title>C&#43;&#43; 模板编程无痛入门（二） Type Traits：类型特征核心实现与约定</title>
+
+<link rel='canonical' href='https://lilithsangreal.com/p/cpp-metaprogramming-tutorails-2/'>
+
+<link rel="stylesheet" href="/scss/style.min.b949db8bead9abdc40291b93383b8da6abc3aa62e74f5580356c06ddbb792dab.css"><meta property='og:title' content='C&#43;&#43; 模板编程无痛入门（二） Type Traits：类型特征核心实现与约定'>
+<meta property='og:description' content='在前一篇 C&#43;&#43; 模板编程无痛入门（一）前言、两种元函数 中，我们举了一个使用模板偏特化来优化 byte_swap 函数的代码困境。当时提到了我们需要能够识别传入数据的“类型本身的更多特征”来加强我们的模板。
+这就是 Type Traits 。
+在拥有了前文对于元函数的理解之后。本文将介绍一些特殊且重要的元函数，Type Traits 系统将建立在这些元函数之上。
+一切的核心：std::integral_constant 这是 Type Traits 的核心元函数，因此需要特别记忆，有一丢丢复杂和抽象：
+1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17  template &amp;lt;class T, T v&amp;gt; // 上篇文章已经提到过，这里可以优化为 auto struct integral_constant { static constexpr T value = v; // 一个值元函数的返回值  using value_type = T; using type = integral_constant&amp;lt;T, v&amp;gt;; // 一个类型元函数的返回值  /// 这里定义了一个转换到T类型值隐式转换  constexpr operator value_type() const noexcept { return value; } // 如果这个模板实例化了，可以使用括号操作符直接访问 value  constexpr value_type operator()() const noexcept { return value; } }   显然这既是一个值元函数，又是一个类型元函数。但目前看不出来这种设计有什么用，也不知道为何要定义隐式转换。让我们继续。'>
+<meta property='og:url' content='https://lilithsangreal.com/p/cpp-metaprogramming-tutorails-2/'>
+<meta property='og:site_name' content='Lilith Sangreal'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2023-02-12T15:13:10&#43;08:00'/><meta property='article:modified_time' content='2023-02-12T15:13:10&#43;08:00'/><meta property='og:image' content='https://lilithsangreal.com/p/cpp-metaprogramming-tutorails-2/attachments/meta2.jpeg' />
+<meta name="twitter:title" content="C&#43;&#43; 模板编程无痛入门（二） Type Traits：类型特征核心实现与约定">
+<meta name="twitter:description" content="在前一篇 C&#43;&#43; 模板编程无痛入门（一）前言、两种元函数 中，我们举了一个使用模板偏特化来优化 byte_swap 函数的代码困境。当时提到了我们需要能够识别传入数据的“类型本身的更多特征”来加强我们的模板。
+这就是 Type Traits 。
+在拥有了前文对于元函数的理解之后。本文将介绍一些特殊且重要的元函数，Type Traits 系统将建立在这些元函数之上。
+一切的核心：std::integral_constant 这是 Type Traits 的核心元函数，因此需要特别记忆，有一丢丢复杂和抽象：
+1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17  template &amp;lt;class T, T v&amp;gt; // 上篇文章已经提到过，这里可以优化为 auto struct integral_constant { static constexpr T value = v; // 一个值元函数的返回值  using value_type = T; using type = integral_constant&amp;lt;T, v&amp;gt;; // 一个类型元函数的返回值  /// 这里定义了一个转换到T类型值隐式转换  constexpr operator value_type() const noexcept { return value; } // 如果这个模板实例化了，可以使用括号操作符直接访问 value  constexpr value_type operator()() const noexcept { return value; } }   显然这既是一个值元函数，又是一个类型元函数。但目前看不出来这种设计有什么用，也不知道为何要定义隐式转换。让我们继续。"><meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content='https://lilithsangreal.com/p/cpp-metaprogramming-tutorails-2/attachments/meta2.jpeg' />
+    </head>
+    <body class="
+    article-page has-toc
+">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex 
+    
+        extended
+    
+">
+    
+        <div id="article-toolbar">
+            <a href="/" class="back-home">
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-chevron-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="15 6 9 12 15 18" />
+</svg>
+
+
+
+                <span>Back</span>
+            </a>
+        </div>
+    
+<main class="main full-width">
+    <article class="has-image main-article">
+    <header class="article-header">
+        <div class="article-image">
+            <a href="/p/cpp-metaprogramming-tutorails-2/">
+                <img src="/p/cpp-metaprogramming-tutorails-2/attachments/meta2_hua3efba0305b3106422b512a25770ea8d_265060_800x0_resize_q75_box.jpeg"
+                        srcset="/p/cpp-metaprogramming-tutorails-2/attachments/meta2_hua3efba0305b3106422b512a25770ea8d_265060_800x0_resize_q75_box.jpeg 800w, /p/cpp-metaprogramming-tutorails-2/attachments/meta2_hua3efba0305b3106422b512a25770ea8d_265060_1600x0_resize_q75_box.jpeg 1600w"
+                        width="800" 
+                        height="400" 
+                        loading="lazy"
+                        alt="Featured image of post C&#43;&#43; 模板编程无痛入门（二） Type Traits：类型特征核心实现与约定" />
+                
+            </a>
+        </div>
+    
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/c&#43;&#43;/" >
+                C&#43;&#43;
+            </a>
+        
+            <a href="/categories/metaprogramming/" >
+                Metaprogramming
+            </a>
+        
+    </header>
+    
+
+    <h2 class="article-title">
+        <a href="/p/cpp-metaprogramming-tutorails-2/">C&#43;&#43; 模板编程无痛入门（二） Type Traits：类型特征核心实现与约定</a>
+    </h2>
+
+    
+
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">Feb 12, 2023</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    3 minute read
+                </time>
+            </div>
+        
+    </footer>
+    
+</div>
+</header>
+
+    <section class="article-content">
+    
+    
+    <p>在前一篇 <a class="link" href="https://lilithsangreal.com/p/cpp-metaprogramming-tutorails/"  target="_blank" rel="noopener"
+    >C++ 模板编程无痛入门（一）前言、两种元函数</a> 中，我们举了一个使用模板偏特化来优化 byte_swap 函数的代码困境。当时提到了我们需要能够识别传入数据的“类型本身的更多特征”来加强我们的模板。</p>
+<p>这就是 Type Traits 。</p>
+<p>在拥有了前文对于元函数的理解之后。本文将介绍一些特殊且重要的元函数，Type Traits 系统将建立在这些元函数之上。</p>
+<h2 id="一切的核心stdintegral_constant">一切的核心：std::integral_constant</h2>
+<p>这是 Type Traits 的核心元函数，因此需要特别记忆，有一丢丢复杂和抽象：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-C++" data-lang="C++"><span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">T</span><span class="p">,</span> <span class="n">T</span> <span class="n">v</span><span class="o">&gt;</span> <span class="c1">// 上篇文章已经提到过，这里可以优化为 auto
+</span><span class="c1"></span><span class="k">struct</span> <span class="nc">integral_constant</span> <span class="p">{</span>
+    <span class="k">static</span> <span class="k">constexpr</span> <span class="n">T</span> <span class="n">value</span> <span class="o">=</span> <span class="n">v</span><span class="p">;</span>                     <span class="c1">// 一个值元函数的返回值
+</span><span class="c1"></span>
+    <span class="k">using</span> <span class="n">value_type</span> <span class="o">=</span> <span class="n">T</span><span class="p">;</span>                   
+    <span class="k">using</span> <span class="n">type</span>       <span class="o">=</span> <span class="n">integral_constant</span><span class="o">&lt;</span><span class="n">T</span><span class="p">,</span> <span class="n">v</span><span class="o">&gt;</span><span class="p">;</span>       <span class="c1">// 一个类型元函数的返回值
+</span><span class="c1"></span>
+    <span class="c1">/// 这里定义了一个转换到T类型值隐式转换
+</span><span class="c1"></span>    <span class="k">constexpr</span> <span class="k">operator</span> <span class="nf">value_type</span><span class="p">()</span> <span class="k">const</span> <span class="k">noexcept</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="n">value</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="c1">// 如果这个模板实例化了，可以使用括号操作符直接访问 value
+</span><span class="c1"></span>    <span class="k">constexpr</span> <span class="n">value_type</span> <span class="nf">operator</span><span class="p">()()</span> <span class="k">const</span> <span class="k">noexcept</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="n">value</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>显然这既是一个值元函数，又是一个类型元函数。但目前看不出来这种设计有什么用，也不知道为何要定义隐式转换。让我们继续。</p>
+<h2 id="stdbool_constantstdtrue_typestdfalse_type">std::bool_constant、std::true_type、std::false_type</h2>
+<p>这三种元函数都是 <code>std::integral_constant</code> 的模板别名。<code>std::bool_constant</code> 别名了 <code>std::integral_constant</code>，而 <code>std::true_type、std::false_type</code> 是 <code>std::bool_constant</code> 的别名。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-C++" data-lang="C++"><span class="k">template</span> <span class="o">&lt;</span><span class="kt">bool</span> <span class="n">B</span><span class="o">&gt;</span>
+<span class="k">using</span> <span class="n">bool_constant</span> <span class="o">=</span> <span class="n">integral_constant</span><span class="o">&lt;</span><span class="kt">bool</span><span class="p">,</span> <span class="n">B</span><span class="o">&gt;</span><span class="p">;</span>
+
+<span class="k">using</span> <span class="n">true_type</span> <span class="o">=</span> <span class="n">bool_constant</span><span class="o">&lt;</span><span class="nb">true</span><span class="o">&gt;</span><span class="p">;</span>
+
+<span class="k">using</span> <span class="n">false_type</span> <span class="o">=</span> <span class="n">bool_constant</span><span class="o">&lt;</span><span class="nb">false</span><span class="o">&gt;</span><span class="p">;</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>其中，<code>std::true_type、std::false_type</code> 被称作<strong>零元元函数</strong>，因为没有传入参数，但是却能拿到返回值。</p>
+<p>有了前一篇文章的介绍，相信各位读者已经能够在脑海中想象出这些元函数如何调用，以及用 <code>::type</code> 和 <code>::value</code> 分别能够拿到什么了。</p>
+<p>那么进一步讨论这些元函数的用法，需要首先交代一些关于 type traits 的约定，这些约定一样来自于社区惯例，<strong>但现在已经成为标准</strong>：</p>
+<h2 id="一元类型特征cpp17unarytypetrait约定">一元类型特征（Cpp17UnaryTypeTrait）约定</h2>
+<ul>
+<li>utt.1 类模板</li>
+<li>utt.2 只有一个类型模板参数（但可以添加一些附加参数）</li>
+<li>utt.3 必须有默认构造函数</li>
+<li>utt.4 必须可以复制构造</li>
+<li>utt.5 必须 public 且没有歧义地继承 <code>std::integral_constant</code></li>
+<li>utt.6 同时，基类的成员需要保持没有歧义、可用，绝不可隐藏起来</li>
+</ul>
+<h2 id="二元类型特征cpp17binarytypetrait约定">二元类型特征（Cpp17BinaryTypeTrait）约定</h2>
+<p>二元类型特征与一元基本一致：</p>
+<ul>
+<li>btt.1 类模板</li>
+<li>btt.2 <strong>需有两个类型模板参数</strong>（但可以添加一些附加参数）</li>
+<li>btt.3 必须有默认构造函数</li>
+<li>btt.4 必须可以复制构造</li>
+<li>btt.5 必须 public 且没有歧义地继承 <code>std::integral_constant</code></li>
+<li>btt.6 同时，基类的成员需要保持没有歧义、可用，绝不可隐藏起来</li>
+</ul>
+<h2 id="转换特征cpp17transformationtrait约定">转换特征（Cpp17TransformationTrait）约定</h2>
+<p>转换特征则不同之处更多：</p>
+<ul>
+<li>tt.1 类模板</li>
+<li>tt.2 只有一个类型模板参数（但可以添加一些附加参数）</li>
+<li>tt.3 <strong>需要有一个内嵌的、<code>public</code>的类型命名为<code>type</code></strong></li>
+<li>tt.4 <strong>无需默认的构造函数，无需默认的拷贝构造函数</strong></li>
+<li>tt.5 <strong>没有继承要求</strong></li>
+</ul>
+<h2 id="未定义的行为">未定义的行为</h2>
+<p>这意味着一些事情，不要去做：</p>
+<ul>
+<li>ub.1 不要特化标准库的类型特征，除了特殊声明可以特化的（如 common_type)</li>
+<li>ub.2 需要当心不完整类型。可以用，但是必须保证示例化一个你的类型特征，无论这个类型是否是完整的，结果都一致。</li>
+</ul>
+<blockquote>
+<p>不完整类型是这样一种类型，它缺乏足够的信息例如长度去描述一个完整的对象。如一个前向声明。</p>
+</blockquote>
+<p>有了上面的约定。让我们开始介绍一些标准库类型特征系统中的重要元函数，并利用这些重要元函数的实现来理解这些约定。</p>
+<h2 id="一元类型特征is_void">一元类型特征：is_void</h2>
+<p>这是一个值元函数，判断一个类型是不是一个void类型。会产生 true_type 或者 false_type。</p>
+<p>这个元函数是通过模板特化来实现的：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-C++" data-lang="C++"><span class="c1">// 泛用情况
+</span><span class="c1"></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">T</span><span class="o">&gt;</span>
+<span class="k">struct</span> <span class="nc">is_void</span> <span class="o">:</span> <span class="n">std</span><span class="o">::</span><span class="n">false_type</span> <span class="p">{};</span> <span class="c1">// utt.5 
+</span><span class="c1"></span>
+<span class="c1">// 特化情况：
+</span><span class="c1">// 全特化模板，只针对void类型才会匹配到这里
+</span><span class="c1"></span><span class="k">template</span> <span class="o">&lt;&gt;</span>
+<span class="k">struct</span> <span class="nc">is_void</span><span class="o">&lt;</span><span class="kt">void</span><span class="o">&gt;</span> <span class="o">:</span> <span class="n">std</span><span class="o">::</span><span class="n">true_type</span> <span class="p">{};</span>  <span class="c1">// utt.5 
+</span></code></pre></td></tr></table>
+</div>
+</div><p>在之前文章的例子里面，我们通常都会使用一个 <code>static_assert</code> 断言来表示一个元函数的用法。那么 <code>is_void</code> 应该是如何使用的呢？is_void 继承自 std::true_type 或 std::false_type。所以编译器根据传入参数的类型（匹配泛用模板或特化模板）实际上是在使用后两者。</p>
+<p>false_type原理一样。这里只以 true_type 为例。</p>
+<p>我们已经知道了 true_type 仅仅是 integral_constant 的模板别名，它是一个 <code>integral_constant&lt;bool, true&gt;</code>，可以认为编译器生成的代码是长这样的：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-C++" data-lang="C++"><span class="k">struct</span> <span class="nc">integral_constant_true_type</span> <span class="p">{</span>
+    <span class="k">static</span> <span class="k">constexpr</span> <span class="kt">bool</span> <span class="n">value</span> <span class="o">=</span> <span class="nb">true</span><span class="p">;</span>  <span class="c1">// 编译期，这里已经“保存”了一个 true了                     
+</span><span class="c1"></span>
+    <span class="c1">// using value_type = bool;                   
+</span><span class="c1"></span>    <span class="k">using</span> <span class="n">type</span>       <span class="o">=</span> <span class="n">integral_constant</span><span class="o">&lt;</span><span class="kt">bool</span><span class="p">,</span> <span class="nb">true</span><span class="o">&gt;</span><span class="p">;</span>
+
+    <span class="c1">/// 这里定义了一个隐式转换转换成一个bool值
+</span><span class="c1"></span>    <span class="k">constexpr</span> <span class="k">operator</span> <span class="nf">bool</span><span class="p">()</span> <span class="k">const</span> <span class="k">noexcept</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="n">value</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="c1">// 可以使用括号语法直接访问 value
+</span><span class="c1"></span>    <span class="k">constexpr</span> <span class="kt">bool</span> <span class="nf">operator</span><span class="p">()()</span> <span class="k">const</span> <span class="k">noexcept</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="n">value</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>因此，<code>is_void</code> 它的用法是这样的：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-C++" data-lang="C++"><span class="k">static_assert</span><span class="err">（</span><span class="n">is_void</span><span class="o">&lt;</span><span class="kt">void</span><span class="o">&gt;</span><span class="p">{});</span> <span class="c1">//使用花括号语法示例化了一个 is_void 对象（true_type)，又隐式转换成了一个 constexpr bool 值 true
+</span><span class="c1"></span><span class="k">static_assert</span><span class="err">（</span><span class="n">not</span> <span class="n">is_void</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="p">{});</span> <span class="c1">//使用花括号语法示例化了一个 is_void 对象（false_type)，又隐式转换成了一个 constexpr bool 值 false
+</span></code></pre></td></tr></table>
+</div>
+</div><p>对于 std::is_void，它的结果是忽略cv性的：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-C++" data-lang="C++"><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">T</span><span class="o">&gt;</span> <span class="k">struct</span> <span class="nc">is_void</span> <span class="o">:</span> <span class="n">std</span><span class="o">::</span><span class="n">false_type</span> <span class="p">{</span> <span class="p">};</span>
+<span class="k">template</span> <span class="o">&lt;&gt;</span> <span class="k">struct</span> <span class="nc">is_void</span><span class="o">&lt;</span><span class="kt">void</span><span class="o">&gt;</span> <span class="o">:</span> <span class="n">std</span><span class="o">::</span><span class="n">true_type</span> <span class="p">{</span> <span class="p">};</span>
+<span class="k">template</span> <span class="o">&lt;&gt;</span> <span class="k">struct</span> <span class="nc">is_void</span><span class="o">&lt;</span><span class="kt">void</span> <span class="k">const</span><span class="o">&gt;</span> <span class="o">:</span> <span class="n">std</span><span class="o">::</span><span class="n">true_type</span> <span class="p">{</span> <span class="p">};</span>
+<span class="k">template</span> <span class="o">&lt;&gt;</span> <span class="k">struct</span> <span class="nc">is_void</span><span class="o">&lt;</span><span class="kt">void</span> <span class="k">volatile</span><span class="o">&gt;</span> <span class="o">:</span> <span class="n">std</span><span class="o">::</span><span class="n">true_type</span> <span class="p">{</span> <span class="p">};</span>
+<span class="k">template</span> <span class="o">&lt;&gt;</span> <span class="k">struct</span> <span class="nc">is_void</span><span class="o">&lt;</span><span class="kt">void</span> <span class="k">const</span> <span class="k">volatile</span><span class="o">&gt;</span>
+<span class="o">:</span> <span class="n">std</span><span class="o">::</span><span class="n">true_type</span> <span class="p">{</span>     <span class="p">};</span>
+<span class="c1">//  标准库实现了简化写法
+</span><span class="c1"></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">T</span><span class="o">&gt;</span>
+<span class="kr">inline</span> <span class="k">constexpr</span> <span class="kt">bool</span> <span class="n">is_void_v</span> <span class="o">=</span> <span class="n">is_void</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;::</span><span class="n">value</span><span class="p">;</span>
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="转换类型特征-remove_const">转换类型特征 remove_const</h2>
+<p>字面意思，功能是 移除一个类型的const修饰词。</p>
+<blockquote>
+<p>注意：只移除顶级const。这也就意味着如果你的指针是指向一个const类型的指针，但本身并不是const，那么remove_const将什么都不会做。</p>
+</blockquote>
+<p>实现 remove_const，我们继承自上一篇文章中实现的 <code>TypeIdentity</code>：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-C++" data-lang="C++"><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">T</span><span class="o">&gt;</span>
+<span class="k">struct</span> <span class="nc">TypeIdentity</span> <span class="p">{</span>
+    <span class="k">using</span> <span class="n">type</span> <span class="o">=</span> <span class="n">T</span><span class="p">;</span> 
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>同样需要利用特化：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-C++" data-lang="C++"><span class="c1">// 泛用模式
+</span><span class="c1"></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">T</span><span class="o">&gt;</span>
+<span class="k">struct</span> <span class="nc">remove_const</span> <span class="o">:</span> <span class="n">TypeIdentity</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="p">{</span> <span class="p">};</span>
+<span class="c1">// 特化版本，这是一个偏特化，因为我们需要明显传入const关键词，剩下的部分 T 才是编译器推断的
+</span><span class="c1"></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">T</span><span class="o">&gt;</span>
+<span class="k">struct</span> <span class="nc">remove_const</span><span class="o">&lt;</span><span class="n">T</span> <span class="k">const</span><span class="o">&gt;</span> <span class="o">:</span> <span class="n">TypeIdentity</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="p">{</span> <span class="p">};</span> <span class="c1">// 显然，丢掉了const
+</span><span class="c1">// 用于简化的模板别名 
+</span><span class="c1"></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">T</span><span class="o">&gt;</span>
+<span class="k">using</span> <span class="n">remove_const_t</span> <span class="o">=</span> <span class="k">typename</span> <span class="n">remove_const</span> <span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;::</span><span class="n">type</span><span class="p">;</span>
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="转换类型特征-conditional">转换类型特征 conditional</h2>
+<p>这个模板特征有三个参数，第一个参数是一个bool，第二个第三个参数都是一个类型。它的功能是如果第一个参数为true，返回第二个参数中的类型，反之返回第三个参数中的类型。</p>
+<p>实现如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-C++" data-lang="C++"><span class="k">template</span> <span class="o">&lt;</span><span class="kt">bool</span> <span class="n">Condition</span><span class="p">,</span> <span class="k">typename</span> <span class="n">T</span><span class="p">,</span> <span class="k">typename</span> <span class="n">F</span><span class="o">&gt;</span>
+<span class="k">struct</span> <span class="nc">conditional</span> <span class="o">:</span> <span class="n">TypeIdentity</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="p">{</span> <span class="p">};</span>
+<span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">T</span><span class="p">,</span> <span class="k">typename</span> <span class="n">F</span><span class="o">&gt;</span>
+<span class="k">struct</span> <span class="nc">conditional</span><span class="o">&lt;</span><span class="nb">false</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">F</span><span class="o">&gt;</span> <span class="o">:</span> <span class="n">TypeIdentity</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&gt;</span> <span class="p">{</span> <span class="p">};</span>
+
+<span class="k">static_assert</span><span class="p">(</span><span class="n">is_same_v</span><span class="o">&lt;</span><span class="kt">int</span><span class="p">,</span>
+                  <span class="n">conditional_t</span><span class="o">&lt;</span><span class="n">is_void</span><span class="o">&lt;</span><span class="kt">void</span><span class="o">&gt;::</span><span class="n">value</span><span class="p">,</span> <span class="kt">int</span><span class="p">,</span> <span class="kt">long</span><span class="o">&gt;</span><span class="p">);</span>
+<span class="k">static_assert</span><span class="p">(</span><span class="n">is_same_v</span><span class="o">&lt;</span><span class="kt">long</span><span class="p">,</span>
+                  <span class="n">conditional_t</span><span class="o">&lt;</span><span class="n">is_void</span><span class="o">&lt;</span><span class="kt">char</span><span class="o">&gt;::</span><span class="n">value</span><span class="p">,</span> <span class="kt">int</span><span class="p">,</span> <span class="kt">long</span><span class="o">&gt;</span><span class="p">);</span>
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="小结">小结</h2>
+<p>本文介绍了 Type Traits 类型特征的核心元函数 integral_constant 及其重要的模板别名。并介绍了三种类型特征的约定。并利用几个标准库特征模板：<code>is_void</code>、<code>remove_const</code>和 <code>conditional</code>来理解这些约定和类型特征的实现方法。</p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+
+    
+        <link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/katex@0.13.13/dist/katex.min.css"integrity="sha384-RZU/ijkSsFbcmivfdRBQDtwuwVqK7GMOw6IMvKyeWL2K5UAlyp6WonmB8m7Jd0Hn"crossorigin="anonymous"
+            ><script 
+                src="https://cdn.jsdelivr.net/npm/katex@0.13.13/dist/katex.min.js"integrity="sha384-pK1WpvzWVBQiP0/GjnvRxV4mOb0oxFuyRxJlk6vVw146n3egcN5C925NCP7a7BY8"crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/katex@0.13.13/dist/contrib/auto-render.min.js"integrity="sha384-vZTG03m&#43;2yp6N6BNi5iM4rW4oIwk5DfcNdFfxkk9ZWpDriOkXX8voJBFrAO7MpVl"crossorigin="anonymous"
+                defer
+                >
+            </script><script>
+    window.addEventListener("DOMContentLoaded", () => {
+        renderMathInElement(document.querySelector(`.article-content`), {
+            delimiters: [
+                { left: "$$", right: "$$", display: true },
+                { left: "$", right: "$", display: false },
+                { left: "\\(", right: "\\)", display: false },
+                { left: "\\[", right: "\\]", display: true }
+            ]
+        });})
+</script>
+    
+</article>
+
+    
+
+    <aside class="related-contents--wrapper">
+    
+    
+        <h2 class="section-title">Related contents</h2>
+        <div class="related-contents">
+            <div class="flex article-list--tile">
+                
+                    
+<article class="has-image">
+    <a href="/p/cpp-metaprogramming-tutorails/">
+        
+        
+            <div class="article-image">
+                <img src="/p/cpp-metaprogramming-tutorails/attachments/meta.deb625fd39786b7845feb16dd728cc64_hu6d94fe0ed3a3271feb05da5d0e2e1bac_1745681_250x150_fill_q75_box_smart1.jpg" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy"
+                        alt="Featured image of post C&#43;&#43; 模板编程无痛入门（一）前言、两种元函数"
+                        data-key="cpp-metaprogramming-tutorails" 
+                        data-hash="md5-3rYl/Tl4a3hF/rFt1yjMZA==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">C&#43;&#43; 模板编程无痛入门（一）前言、两种元函数</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/google-protocol-buffers-notes/">
+        
+        
+            <div class="article-image">
+                <img src="/p/google-protocol-buffers-notes/attachments/2022-04-29-16-27-11.eb070506e26696a17aac97af680bad82_hu027c5933656146fc15554de25a0d1438_144723_250x150_fill_box_smart1_3.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy"
+                        alt="Featured image of post Protocol Buffers 编译器源码阅读"
+                        data-key="google-protocol-buffers-notes" 
+                        data-hash="md5-6wcFBuJmlqF6rJevaAutgg==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Protocol Buffers 编译器源码阅读</h2>
+        </div>
+    </a>
+</article>
+                
+            </div>
+        </div>
+    
+</aside>
+
+     
+    
+        
+    <div class="disqus-container">
+    <div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "hugo-theme-stack" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+<style>
+    .disqus-container {
+        background-color: var(--card-background);
+        border-radius: var(--card-border-radius);
+        box-shadow: var(--shadow-l1);
+        padding: var(--card-padding);
+    }
+</style>
+
+<script>
+    window.addEventListener('onColorSchemeChange', (e) => {
+        if (DISQUS) {
+            DISQUS.reset({
+                reload: true
+            });
+        }
+    })
+</script>
+
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2019 - 
+        
+        2023 Lilith Sangreal
+    </section>
+    
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.8.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.css"integrity="sha256-c0uckgykQ9v5k&#43;IqViZOZKc47Jn7KQil4/MP3ySA3F8="crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.css"integrity="sha256-SBLU4vv6CA6lHsZ1XyTdhyjJxCjPif/TRkjnsyGAGnE="crossorigin="anonymous"
+            >
+
+            </main>
+    
+        <aside class="sidebar right-sidebar sticky">
+            <section class="widget archives">
+                <div class="widget-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+                </div>
+                <h2 class="widget-title section-title">Table of contents</h2>
+                
+                <div class="widget--toc">
+                    <nav id="TableOfContents">
+  <ol>
+    <li><a href="#一切的核心stdintegral_constant">一切的核心：std::integral_constant</a></li>
+    <li><a href="#stdbool_constantstdtrue_typestdfalse_type">std::bool_constant、std::true_type、std::false_type</a></li>
+    <li><a href="#一元类型特征cpp17unarytypetrait约定">一元类型特征（Cpp17UnaryTypeTrait）约定</a></li>
+    <li><a href="#二元类型特征cpp17binarytypetrait约定">二元类型特征（Cpp17BinaryTypeTrait）约定</a></li>
+    <li><a href="#转换特征cpp17transformationtrait约定">转换特征（Cpp17TransformationTrait）约定</a></li>
+    <li><a href="#未定义的行为">未定义的行为</a></li>
+    <li><a href="#一元类型特征is_void">一元类型特征：is_void</a></li>
+    <li><a href="#转换类型特征-remove_const">转换类型特征 remove_const</a></li>
+    <li><a href="#转换类型特征-conditional">转换类型特征 conditional</a></li>
+    <li><a href="#小结">小结</a></li>
+  </ol>
+</nav>
+                </div>
+            </section>
+        </aside>
+    
+
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.5/dist/vibrant.min.js"integrity="sha256-5NovOZc4iwiAWTYIFiIM7DxKUXKWvpVEuMEPLzcm5/g="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>
