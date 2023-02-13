@@ -1,69 +1,93 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
-  <channel>
-    <title>C&#43;&#43; on Lilith Sangreal</title>
-    <link>https://lilithsangreal.com/categories/c&#43;&#43;/</link>
-    <description>Recent content in C&#43;&#43; on Lilith Sangreal</description>
-    <generator>Hugo -- gohugo.io</generator>
-    <language>en-us</language>
-    <lastBuildDate>Sun, 12 Feb 2023 15:13:10 +0800</lastBuildDate><atom:link href="https://lilithsangreal.com/categories/c++/index.xml" rel="self" type="application/rss+xml" />
-    <item>
-      <title>C&#43;&#43; 模板编程无痛入门（二） Type Traits：类型特征核心实现与约定</title>
-      <link>https://lilithsangreal.com/p/cpp-metaprogramming-tutorails-2/</link>
-      <pubDate>Sun, 12 Feb 2023 15:13:10 +0800</pubDate>
-      
-      <guid>https://lilithsangreal.com/p/cpp-metaprogramming-tutorails-2/</guid>
-      <description>在前一篇 C++ 模板编程无痛入门（一）前言、两种元函数 中，我们举了一个使用模板偏特化来优化 byte_swap 函数的代码困境。当时提到了我们需要能够识别传入数据的“类型本身的更多特征”来加强我们的模板。
-这就是 Type Traits 。
-在拥有了前文对于元函数的理解之后。本文将介绍一些特殊且重要的元函数，Type Traits 系统将建立在这些元函数之上。
-一切的核心：std::integral_constant 这是 Type Traits 的核心元函数，因此需要特别记忆，有一丢丢复杂和抽象：
-1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17  template &amp;lt;class T, T v&amp;gt; // 上篇文章已经提到过，这里可以优化为 auto struct integral_constant { static constexpr T value = v; // 一个值元函数的返回值  using value_type = T; using type = integral_constant&amp;lt;T, v&amp;gt;; // 一个类型元函数的返回值  /// 这里定义了一个转换到T类型值隐式转换  constexpr operator value_type() const noexcept { return value; } // 如果这个模板实例化了，可以使用括号操作符直接访问 value  constexpr value_type operator()() const noexcept { return value; } }   显然这既是一个值元函数，又是一个类型元函数。但目前看不出来这种设计有什么用，也不知道为何要定义隐式转换。让我们继续。</description>
-    </item>
-    
-    <item>
-      <title>C&#43;&#43; 模板编程无痛入门（一）前言、两种元函数</title>
-      <link>https://lilithsangreal.com/p/cpp-metaprogramming-tutorails/</link>
-      <pubDate>Sun, 05 Feb 2023 19:55:58 +0800</pubDate>
-      
-      <guid>https://lilithsangreal.com/p/cpp-metaprogramming-tutorails/</guid>
-      <description>程序如果不能在运行时完成工作，那就只能在编译时完成工作 —— 维基百科
- 本文是一个非常适合新手阅读的模板元编程的入门教程。但仍然需要你有一些基础的 C++ 能力，但不需要很多。
-如果你像我一样是个C++菜鸡，但大概能够理解 C++ 的面对对象编程和范型的概念。那么阅读并理解本文内容仍然不成问题。
-本文内容和代码例都来自cppcon的内容整理和个人理解总结，如有错误请一定拍砖，十分感谢。
-模板元编程是什么？ 这里有一个来自维基百科的定义：
- 模板元编程（英语：Template metaprogramming，缩写：TMP）是一种元编程技术，编译器使用模板产生暂时性的源码，然后再和剩下的源码混合并编译。这些模板的输出包括编译时期常量、数据结构以及完整的函数。
- 如果这个描述仍然让你感到费解，那么这里有另外一个定义：
- 元编程是程序作者像正常程序操作数据一样操作程序本身的手段。  如果这句话仍然让你感到抽象。那你可以从性能的角度来理解：
- 使用元编程能力，我可以把运行时需要做的事情，移动到编译期来做，提升我的程序性能——当然这反之会提升你的编译时间，正如我在文章最开头提到的那样。  或者，可以从你将要做的工作来理解：
- 我想要编写一些给同事、同学或是社区使用的框架代码。这些代码我想尽可能简洁且灵活（最基础的范型提供了一些这样的能力，但深入使用模板元编程可以做得更多）。或者想给 C++ 本身添加一些能力，制作一些语法糖。  那也许，你将不得不了解一些元编程的技术。
-使用元编程，一点理由…… 这里有一张来自 Walter E. Brown 的实验结果（Cppcon 2014）。
-使用模版元编程技术实现的 pow “函数”比 std::pow() 性能高出很多倍。
-模版特化与 Type Traits 简单了解过范型的就能知道，普通的函数只能提供给函数声明时指定的类型使用，而模板函数传入多种数据类型。
-比如定义一个函数叫：
-1 2 3 4 5 6 7 8 9 10 11 12  /// 以下代码示例来自 https://blog.aaronballman.com/2011/11/a-simple-introduction-to-type-traits/  template &amp;lt;typename T&amp;gt; T byte_swap( T value ) { unsigned char *bytes = reinterpret_cast&amp;lt; unsigned char * &amp;gt;( &amp;amp;value ); for (size_t i = 0; i &amp;lt; sizeof( T ); i += 2) { unsigned char v = bytes[ i ]; bytes[ i ] = bytes[ i + 1 ]; bytes[ i + 1 ] = v; } return value; }   不用仔细阅读这个函数的实现。简单来说，这个函数传入一个 32 位的数字 0x11223344 会得到返回值 0x22114433。也可以传入一个 16 位的数字 0x1122 得到 0x2211。</description>
-    </item>
-    
-    <item>
-      <title>Protocol Buffers 编译器源码阅读</title>
-      <link>https://lilithsangreal.com/p/google-protocol-buffers-notes/</link>
-      <pubDate>Fri, 29 Apr 2022 00:00:00 +0000</pubDate>
-      
-      <guid>https://lilithsangreal.com/p/google-protocol-buffers-notes/</guid>
-      <description>Protocol Buffers 编译器源码阅读 前言 Protocol Buffers （简称 pb/protobuf） 是谷歌公司开发的一款跨平台跨语言的结构数据序列化框架，可以使用 protobuf 的提供的编译器将定义好的数据模型（ proto文件 ）编译为各种语言，提供对应的特殊数据结构的序列化、反序列化能力。protobuf 性能好，语法简洁，广泛应用于 rpc 框架中，为其提供编解码的能力。
-除此之外，protobuf 还是一个优秀的 C++ 开源项目 Github，在社区里询问阅读什么项目提升自己的 C++ 编码能力时，也有很多人推荐阅读 protobuf 的源码。
-出于工作上的原因，最近我也对 protobuf 的编译器源码（Protocol buffers 3）进行一定阅读，发现它的代码整洁，逻辑清晰，设计也非常好。因此写一篇这样的文章记录一下阅读的一些收获。
-编译器相关知识 如果完全没有编译器相关的知识，那么阅读 protobuf 的源码是无从下手的。和寻常的编译器一样，protobuf 也可以分为编译器前端和后端，并完成了一个从源语言到目标语言的转换。对于传统编程语言来说，即是从源代码到机器直接执行的机器码的转换。
-如图所示，对于 protobuf 来说，源语言就是一个 proto 文件，定义了数据结构。而目标语言则是对应语言的源代码。以便于各种语言直接调用使用。
-目前 protobuf 支持的语言如下。也就是说，定义好的 proto 文件会转换为下列语言的源代码。
-对于编译器来说，前端主要完成的工作是词法分析，语法分析，语义分析。
-假设我们已经完成了预编译器的工作（一般包括去除空格，插入头文件，展开宏等等……事实上，根据不同的语言复杂程度，预编译器的工作也可能会非常复杂）。假设我们的语言非常简单，不需要引入什么头文件，展开宏等等，那么输入的目标语言将会被去除多余的空格和换行符。
-这样，对于编译器来说，目标语言只是一串连续的字母和特殊符号的序列，比如：
-1  whiletrue;   单个字母和符号一般不能表达什么含义，因此 词法分析 是将单词组合拆分成 token（单词）的形式， 如上述代码中的 while 和 true。经过词法分析，字母和特殊符号的序列就转化为了一串由单词形式组成的序列。
-而 语法分析 则是将这个单词的序列组织成一个抽象语法树（Abstract Syntax Tree，AST），后文会针对protobuf使用的语法分析方式介绍这一过程的实例。
-至此为止，其实编译器也只是将源语言，从一种不包含结构的序列形式转换成了含有结构的形式。这其中产生了任何的理解了吗？没有，至此位置，计算机只是对数据进行了一些处理工作，但并不知道我们的代码做了什么事情。
-但是组织一棵树的形式，则为语言初步理解源代码做了什么，做的事情是否合法提供了条件。编译器会反复阅读这棵树，根据这棵树的结构来分析语义，来判断程序员输入的东西是否合理。在这个过程中，编译器会为AST的每个节点填写一些属性。这就是 语义分析。
-LL(1) 文法 </description>
-    </item>
-    
-  </channel>
+    <channel>
+        <title>C&#43;&#43; on Lilith Sangreal</title>
+        <link>https://lilithsangreal.com/categories/c&#43;&#43;/</link>
+        <description>Recent content in C&#43;&#43; on Lilith Sangreal</description>
+        <generator>Hugo -- gohugo.io</generator>
+        <language>en-us</language>
+        <lastBuildDate>Fri, 29 Apr 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://lilithsangreal.com/categories/c++/index.xml" rel="self" type="application/rss+xml" /><item>
+        <title>Protocol Buffers 编译器源码阅读</title>
+        <link>https://lilithsangreal.com/p/google-protocol-buffers-notes/</link>
+        <pubDate>Fri, 29 Apr 2022 00:00:00 +0000</pubDate>
+        
+        <guid>https://lilithsangreal.com/p/google-protocol-buffers-notes/</guid>
+        <description>&lt;img src="https://lilithsangreal.com/p/google-protocol-buffers-notes/attachments/2022-04-29-16-27-11.png" alt="Featured image of post Protocol Buffers 编译器源码阅读" /&gt;&lt;h1 id=&#34;protocol-buffers-编译器源码阅读&#34;&gt;Protocol Buffers 编译器源码阅读&lt;/h1&gt;
+&lt;h2 id=&#34;前言&#34;&gt;前言&lt;/h2&gt;
+&lt;p&gt;Protocol Buffers （简称 pb/protobuf） 是谷歌公司开发的一款跨平台跨语言的结构数据序列化框架，可以使用 protobuf 的提供的编译器将定义好的数据模型（ proto文件 ）编译为各种语言，提供对应的特殊数据结构的序列化、反序列化能力。protobuf 性能好，语法简洁，广泛应用于 rpc 框架中，为其提供编解码的能力。&lt;/p&gt;
+&lt;p&gt;除此之外，protobuf 还是一个优秀的 C++ 开源项目 &lt;a class=&#34;link&#34; href=&#34;https://github.com/protocolbuffers/protobuf&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Github&lt;/a&gt;，在社区里询问阅读什么项目提升自己的 C++ 编码能力时，也有很多人推荐阅读 protobuf 的源码。&lt;/p&gt;
+&lt;p&gt;出于工作上的原因，最近我也对 protobuf 的编译器源码（Protocol buffers 3）进行一定阅读，发现它的代码整洁，逻辑清晰，设计也非常好。因此写一篇这样的文章记录一下阅读的一些收获。&lt;/p&gt;
+&lt;h2 id=&#34;编译器相关知识&#34;&gt;编译器相关知识&lt;/h2&gt;
+&lt;p&gt;如果完全没有编译器相关的知识，那么阅读 protobuf 的源码是无从下手的。和寻常的编译器一样，protobuf 也可以分为编译器前端和后端，并完成了一个从源语言到目标语言的转换。对于传统编程语言来说，即是从源代码到机器直接执行的机器码的转换。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://lilithsangreal.com/p/google-protocol-buffers-notes/attachments/2022-04-29-16-43-54.png&#34;
+	width=&#34;2458&#34;
+	height=&#34;592&#34;
+	srcset=&#34;https://lilithsangreal.com/p/google-protocol-buffers-notes/attachments/2022-04-29-16-43-54_hu30df2083b9bef9a372f895ff63da6290_112200_480x0_resize_box_3.png 480w, https://lilithsangreal.com/p/google-protocol-buffers-notes/attachments/2022-04-29-16-43-54_hu30df2083b9bef9a372f895ff63da6290_112200_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;415&#34;
+		data-flex-basis=&#34;996px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;如图所示，对于 protobuf 来说，源语言就是一个 proto 文件，定义了数据结构。而目标语言则是对应语言的源代码。以便于各种语言直接调用使用。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://lilithsangreal.com/p/google-protocol-buffers-notes/attachments/2022-05-02-20-18-41.png&#34;
+	width=&#34;1958&#34;
+	height=&#34;426&#34;
+	srcset=&#34;https://lilithsangreal.com/p/google-protocol-buffers-notes/attachments/2022-05-02-20-18-41_hu41127c18d30142f992fd9fc3cb5ea7a0_104474_480x0_resize_box_3.png 480w, https://lilithsangreal.com/p/google-protocol-buffers-notes/attachments/2022-05-02-20-18-41_hu41127c18d30142f992fd9fc3cb5ea7a0_104474_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;459&#34;
+		data-flex-basis=&#34;1103px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;目前 protobuf 支持的语言如下。也就是说，定义好的 proto 文件会转换为下列语言的源代码。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://lilithsangreal.com/p/google-protocol-buffers-notes/attachments/2022-05-02-20-17-51.png&#34;
+	width=&#34;954&#34;
+	height=&#34;592&#34;
+	srcset=&#34;https://lilithsangreal.com/p/google-protocol-buffers-notes/attachments/2022-05-02-20-17-51_hu6add5649c71dabf928d57d6fdc51d6a7_78843_480x0_resize_box_3.png 480w, https://lilithsangreal.com/p/google-protocol-buffers-notes/attachments/2022-05-02-20-17-51_hu6add5649c71dabf928d57d6fdc51d6a7_78843_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;161&#34;
+		data-flex-basis=&#34;386px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://lilithsangreal.com/p/google-protocol-buffers-notes/attachments/2022-04-29-16-50-08.png&#34;
+	width=&#34;1142&#34;
+	height=&#34;382&#34;
+	srcset=&#34;https://lilithsangreal.com/p/google-protocol-buffers-notes/attachments/2022-04-29-16-50-08_hu6d53ba4ac7b815986f89c73999ac5113_118045_480x0_resize_box_3.png 480w, https://lilithsangreal.com/p/google-protocol-buffers-notes/attachments/2022-04-29-16-50-08_hu6d53ba4ac7b815986f89c73999ac5113_118045_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;298&#34;
+		data-flex-basis=&#34;717px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;对于编译器来说，前端主要完成的工作是词法分析，语法分析，语义分析。&lt;/p&gt;
+&lt;p&gt;假设我们已经完成了预编译器的工作（一般包括去除空格，插入头文件，展开宏等等……事实上，根据不同的语言复杂程度，预编译器的工作也可能会非常复杂）。假设我们的语言非常简单，不需要引入什么头文件，展开宏等等，那么输入的目标语言将会被去除多余的空格和换行符。&lt;/p&gt;
+&lt;p&gt;这样，对于编译器来说，目标语言只是一串连续的字母和特殊符号的序列，比如：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;whiletrue;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;单个字母和符号一般不能表达什么含义，因此 &lt;strong&gt;词法分析&lt;/strong&gt; 是将单词组合拆分成 token（单词）的形式， 如上述代码中的 &lt;code&gt;while&lt;/code&gt; 和 &lt;code&gt;true&lt;/code&gt;。经过词法分析，字母和特殊符号的序列就转化为了一串由单词形式组成的序列。&lt;/p&gt;
+&lt;p&gt;而 &lt;strong&gt;语法分析&lt;/strong&gt; 则是将这个单词的序列组织成一个抽象语法树（Abstract Syntax Tree，AST），后文会针对protobuf使用的语法分析方式介绍这一过程的实例。&lt;/p&gt;
+&lt;p&gt;至此为止，其实编译器也只是将源语言，从一种不包含结构的序列形式转换成了含有结构的形式。这其中产生了任何的理解了吗？没有，至此位置，计算机只是对数据进行了一些处理工作，但并不知道我们的代码做了什么事情。&lt;/p&gt;
+&lt;p&gt;但是组织一棵树的形式，则为语言初步理解源代码做了什么，做的事情是否合法提供了条件。编译器会反复阅读这棵树，根据这棵树的结构来分析语义，来判断程序员输入的东西是否合理。在这个过程中，编译器会为AST的每个节点填写一些属性。这就是 &lt;strong&gt;语义分析&lt;/strong&gt;。&lt;/p&gt;
+&lt;h3 id=&#34;ll1-文法&#34;&gt;LL(1) 文法&lt;/h3&gt;
+</description>
+        </item>
+        
+    </channel>
 </rss>
